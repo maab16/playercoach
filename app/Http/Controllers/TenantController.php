@@ -28,6 +28,7 @@ class TenantController extends Controller
             if (! File::isDirectory($directoryPath)) {
                 File::makeDirectory($directoryPath, 0777, true, true);
             }
+            
             tenant()->deleteKey('token');
             Artisan::call('tenants:migrate');
 

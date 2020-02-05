@@ -19,4 +19,6 @@ Route::get('/', 'TenantController@index')->name('tenant.dashboard');
 Route::get('dashboard', 'TenantController@index')->name('tenant.dashboard');
 Route::get('tenant/create/{token}', 'TenantController@create')->name('tenant.create');
 
-Route::get('login', '\Laravel\Spark\Http\Controllers\Auth\LoginController@showLoginForm');
+// Route::middleware('universal')->group(function(){
+// 	Route::get('login', '\Laravel\Spark\Http\Controllers\Auth\LoginController@showLoginForm');
+// });

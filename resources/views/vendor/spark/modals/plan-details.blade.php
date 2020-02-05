@@ -11,8 +11,9 @@
             <!-- Modal Body -->
             <div class="modal-body">
                 <ul class="plan-feature-list p-0 m-0">
-                    <li v-for="feature in detailingPlan.features">
-                        @{{ feature }}
+                    <li v-for="(feature, index) in detailingPlan.features" :key="index">
+                        <input type="checkbox" :name="'feature_'+index+1" :id="'feature_'+index+1">
+                        <label :for="'feature_'+index+1">@{{ feature }}</label>
                     </li>
                 </ul>
             </div>
