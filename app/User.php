@@ -3,9 +3,11 @@
 namespace App;
 
 use Laravel\Spark\User as SparkUser;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends SparkUser
 {
+    use HasRoles;
     /**
      * The attributes that are mass assignable.
      *

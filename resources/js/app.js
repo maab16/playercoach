@@ -18,6 +18,17 @@ require('spark-bootstrap');
 
 require('./components/bootstrap');
 
+window.toastr = require('toastr');
+toastr.options.closeButton = true;
+
+import Multiselect from 'vue-multiselect';
+Vue.component('multiselect', Multiselect);
+
+console.log(toastr.options)
+
+Vue.component('permissions-data', require('./views/Permission.vue').default);
+Vue.component('roles-data', require('./views/Role.vue').default);
+
 var app = new Vue({
     mixins: [require('spark')]
 });

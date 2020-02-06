@@ -1,2 +1,5 @@
 // @import "./spark/spark";
 @import "./../../vendor/laravel/spark-aurelius/resources/assets/sass/spark";
+@import '~bootstrap/scss/bootstrap';
+@import "~toastr/toastr.scss";
+@import "~vue-multiselect/dist/vue-multiselect.min.css";

@@ -19,3 +19,40 @@ Route::group(['domain' => 'facility.playercoach.com'], function(){
 	Route::get('register', 'Facility\AuthController@showTenantRegisterForm');
 	Route::post('register', 'Facility\AuthController@register');
 });
+
+Route::get('users', 'UserController@index')->name('users');
+Route::get('user/add', 'UserController@showCreateForm')->name('user.add');
+Route::get('user/{id}', 'UserController@index')->name('user.edit');
+Route::post('user/create', 'UserController@index')->name('user.create');
+Route::put('user/{id}', 'UserController@index')->name('user.update');
+Route::delete('user/{id}', 'UserController@index')->name('user.delete');
+
+Route::resource('role', 'RoleController');
+Route::resource('permission', 'PermissionController');
+
+Route::get('/permissions/all', 'PermissionController@all');
+Route::get('/roles/all', 'RoleController@all');
+Route::get('/roles/{id}/rolePermissions', 'RoleController@getRolePermissions');
+
+// Route::get('users', 'UserController@index')->name('users');
+// Route::get('user/add', 'UserController@showCreateForm')->name('user.add');
+// Route::get('user/{id}', 'UserController@index')->name('user.edit');
+// Route::post('user/create', 'UserController@index')->name('user.create');
+// Route::put('user/{id}', 'UserController@index')->name('user.update');
+// Route::delete('user/{id}', 'UserController@index')->name('user.delete');
+
+// Route::get('users', 'UserController@index')->name('users');
+// Route::get('user/add', 'UserController@showCreateForm')->name('user.add');
+// Route::get('user/{id}', 'UserController@index')->name('user.edit');
+// Route::post('user/create', 'UserController@index')->name('user.create');
+// Route::put('user/{id}', 'UserController@index')->name('user.update');
+// Route::delete('user/{id}', 'UserController@index')->name('user.delete');
+
+// Route::group(['prefix' => 'courtbooking'], function () {
+//     Route::get('/courts/{date?}', 'SchedulingController@viewSheet')->name('booking.sheet');
+//     Route::get('/resources', 'SchedulingController@viewResourceSheet');
+//     Route::resource('bookings', 'BookingsController');
+//     Route::post('bookcourt', ['as' => 'bookcourt', 'uses'=> 'SchedulingController@makebooking']);
+//     Route::post('joingroup', ['as' => 'joingroup', 'uses'=> 'SchedulingController@joingroup']);
+//     Route::get('bookings/{id}/edit', 'BookingsController@edit');
+// });

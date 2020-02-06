@@ -22,8 +22,10 @@
     "sass": "^1.22.5",
     "sass-loader": "7.*",
     "sweetalert2": "^8.13.6",
+    "toastr": "^2.1.4",
     "urijs": "^1.17.0",
     "vue": "2.*",
+    "vue-multiselect": "^2.1.6",
     "vue-template-compiler": "^2.6.10"
   }
 }
