@@ -18,20 +18,47 @@ require('spark-bootstrap');
 
 require('./components/bootstrap');
 
+window.Vue = require('vue');
+
+import _ from 'lodash'
+
 window.toastr = require('toastr');
 toastr.options.closeButton = true;
 
 import Multiselect from 'vue-multiselect';
 Vue.component('multiselect', Multiselect);
 
-import { ValidationProvider } from 'vee-validate';
-console.log(ValidationProvider)
-Vue.component('ValidationProvider', ValidationProvider);
+import VueRouter from 'vue-router';
+Vue.use(VueRouter);
+
+import VueProgressBar from 'vue-progressbar'
+Vue.use(VueProgressBar, {
+  color: 'rgb(143, 255, 199)',
+  failedColor: '#874b4b',
+  thickness: '5px',
+  transition: {
+    speed: '0.2s',
+    opacity: '0.6s',
+    termination: 300
+  },
+  autoRevert: true,
+  location: 'top',
+  inverse: false
+})
 
 Vue.component('permissions-data', require('./views/Permission.vue').default);
 Vue.component('roles-data', require('./views/Role.vue').default);
 Vue.component('users-data', require('./views/User.vue').default);
+Vue.component('app-data', require('./views/App.vue').default);
+Vue.component('pagination', require('laravel-vue-pagination'));
+
+// Mixins
+import mixin from './mixin.js'
+Vue.mixin(mixin)
+// Routes
+import router from './routes.js'
 
 var app = new Vue({
-    mixins: [require('spark')]
+    mixins: [require('spark')],
+    router
 });

@@ -36,19 +36,14 @@ Route::get('/permissions/all', 'PermissionController@all');
 Route::get('/roles/all', 'RoleController@all');
 Route::get('/roles/{id}/rolePermissions', 'RoleController@getRolePermissions');
 
-// Route::get('users', 'UserController@index')->name('users');
-// Route::get('user/add', 'UserController@showCreateForm')->name('user.add');
-// Route::get('user/{id}', 'UserController@index')->name('user.edit');
-// Route::post('user/create', 'UserController@index')->name('user.create');
-// Route::put('user/{id}', 'UserController@index')->name('user.update');
-// Route::delete('user/{id}', 'UserController@index')->name('user.delete');
+Route::any('/admin', 'AdminController@index');
+Route::any('/admin/users', 'AdminController@index');
+Route::any('/admin/roles', 'AdminController@index');
+Route::any('/admin/permissions', 'AdminController@index');
 
-// Route::get('users', 'UserController@index')->name('users');
-// Route::get('user/add', 'UserController@showCreateForm')->name('user.add');
-// Route::get('user/{id}', 'UserController@index')->name('user.edit');
-// Route::post('user/create', 'UserController@index')->name('user.create');
-// Route::put('user/{id}', 'UserController@index')->name('user.update');
-// Route::delete('user/{id}', 'UserController@index')->name('user.delete');
+// Route::get('/admin', function(){
+// 	return view('app');
+// });
 
 // Route::group(['prefix' => 'courtbooking'], function () {
 //     Route::get('/courts/{date?}', 'SchedulingController@viewSheet')->name('booking.sheet');
