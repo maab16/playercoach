@@ -7,6 +7,10 @@ import Role from './views/Auth/Role.vue'
 import Permission from './views/Auth/Permission.vue'
 import Court from './views/CourtBooking/Court.vue'
 import Resource from './views/CourtBooking/Resource.vue'
+import Profile from './views/Setting/Profile.vue'
+import Subscription from './views/Setting/Subscription.vue'
+import Order from './views/Setting/Order.vue'
+import Invoice from './views/Setting/Invoice.vue'
 
 // let basePath = document.querySelector('#app').getAttribute('base-path').trim().trimRight('/')
 // let prefix = document.querySelector('#app').getAttribute('prefix').trim().trimRight('/')
@@ -117,6 +121,74 @@ const router = new VueRouter({
                     {
                         name: 'resource',
                         display: 'Resources'
+                    }
+                ]
+            }
+        },
+        {
+            path: '/settings/profile',
+            name: 'profile',
+            component: Profile,
+            meta: {
+                breadcrumbs: [
+                    {
+                        name: 'admin',
+                        display: 'Admin'
+                    },
+                    {
+                        name: 'profile',
+                        display: 'Profile'
+                    }
+                ]
+            }
+        },
+        {
+            path: '/settings/subscriptions',
+            name: 'subscription',
+            component: Subscription,
+            meta: {
+                breadcrumbs: [
+                    {
+                        name: 'admin',
+                        display: 'Admin'
+                    },
+                    {
+                        name: 'subscription',
+                        display: 'Subscriptions'
+                    }
+                ]
+            }
+        },
+        {
+            path: '/settings/orders',
+            name: 'order',
+            component: Order,
+            meta: {
+                breadcrumbs: [
+                    {
+                        name: 'admin',
+                        display: 'Admin'
+                    },
+                    {
+                        name: 'order',
+                        display: 'Orders'
+                    }
+                ]
+            }
+        },
+        {
+            path: '/settings/invoices',
+            name: 'invoice',
+            component: Invoice,
+            meta: {
+                breadcrumbs: [
+                    {
+                        name: 'admin',
+                        display: 'Admin'
+                    },
+                    {
+                        name: 'invoice',
+                        display: 'Invoices'
                     }
                 ]
             }

@@ -41,6 +41,10 @@ Route::any('/admin/roles', 'AdminController@index');
 Route::any('/admin/permissions', 'AdminController@index');
 Route::any('/courtbooking/courts', 'AdminController@index');
 Route::any('/courtbooking/resources', 'AdminController@index');
+Route::any('/settings/profile', 'AdminController@index');
+Route::any('/settings/subscriptions', 'AdminController@index');
+Route::any('/settings/orders', 'AdminController@index');
+Route::any('/settings/invoices', 'AdminController@index');
 
 // Route::get('/admin', function(){
 // 	return view('app');

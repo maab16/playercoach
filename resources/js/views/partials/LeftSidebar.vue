@@ -10,6 +10,17 @@
 	        <h1><a href="/" class="logo">Laravel</a></h1>
 	        <ul class="list-unstyled components mb-5">
 	        	<li><router-link :to="{ name: 'admin' }" class="nav-link">Admin</router-link></li>
+	        	<li>
+	                <a data-toggle="collapse" href="#user"><span class="fa fa-suitcase mr-3"></span> Settings</a>
+	                <div class="collapse" id="user" :class="{show:isActiveMenu('profile|subscription|order|invoice')}">
+	                    <ul class="list-unstyled components ml-3">
+	                        <li><router-link :to="{ name: 'profile' }" class="nav-link">Profile</router-link></li>
+	                        <li><router-link :to="{ name: 'subscription' }" class="nav-link">My Subscriptions</router-link></li>
+	                        <li><router-link :to="{ name: 'order' }" class="nav-link">My Orders</router-link></li>
+	                        <li><router-link :to="{ name: 'invoice' }" class="nav-link">My Invoices</router-link></li>
+	                    </ul>
+	                </div>
+	            </li>
 	            <li>
 	                <a data-toggle="collapse" href="#user"><span class="fa fa-suitcase mr-3"></span> Users & Permissions</a>
 	                <div class="collapse" id="user" :class="{show:isActiveMenu('user|role|permission')}">
