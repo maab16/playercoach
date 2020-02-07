@@ -24,6 +24,7 @@
     "sweetalert2": "^8.13.6",
     "toastr": "^2.1.4",
     "urijs": "^1.17.0",
+    "vee-validate": "^3.2.3",
     "vue": "2.*",
     "vue-multiselect": "^2.1.6",
     "vue-template-compiler": "^2.6.10"

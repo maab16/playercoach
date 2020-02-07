@@ -23,9 +23,11 @@ Route::group(['domain' => 'facility.playercoach.com'], function(){
 Route::get('users', 'UserController@index')->name('users');
 Route::get('user/add', 'UserController@showCreateForm')->name('user.add');
 Route::get('user/{id}', 'UserController@index')->name('user.edit');
-Route::post('user/create', 'UserController@index')->name('user.create');
-Route::put('user/{id}', 'UserController@index')->name('user.update');
-Route::delete('user/{id}', 'UserController@index')->name('user.delete');
+Route::post('user', 'UserController@store')->name('user.store');
+Route::put('user/{id}', 'UserController@update')->name('user.update');
+Route::delete('user/{id}', 'UserController@destroy')->name('user.delete');
+
+Route::get('users/all', 'UserController@all');
 
 Route::resource('role', 'RoleController');
 Route::resource('permission', 'PermissionController');
