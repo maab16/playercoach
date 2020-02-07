@@ -104,9 +104,13 @@
                 }
             }
         },
-        created(){},
+        created(){
+          this.fetchUserData()
+        },
         methods: {
-            
+            fetchUserData: function(){
+              
+            }
         },
         mounted() {},
     }

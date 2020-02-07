@@ -154,7 +154,7 @@
 
 			},
 			addRole: function(){
-				axios.post('role', this.roleData).then(res =>{
+				axios.post('/role', this.roleData).then(res =>{
 					console.log(res.data)
 	                if(res.data.success == true) {
 	                  // Flash success message

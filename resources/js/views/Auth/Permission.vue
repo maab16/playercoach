@@ -96,7 +96,7 @@
 				this.permissionData = this.permissions[index]
 			},
 			addPermission: function(){
-				axios.post('permission', {
+				axios.post('/permission', {
 					name: this.permissionData.name,
 					guard_name: this.permissionData.permission
 				}).then(res =>{

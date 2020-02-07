@@ -2453,7 +2453,7 @@ __webpack_require__.r(__webpack_exports__);
     addPermission: function addPermission() {
       var _this2 = this;
 
-      axios.post('permission', {
+      axios.post('/permission', {
         name: this.permissionData.name,
         guard_name: this.permissionData.permission
       }).then(function (res) {
@@ -2760,7 +2760,7 @@ __webpack_require__.r(__webpack_exports__);
     addRole: function addRole() {
       var _this4 = this;
 
-      axios.post('role', this.roleData).then(function (res) {
+      axios.post('/role', this.roleData).then(function (res) {
         console.log(res.data);
 
         if (res.data.success == true) {
@@ -3005,7 +3005,7 @@ __webpack_require__.r(__webpack_exports__);
     addUser: function addUser() {
       var _this2 = this;
 
-      axios.post('user', this.user).then(function (res) {
+      axios.post('/user', this.user).then(function (res) {
         console.log(res.data);
 
         if (res.data.success == true) {
@@ -3458,8 +3458,12 @@ __webpack_require__.r(__webpack_exports__);
       }
     };
   },
-  created: function created() {},
-  methods: {},
+  created: function created() {
+    this.fetchUserData();
+  },
+  methods: {
+    fetchUserData: function fetchUserData() {}
+  },
   mounted: function mounted() {}
 });
 
@@ -67289,7 +67293,7 @@ var render = function() {
               class: {
                 show: _vm.isActiveMenu("profile|subscription|order|invoice")
               },
-              attrs: { id: "user" }
+              attrs: { id: "setting" }
             },
             [
               _c("ul", { staticClass: "list-unstyled components ml-3" }, [
@@ -67426,7 +67430,7 @@ var render = function() {
             {
               staticClass: "collapse",
               class: { show: _vm.isActiveMenu("court|resource") },
-              attrs: { id: "user" }
+              attrs: { id: "court_booking" }
             },
             [
               _c("ul", { staticClass: "list-unstyled components ml-3" }, [
@@ -67501,7 +67505,7 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("a", { attrs: { "data-toggle": "collapse", href: "#user" } }, [
+    return _c("a", { attrs: { "data-toggle": "collapse", href: "#setting" } }, [
       _c("span", { staticClass: "fa fa-suitcase mr-3" }),
       _vm._v(" Settings")
     ])
@@ -67519,10 +67523,14 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("a", { attrs: { "data-toggle": "collapse", href: "#user" } }, [
-      _c("span", { staticClass: "fa fa-suitcase mr-3" }),
-      _vm._v(" Court Booking")
-    ])
+    return _c(
+      "a",
+      { attrs: { "data-toggle": "collapse", href: "#court_booking" } },
+      [
+        _c("span", { staticClass: "fa fa-suitcase mr-3" }),
+        _vm._v(" Court Booking")
+      ]
+    )
   }
 ]
 render._withStripped = true

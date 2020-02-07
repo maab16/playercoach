@@ -11,8 +11,8 @@
 	        <ul class="list-unstyled components mb-5">
 	        	<li><router-link :to="{ name: 'admin' }" class="nav-link">Admin</router-link></li>
 	        	<li>
-	                <a data-toggle="collapse" href="#user"><span class="fa fa-suitcase mr-3"></span> Settings</a>
-	                <div class="collapse" id="user" :class="{show:isActiveMenu('profile|subscription|order|invoice')}">
+	                <a data-toggle="collapse" href="#setting"><span class="fa fa-suitcase mr-3"></span> Settings</a>
+	                <div class="collapse" id="setting" :class="{show:isActiveMenu('profile|subscription|order|invoice')}">
 	                    <ul class="list-unstyled components ml-3">
 	                        <li><router-link :to="{ name: 'profile' }" class="nav-link">Profile</router-link></li>
 	                        <li><router-link :to="{ name: 'subscription' }" class="nav-link">My Subscriptions</router-link></li>
@@ -32,8 +32,8 @@
 	                </div>
 	            </li>
 	            <li>
-	                <a data-toggle="collapse" href="#user"><span class="fa fa-suitcase mr-3"></span> Court Booking</a>
-	                <div class="collapse" id="user" :class="{show:isActiveMenu('court|resource')}">
+	                <a data-toggle="collapse" href="#court_booking"><span class="fa fa-suitcase mr-3"></span> Court Booking</a>
+	                <div class="collapse" id="court_booking" :class="{show:isActiveMenu('court|resource')}">
 	                    <ul class="list-unstyled components ml-3">
 	                        <li><router-link :to="{ name: 'court' }" class="nav-link">Courts</router-link></li>
 	                        <li><router-link :to="{ name: 'resource' }" class="nav-link">Resources</router-link></li>

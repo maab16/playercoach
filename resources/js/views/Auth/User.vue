@@ -129,7 +129,7 @@
 				this.user = this.users[index]
 			},
 			addUser: function(){
-				axios.post('user', this.user).then(res =>{
+				axios.post('/user', this.user).then(res =>{
 					console.log(res.data)
 	                if(res.data.success == true) {
 	                  // Flash success message
