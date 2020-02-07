@@ -58,7 +58,7 @@
 </template>
 
 <script>
-	import RoleModals from '../views/modals/RoleModals.vue';
+	import RoleModals from '../../views/modals/RoleModals.vue';
 	export default {
 		'name': 'roles-data',
 		components: {

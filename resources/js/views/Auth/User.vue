@@ -6,36 +6,48 @@
 	        class="btn btn-success" 
 	        @click.prevent="showCreateForm()" 
 	        data-toggle="modal" 
-	        data-target="#addEditPermissionModal"> <i class="fas fa-plus"></i>Create new Permission</a>
+	        data-target="#addEditUserModal"> <i class="fas fa-plus"></i>Create new User</a>
+
+	    <div 
+            class="errors alert alert-danger mt-3" 
+            role="alert" 
+            v-for="(error,key) in errors" 
+            :key="key"> {{ error }} </div>
 
 	    <div class="table-responsive mt-3">
             <table class="table table-striped table-bordered database-tables" style="width: 100%;">
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Guard name</th>
+                        <th>Email</th>
+                        <th>Roles</th>
                         <th class="action">Action</th>
                     </tr>
                 </thead>
                 <tbody>
-	                <tr v-for="(permission,index) in permissions" :key="index" :data-id="index+1">
-	                    <td>{{ permission.name }}</td>
-	                    <td>{{ permission.guard_name }}</td>
+	                <tr v-for="(user,index) in users" :key="index" :data-id="index+1">
+	                    <td>{{ user.name }}</td>
+	                    <td>{{ user.email }}</td>
+	                    <td>
+	                    	<ul v-if="user.roles.length > 0">
+	                    		<li v-for="(role,index) in user.roles" :key="index">{{ role.name }}</li>
+	                    	</ul>
+	                    </td>
 	                    <td class="action">
 	                        <a 
 	                        	href="#" 
 						        class="btn btn-info" 
-						        @click.prevent="viewPermission(index)" 
+						        @click.prevent="viewUser(index)" 
 						        data-toggle="modal" 
-						        data-target="#viewPermissionModal">View</a>
+						        data-target="#viewUserModal">View</a>
 	                        <a 
 	                        	href="#" 
 						        class="btn btn-success" 
 						        @click.prevent="showEditForm(index)" 
 						        data-toggle="modal" 
-						        data-target="#addEditPermissionModal">Edit</a>
+						        data-target="#addEditUserModal">Edit</a>
 	                        <a 
-	               				@click.prevent="remove(permission.id)" 
+	               				@click.prevent="remove(user.id)" 
 	                        	class="btn btn-danger">Delete</a>
 	                    </td>
 	                </tr>
@@ -44,85 +56,123 @@
             </table>
 	    </div>
 
-	    <permission-modals 
+	    <user-modals 
 			:action="action"
 			:category="category"
-	    	:permission="permissionData"
-	    	:addPermission="addPermission"
-	    	:updatePermission="updatePermission"></permission-modals>
+	    	:user="user"
+	    	:roles="roles"
+	    	:addUser="addUser"
+	    	:updateUser="updateUser"></user-modals>
 
 	</div>
 </template>
 
 <script>
-	import PermissionModals from '../views/modals/PermissionModals.vue';
+	import UserModals from '../../views/modals/UserModals.vue';
 	export default {
-		'name': 'permissions-data',
+		'name': 'users-data',
 		components: {
-			PermissionModals
+			UserModals
 		},
 		data(){
 			return {
-				permissions: [],
-				permissionData: {
+				users: [],
+				roles: [],
+				user: {
 					name: '',
-					guard_name: ''
+					email: '',
+					password: '',
+					password_confirmation: '',
+					roles: []
 				},
-				category: 'Create Permission',
+				category: 'Create User',
 				action: 'add',
+				errors: [],
 			}
 		},
 		mounted(){
-			this.fetchPermissions()
+			this.fetchUsers()
 		},
 		methods: {
-			fetchPermissions: function(){
-				axios.get('/permissions/all').then(res =>{
-					this.permissions = res.data.permissions
+			fetchUsers: function(){
+				axios.get('/users/all').then(res =>{
+					console.log(res.data)
+					this.users = res.data.users
+					this.roles = []
+					for(let role of res.data.roles) {
+						this.roles.push({
+							name: role.name,
+							id: role.id
+						});
+					}
+					
 				});
 			},
 			showCreateForm: function(){
 				this.action = "add"
-				this.category = "Create"
-				this.permissionData = {name:'', guard_name: ''}
+				this.category = "Create User"
+				this.user = {
+					name:'', 
+					email: '', 
+					password: '', 
+					password_confirmation: '', 
+					roles: []
+				}
 			},
 			showEditForm: function(index){
 				console.log(index)
 				this.action = "edit"
-				this.category = "Update"
-				this.permissionData = this.permissions[index]
+				this.category = "Update User"
+				this.user = this.users[index]
 			},
-			viewPermission: function(index){
-				this.permissionData = this.permissions[index]
+			viewUser: function(index){
+				this.user = this.users[index]
 			},
-			addPermission: function(){
-				axios.post('permission', {
-					name: this.permissionData.name,
-					guard_name: this.permissionData.permission
-				}).then(res =>{
+			addUser: function(){
+				axios.post('user', this.user).then(res =>{
+					console.log(res.data)
 	                if(res.data.success == true) {
 	                  // Flash success message
 	                  toastr.success('Added Successfully into template.')
-	                  this.fetchPermissions()
+	                  this.fetchUsers()
 	                  this.closeModal()
 	                }
-	              })
-	              .catch(err => this.displayError(err.response));
+
+	                if(res.data.success == false) {
+	                	this.errors = []
+	                	for(let error of res.data.errors) {
+	                		toastr.error(error)
+	                		this.errors.push(error)
+	                	}
+	                }
+	            })
+	            .catch(err => {
+	            	console.log(err)
+	            });
 			},
-			updatePermission: function(){
-				console.log(this.permissionData.id)
-				axios.put(`/permission/${this.permissionData.id}`, this.permissionData).then(res =>{
+			updateUser: function(){
+				console.log(this.user)
+				axios.put(`/user/${this.user.id}`, this.user).then(res =>{
 					console.log(res.data)
 	                if(res.data.success == true) {
 	                  // Flash success message
 	                  toastr.success('Updated Successfully into template.')
-	                  this.fetchPermissions()
+	                  this.fetchUsers()
 	                  this.closeModal()
 	                }
+
+	                if(res.data.success == false) {
+	                	this.errors = []
+	                	for(let error of res.data.errors) {
+	                		toastr.error(error)
+	                		this.errors.push(error)
+	                	}
+	                }
+
 	              })
-	              .catch(err => this.displayError(err.response));
+	              .catch(err => console.log(err));
 			},
-			remove: function(permission){
+			remove: function(user){
 				let self = this;
                 Swal.fire({
                     title: 'Are you sure?',
@@ -134,10 +184,11 @@
                 }).then((result) => {
                     if (result.value) {
                         // this.$Progress.start()
-                        axios.delete(`/permission/${permission}`).then(res => {
+                        axios.delete(`/user/${user}`).then(res => {
+                        	console.log(res.data)
                             if( res.data.success == true ){
-                                toastr.success("Permission Deleted Successfully")
-                                self.fetchPermissions()
+                                toastr.success("User Deleted Successfully")
+                                self.fetchUsers()
                                 // this.$Progress.finish()
                             }
                         }).catch(err => {

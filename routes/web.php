@@ -21,13 +21,12 @@ Route::group(['domain' => 'facility.playercoach.com'], function(){
 });
 
 Route::get('users', 'UserController@index')->name('users');
+Route::get('users/all', 'UserController@all');
 Route::get('user/add', 'UserController@showCreateForm')->name('user.add');
 Route::get('user/{id}', 'UserController@index')->name('user.edit');
 Route::post('user', 'UserController@store')->name('user.store');
 Route::put('user/{id}', 'UserController@update')->name('user.update');
 Route::delete('user/{id}', 'UserController@destroy')->name('user.delete');
-
-Route::get('users/all', 'UserController@all');
 
 Route::resource('role', 'RoleController');
 Route::resource('permission', 'PermissionController');
@@ -40,6 +39,8 @@ Route::any('/admin', 'AdminController@index');
 Route::any('/admin/users', 'AdminController@index');
 Route::any('/admin/roles', 'AdminController@index');
 Route::any('/admin/permissions', 'AdminController@index');
+Route::any('/courtbooking/courts', 'AdminController@index');
+Route::any('/courtbooking/resources', 'AdminController@index');
 
 // Route::get('/admin', function(){
 // 	return view('app');

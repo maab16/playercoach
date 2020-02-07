@@ -1,11 +1,12 @@
 import VueRouter from 'vue-router';
 
-// import App from './views/App'
-import Login from './views/Login'
 import Admin from './views/Admin.vue'
-import User from './views/User.vue'
-import Role from './views/Role.vue'
-import Permission from './views/Permission.vue'
+import Login from './views/Auth/Login'
+import User from './views/Auth/User.vue'
+import Role from './views/Auth/Role.vue'
+import Permission from './views/Auth/Permission.vue'
+import Court from './views/CourtBooking/Court.vue'
+import Resource from './views/CourtBooking/Resource.vue'
 
 // let basePath = document.querySelector('#app').getAttribute('base-path').trim().trimRight('/')
 // let prefix = document.querySelector('#app').getAttribute('prefix').trim().trimRight('/')
@@ -82,6 +83,40 @@ const router = new VueRouter({
                     {
                         name: 'permission',
                         display: 'Permissions'
+                    }
+                ]
+            }
+        },
+        {
+            path: '/courtbooking/courts',
+            name: 'court',
+            component: Court,
+            meta: {
+                breadcrumbs: [
+                    {
+                        name: 'admin',
+                        display: 'Admin'
+                    },
+                    {
+                        name: 'court',
+                        display: 'Courts'
+                    }
+                ]
+            }
+        },
+        {
+            path: '/courtbooking/resources',
+            name: 'resource',
+            component: Resource,
+            meta: {
+                breadcrumbs: [
+                    {
+                        name: 'admin',
+                        display: 'Admin'
+                    },
+                    {
+                        name: 'resource',
+                        display: 'Resources'
                     }
                 ]
             }

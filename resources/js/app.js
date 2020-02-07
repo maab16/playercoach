@@ -46,9 +46,9 @@ Vue.use(VueProgressBar, {
   inverse: false
 })
 
-Vue.component('permissions-data', require('./views/Permission.vue').default);
-Vue.component('roles-data', require('./views/Role.vue').default);
-Vue.component('users-data', require('./views/User.vue').default);
+Vue.component('permissions-data', require('./views/Auth/Permission.vue').default);
+Vue.component('roles-data', require('./views/Auth/Role.vue').default);
+Vue.component('users-data', require('./views/Auth/User.vue').default);
 Vue.component('app-data', require('./views/App.vue').default);
 Vue.component('pagination', require('laravel-vue-pagination'));
 
