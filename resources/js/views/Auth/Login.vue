@@ -49,7 +49,7 @@
             return {
                 email: "",
                 password: "",
-                prefix: localStorage.getItem('dbm.prefix')
+                prefix: localStorage.getItem('playercoach.prefix')
             }
         },
         created(){
@@ -60,7 +60,7 @@
                 e.preventDefault()
                 this.validation();
                 if (this.password.length > 0) {
-                    axios.post('/api'+this.prefix+'/login',{
+                    axios.post('/api/login',{
                       data: {
                         email: this.email,
                         password: this.password
@@ -68,11 +68,11 @@
                     })
                     .then(res => {
                         if(res.data.success == true) {
-                            localStorage.setItem('dbm.user', JSON.stringify(res.data.user))
-                            localStorage.setItem('dbm.authToken', res.data.token)
+                            localStorage.setItem('playercoach.user', JSON.stringify(res.data.user))
+                            localStorage.setItem('playercoach.authToken', res.data.token)
                             let now = new Date()
                             let expiry = now.getTime() + res.data.expiry
-                            localStorage.setItem('dbm.authTokenExpiry', expiry)
+                            localStorage.setItem('playercoach.authTokenExpiry', expiry)
                             this.redirectTo()
                         }
                     })
@@ -82,12 +82,12 @@
                 }
             },
             redirectTo: function(){
-                if (localStorage.getItem('dbm.authToken') != null) {
+                if (localStorage.getItem('playercoach.authToken') != null) {
                     this.$emit('check')
                     if (this.$route.params.nextUrl != null) {
                         this.$router.push(this.$route.params.nextUrl)
                     } else {
-                        this.$router.push({name: 'database'})
+                        this.$router.push({name: 'admin'})
                     }
                 }
             },

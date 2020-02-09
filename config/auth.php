@@ -42,7 +42,9 @@ return [
         ],
 
         'api' => [
-            'driver' => 'spark',
+            // 'driver' => 'spark',
+            'driver' => 'passport',
+            'provider' => 'users',
         ],
     ],
 

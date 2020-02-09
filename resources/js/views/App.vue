@@ -64,17 +64,16 @@
                 menus: [],
                 name: null,
                 user_type: 0,
-                basePath: localStorage.getItem('dbm.basePath'),
-                prefix: localStorage.getItem('dbm.prefix'),
-                // isLoggedIn: localStorage.getItem('dbm.authToken') != null
-                isLoggedIn: true
+                basePath: localStorage.getItem('playercoach.basePath'),
+                prefix: localStorage.getItem('playercoach.prefix'),
+                isLoggedIn: localStorage.getItem('playercoach.authToken') != null
             }
         },
         created(){
-            // localStorage.setItem('dbm.prefix', '');
-            // if(localStorage.getItem('dbm.prefix') != null && localStorage.getItem('dbm.prefix') != this.prefix) {
-            //     localStorage.removeItem('dbm.prefix');
-            //     localStorage.setItem('dbm.prefix', this.prefix);
+            // localStorage.setItem('playercoach.prefix', '');
+            // if(localStorage.getItem('playercoach.prefix') != null && localStorage.getItem('playercoach.prefix') != this.prefix) {
+            //     localStorage.removeItem('playercoach.prefix');
+            //     localStorage.setItem('playercoach.prefix', this.prefix);
             // }
             // Set Base URL for axios request
             // axios.defaults.baseURL = this.basePath;
@@ -117,14 +116,16 @@
             },
             setDefaults() {
                 if (this.isLoggedIn) {
-                    let user = JSON.parse(localStorage.getItem('dbm.user'))
+                    let user = JSON.parse(localStorage.getItem('playercoach.user'))
                     this.name = user.name
+                    axios.defaults.headers.common['Content-Type'] = 'application/json'
+                    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('playercoach.authToken');
                 }
             },
             check(type = 'authenticate') {
                 switch(type) {
                     case 'authenticate':
-                        this.isLoggedIn = localStorage.getItem('dbm.authToken') != null
+                        this.isLoggedIn = localStorage.getItem('playercoach.authToken') != null
                         this.setDefaults()
                         break
                     case 'load':
@@ -137,8 +138,8 @@
                 }
             },
             logout(){
-                localStorage.removeItem('dbm.authToken')
-                localStorage.removeItem('dbm.user')
+                localStorage.removeItem('playercoach.authToken')
+                localStorage.removeItem('playercoach.user')
                 this.check()
                 this.$router.push({name: 'login'})
             }

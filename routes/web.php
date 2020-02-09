@@ -21,22 +21,13 @@ Route::group(['domain' => 'facility.playercoach.com'], function(){
 });
 
 Route::get('users', 'UserController@index')->name('users');
-Route::get('users/all', 'UserController@all');
-Route::get('user/add', 'UserController@showCreateForm')->name('user.add');
-Route::get('user/{id}', 'UserController@index')->name('user.edit');
-Route::post('user', 'UserController@store')->name('user.store');
-Route::put('user/{id}', 'UserController@update')->name('user.update');
-Route::delete('user/{id}', 'UserController@destroy')->name('user.delete');
-
-Route::resource('role', 'RoleController');
-Route::resource('permission', 'PermissionController');
-
-Route::get('/permissions/all', 'PermissionController@all');
-Route::get('/roles/all', 'RoleController@all');
-Route::get('/roles/{id}/rolePermissions', 'RoleController@getRolePermissions');
 
 Route::any('/admin', 'AdminController@index');
+Route::any('/admin/login', 'AdminController@index');
 Route::any('/admin/users', 'AdminController@index');
+Route::any('/admin/facility', 'AdminController@index');
+Route::any('/admin/facility/bookings', 'AdminController@index');
+Route::any('/admin/facility/resources', 'AdminController@index');
 Route::any('/admin/roles', 'AdminController@index');
 Route::any('/admin/permissions', 'AdminController@index');
 Route::any('/courtbooking/courts', 'AdminController@index');
@@ -45,6 +36,8 @@ Route::any('/settings/profile', 'AdminController@index');
 Route::any('/settings/subscriptions', 'AdminController@index');
 Route::any('/settings/orders', 'AdminController@index');
 Route::any('/settings/invoices', 'AdminController@index');
+
+Route::get('check/booking', 'Facility\BookingController@index');
 
 // Route::get('/admin', function(){
 // 	return view('app');

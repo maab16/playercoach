@@ -2123,19 +2123,18 @@ __webpack_require__.r(__webpack_exports__);
       menus: [],
       name: null,
       user_type: 0,
-      basePath: localStorage.getItem('dbm.basePath'),
-      prefix: localStorage.getItem('dbm.prefix'),
-      // isLoggedIn: localStorage.getItem('dbm.authToken') != null
-      isLoggedIn: true
+      basePath: localStorage.getItem('playercoach.basePath'),
+      prefix: localStorage.getItem('playercoach.prefix'),
+      isLoggedIn: localStorage.getItem('playercoach.authToken') != null
     };
   },
   created: function created() {
     var _this = this;
 
-    // localStorage.setItem('dbm.prefix', '');
-    // if(localStorage.getItem('dbm.prefix') != null && localStorage.getItem('dbm.prefix') != this.prefix) {
-    //     localStorage.removeItem('dbm.prefix');
-    //     localStorage.setItem('dbm.prefix', this.prefix);
+    // localStorage.setItem('playercoach.prefix', '');
+    // if(localStorage.getItem('playercoach.prefix') != null && localStorage.getItem('playercoach.prefix') != this.prefix) {
+    //     localStorage.removeItem('playercoach.prefix');
+    //     localStorage.setItem('playercoach.prefix', this.prefix);
     // }
     // Set Base URL for axios request
     // axios.defaults.baseURL = this.basePath;
@@ -2181,8 +2180,10 @@ __webpack_require__.r(__webpack_exports__);
     },
     setDefaults: function setDefaults() {
       if (this.isLoggedIn) {
-        var user = JSON.parse(localStorage.getItem('dbm.user'));
+        var user = JSON.parse(localStorage.getItem('playercoach.user'));
         this.name = user.name;
+        axios.defaults.headers.common['Content-Type'] = 'application/json';
+        axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('playercoach.authToken');
       }
     },
     check: function check() {
@@ -2190,7 +2191,7 @@ __webpack_require__.r(__webpack_exports__);
 
       switch (type) {
         case 'authenticate':
-          this.isLoggedIn = localStorage.getItem('dbm.authToken') != null;
+          this.isLoggedIn = localStorage.getItem('playercoach.authToken') != null;
           this.setDefaults();
           break;
 
@@ -2205,8 +2206,8 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     logout: function logout() {
-      localStorage.removeItem('dbm.authToken');
-      localStorage.removeItem('dbm.user');
+      localStorage.removeItem('playercoach.authToken');
+      localStorage.removeItem('playercoach.user');
       this.check();
       this.$router.push({
         name: 'login'
@@ -2276,7 +2277,7 @@ __webpack_require__.r(__webpack_exports__);
     return {
       email: "",
       password: "",
-      prefix: localStorage.getItem('dbm.prefix')
+      prefix: localStorage.getItem('playercoach.prefix')
     };
   },
   created: function created() {
@@ -2290,18 +2291,18 @@ __webpack_require__.r(__webpack_exports__);
       this.validation();
 
       if (this.password.length > 0) {
-        axios.post('/api' + this.prefix + '/login', {
+        axios.post('/api/login', {
           data: {
             email: this.email,
             password: this.password
           }
         }).then(function (res) {
           if (res.data.success == true) {
-            localStorage.setItem('dbm.user', JSON.stringify(res.data.user));
-            localStorage.setItem('dbm.authToken', res.data.token);
+            localStorage.setItem('playercoach.user', JSON.stringify(res.data.user));
+            localStorage.setItem('playercoach.authToken', res.data.token);
             var now = new Date();
             var expiry = now.getTime() + res.data.expiry;
-            localStorage.setItem('dbm.authTokenExpiry', expiry);
+            localStorage.setItem('playercoach.authTokenExpiry', expiry);
 
             _this.redirectTo();
           }
@@ -2311,14 +2312,14 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     redirectTo: function redirectTo() {
-      if (localStorage.getItem('dbm.authToken') != null) {
+      if (localStorage.getItem('playercoach.authToken') != null) {
         this.$emit('check');
 
         if (this.$route.params.nextUrl != null) {
           this.$router.push(this.$route.params.nextUrl);
         } else {
           this.$router.push({
-            name: 'database'
+            name: 'admin'
           });
         }
       }
@@ -2423,13 +2424,15 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   mounted: function mounted() {
+    axios.defaults.headers.common['Content-Type'] = 'application/json';
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('playercoach.authToken');
     this.fetchPermissions();
   },
   methods: {
     fetchPermissions: function fetchPermissions() {
       var _this = this;
 
-      axios.get('/permissions/all').then(function (res) {
+      axios.get('/api/permissions/all').then(function (res) {
         _this.permissions = res.data.permissions;
       });
     },
@@ -2453,7 +2456,7 @@ __webpack_require__.r(__webpack_exports__);
     addPermission: function addPermission() {
       var _this2 = this;
 
-      axios.post('/permission', {
+      axios.post('/api/permission', {
         name: this.permissionData.name,
         guard_name: this.permissionData.permission
       }).then(function (res) {
@@ -2473,7 +2476,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this3 = this;
 
       console.log(this.permissionData.id);
-      axios.put("/permission/".concat(this.permissionData.id), this.permissionData).then(function (res) {
+      axios.put("/api/permission/".concat(this.permissionData.id), this.permissionData).then(function (res) {
         console.log(res.data);
 
         if (res.data.success == true) {
@@ -2502,7 +2505,7 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (result) {
         if (result.value) {
           // this.$Progress.start()
-          axios["delete"]("/permission/".concat(permission)).then(function (res) {
+          axios["delete"]("/api/permission/".concat(permission)).then(function (res) {
             if (res.data.success == true) {
               toastr.success("Permission Deleted Successfully");
               self.fetchPermissions(); // this.$Progress.finish()
@@ -2616,13 +2619,15 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   mounted: function mounted() {
+    axios.defaults.headers.common['Content-Type'] = 'application/json';
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('playercoach.authToken');
     this.fetchRoles();
   },
   methods: {
     fetchRoles: function fetchRoles() {
       var _this = this;
 
-      axios.get('/roles/all').then(function (res) {
+      axios.get('/api/roles/all').then(function (res) {
         _this.roles = res.data.roles;
         var rolePermissions = [];
         var _iteratorNormalCompletion = true;
@@ -2673,7 +2678,7 @@ __webpack_require__.r(__webpack_exports__);
       this.action = "edit";
       this.category = "Update";
       var role = this.roles[index];
-      axios.get("/roles/".concat(role.id, "/rolePermissions")).then(function (res) {
+      axios.get("/api/roles/".concat(role.id, "/rolePermissions")).then(function (res) {
         // console.log(res.data)
         var rolePermissions = [];
         var _iteratorNormalCompletion2 = true;
@@ -2717,7 +2722,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this3 = this;
 
       var role = this.roles[index];
-      axios.get("/roles/".concat(role.id, "/rolePermissions")).then(function (res) {
+      axios.get("/api/roles/".concat(role.id, "/rolePermissions")).then(function (res) {
         // console.log(res.data)
         var rolePermissions = [];
         var _iteratorNormalCompletion3 = true;
@@ -2760,7 +2765,7 @@ __webpack_require__.r(__webpack_exports__);
     addRole: function addRole() {
       var _this4 = this;
 
-      axios.post('/role', this.roleData).then(function (res) {
+      axios.post('/api/role', this.roleData).then(function (res) {
         console.log(res.data);
 
         if (res.data.success == true) {
@@ -2779,7 +2784,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this5 = this;
 
       console.log(this.roleData);
-      axios.put("/role/".concat(this.roleData.id), this.roleData).then(function (res) {
+      axios.put("/api/role/".concat(this.roleData.id), this.roleData).then(function (res) {
         console.log(res.data);
 
         if (res.data.success == true) {
@@ -2808,7 +2813,7 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (result) {
         if (result.value) {
           // this.$Progress.start()
-          axios["delete"]("/role/".concat(role)).then(function (res) {
+          axios["delete"]("/api/role/".concat(role)).then(function (res) {
             if (res.data.success == true) {
               toastr.success("role Deleted Successfully");
               self.fetchRoles(); // this.$Progress.finish()
@@ -2943,13 +2948,15 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   mounted: function mounted() {
+    axios.defaults.headers.common['Content-Type'] = 'application/json';
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('playercoach.authToken');
     this.fetchUsers();
   },
   methods: {
     fetchUsers: function fetchUsers() {
       var _this = this;
 
-      axios.get('/users/all').then(function (res) {
+      axios.get('/api/users/all').then(function (res) {
         console.log(res.data);
         _this.users = res.data.users;
         _this.roles = [];
@@ -3005,7 +3012,7 @@ __webpack_require__.r(__webpack_exports__);
     addUser: function addUser() {
       var _this2 = this;
 
-      axios.post('/user', this.user).then(function (res) {
+      axios.post('/api/user', this.user).then(function (res) {
         console.log(res.data);
 
         if (res.data.success == true) {
@@ -3053,7 +3060,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this3 = this;
 
       console.log(this.user);
-      axios.put("/user/".concat(this.user.id), this.user).then(function (res) {
+      axios.put("/api/user/".concat(this.user.id), this.user).then(function (res) {
         console.log(res.data);
 
         if (res.data.success == true) {
@@ -3111,7 +3118,7 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (result) {
         if (result.value) {
           // this.$Progress.start()
-          axios["delete"]("/user/".concat(user)).then(function (res) {
+          axios["delete"]("/api/user/".concat(user)).then(function (res) {
             console.log(res.data);
 
             if (res.data.success == true) {
@@ -3261,15 +3268,18 @@ __webpack_require__.r(__webpack_exports__);
     addCourt: function addCourt() {},
     updateCourt: function updateCourt() {}
   },
-  mounted: function mounted() {}
+  mounted: function mounted() {
+    axios.defaults.headers.common['Content-Type'] = 'application/json';
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('playercoach.authToken');
+  }
 });
 
 /***/ }),
 
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/CourtBooking/Resource.vue?vue&type=script&lang=js&":
-/*!***************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/CourtBooking/Resource.vue?vue&type=script&lang=js& ***!
-  \***************************************************************************************************************************************************************************/
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/Facility.vue?vue&type=script&lang=js&":
+/*!**************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/Facility.vue?vue&type=script&lang=js& ***!
+  \**************************************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -3281,13 +3291,836 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 // Set Default functionality for all vue components
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
-    return {};
+    return {
+      facility: {
+        username: '',
+        domain: '',
+        tempDomain: 'playercoach.com',
+        cms: []
+      },
+      cms: ["octobercms", "wordpress", "other"],
+      isDomain: false
+    };
   },
-  created: function created() {},
-  mounted: function mounted() {}
+  methods: {
+    createFacility: function createFacility() {
+      // console.log(this.facility.domainOption)
+      console.log(this.facility.username);
+      console.log(this.facility.domain);
+    },
+    selectCMS: function selectCMS() {// let cms = [...this.facility.cms]
+      // console.log(this.cms);
+      // Vue.delete(this.facility, 'cms')
+      // this.facility.cms = this.cms
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/Facility/Booking.vue?vue&type=script&lang=js&":
+/*!**********************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/Facility/Booking.vue?vue&type=script&lang=js& ***!
+  \**********************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _views_modals_BookingModals_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../views/modals/BookingModals.vue */ "./resources/js/views/modals/BookingModals.vue");
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    BookingModals: _views_modals_BookingModals_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
+  data: function data() {
+    var _ref;
+
+    return _ref = {
+      bookings: [],
+      unpublished_bookings: [],
+      published_bookings: []
+    }, _defineProperty(_ref, "bookings", []), _defineProperty(_ref, "booking", {
+      title: '',
+      setting: ''
+    }), _defineProperty(_ref, "category", 'Create Booking Sheet'), _defineProperty(_ref, "action", 'add'), _defineProperty(_ref, "errors", []), _ref;
+  },
+  mounted: function mounted() {
+    axios.defaults.headers.common['Content-Type'] = 'application/json';
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('playercoach.authToken');
+    this.fetchBookings();
+  },
+  methods: {
+    fetchBookings: function fetchBookings() {
+      var _this = this;
+
+      axios.get('/api/facility/booking/all').then(function (res) {
+        console.log(res.data);
+        _this.bookings = res.data.bookings;
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
+
+        try {
+          for (var _iterator = _this.bookings[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var booking = _step.value;
+            booking.settings = JSON.stringify(booking.settings, null, 4);
+          }
+        } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+              _iterator["return"]();
+            }
+          } finally {
+            if (_didIteratorError) {
+              throw _iteratorError;
+            }
+          }
+        }
+
+        _this.unpublished_bookings = res.data.unpublished_bookings;
+        var _iteratorNormalCompletion2 = true;
+        var _didIteratorError2 = false;
+        var _iteratorError2 = undefined;
+
+        try {
+          for (var _iterator2 = _this.unpublished_bookings[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+            var unpublished_booking = _step2.value;
+            unpublished_booking.settings = JSON.stringify(unpublished_booking.settings, null, 4);
+          }
+        } catch (err) {
+          _didIteratorError2 = true;
+          _iteratorError2 = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
+              _iterator2["return"]();
+            }
+          } finally {
+            if (_didIteratorError2) {
+              throw _iteratorError2;
+            }
+          }
+        }
+
+        _this.published_bookings = res.data.published_bookings;
+        var _iteratorNormalCompletion3 = true;
+        var _didIteratorError3 = false;
+        var _iteratorError3 = undefined;
+
+        try {
+          for (var _iterator3 = _this.published_bookings[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+            var published_booking = _step3.value;
+            published_booking.settings = JSON.stringify(published_booking.settings, null, 4);
+          }
+        } catch (err) {
+          _didIteratorError3 = true;
+          _iteratorError3 = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion3 && _iterator3["return"] != null) {
+              _iterator3["return"]();
+            }
+          } finally {
+            if (_didIteratorError3) {
+              throw _iteratorError3;
+            }
+          }
+        }
+      });
+    },
+    showCreateForm: function showCreateForm() {
+      this.action = "add";
+      this.category = "Create Booking Sheet";
+      this.booking = {
+        title: '',
+        settings: ''
+      };
+    },
+    showEditForm: function showEditForm(index) {
+      console.log(index);
+      this.action = "edit";
+      this.category = "Update Booking Sheet";
+      this.booking = this.bookings[index];
+    },
+    viewBooking: function viewBooking(index) {
+      this.booking = this.bookings[index];
+    },
+    addBooking: function addBooking() {
+      var _this2 = this;
+
+      // console.log(this.booking)
+      // let booking = {...this.booking}
+      // let settings = JSON.parse(booking.settings)
+      // booking.settings = Object.entries(settings)
+      axios.post('/api/facility/booking', this.booking).then(function (res) {
+        console.log(res.data);
+
+        if (res.data.success == true) {
+          // Flash success message
+          toastr.success('Added Successfully.');
+
+          _this2.fetchBookings();
+
+          _this2.closeModal();
+        }
+
+        if (res.data.success == false) {
+          _this2.errors = [];
+          var _iteratorNormalCompletion4 = true;
+          var _didIteratorError4 = false;
+          var _iteratorError4 = undefined;
+
+          try {
+            for (var _iterator4 = res.data.errors[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+              var error = _step4.value;
+              toastr.error(error);
+
+              _this2.errors.push(error);
+            }
+          } catch (err) {
+            _didIteratorError4 = true;
+            _iteratorError4 = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion4 && _iterator4["return"] != null) {
+                _iterator4["return"]();
+              }
+            } finally {
+              if (_didIteratorError4) {
+                throw _iteratorError4;
+              }
+            }
+          }
+        }
+      })["catch"](function (err) {
+        console.log(err);
+      });
+    },
+    updateBooking: function updateBooking() {
+      var _this3 = this;
+
+      // this.booking.settings = JSON.parse(this.booking.settings)
+      console.log(this.booking);
+      axios.put("/api/facility/booking/".concat(this.booking.id), this.booking).then(function (res) {
+        console.log(res.data);
+
+        if (res.data.success == true) {
+          // Flash success message
+          toastr.success('Updated Successfully into template.');
+
+          _this3.fetchBookings();
+
+          _this3.closeModal();
+        }
+
+        if (res.data.success == false) {
+          _this3.errors = [];
+          var _iteratorNormalCompletion5 = true;
+          var _didIteratorError5 = false;
+          var _iteratorError5 = undefined;
+
+          try {
+            for (var _iterator5 = res.data.errors[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+              var error = _step5.value;
+              toastr.error(error);
+
+              _this3.errors.push(error);
+            }
+          } catch (err) {
+            _didIteratorError5 = true;
+            _iteratorError5 = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion5 && _iterator5["return"] != null) {
+                _iterator5["return"]();
+              }
+            } finally {
+              if (_didIteratorError5) {
+                throw _iteratorError5;
+              }
+            }
+          }
+        }
+      })["catch"](function (err) {
+        return console.log(err);
+      });
+    },
+    restore: function restore(booking) {
+      var _this4 = this;
+
+      var self = this;
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'You want to restore Booking',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, restore it!',
+        cancelButtonText: 'No, keep it'
+      }).then(function (result) {
+        if (result.value) {
+          // this.$Progress.start()
+          axios.put("/api/facility/booking/".concat(booking, "/restore")).then(function (res) {
+            console.log(res.data);
+
+            if (res.data.success == true) {
+              toastr.success("Booking Restored Successfully");
+              self.fetchBookings(); // this.$Progress.finish()
+            }
+          })["catch"](function (err) {
+            // this.$Progress.start()
+            _this4.displayError(err.response);
+          });
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          Swal.fire('Cancelled', 'Your imaginary file is safe :)', 'error');
+        }
+      });
+    },
+    remove: function remove(booking) {
+      var _this5 = this;
+
+      var self = this;
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'You will not be able to recover this database',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'No, keep it'
+      }).then(function (result) {
+        if (result.value) {
+          // this.$Progress.start()
+          axios["delete"]("/api/facility/booking/".concat(booking)).then(function (res) {
+            console.log(res.data);
+
+            if (res.data.success == true) {
+              toastr.success("Booking Deleted Successfully");
+              self.fetchBookings(); // this.$Progress.finish()
+            }
+          })["catch"](function (err) {
+            // this.$Progress.start()
+            _this5.displayError(err.response);
+          });
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          Swal.fire('Cancelled', 'Your imaginary file is safe :)', 'error');
+        }
+      });
+    },
+    removePermanently: function removePermanently(booking) {
+      var _this6 = this;
+
+      var self = this;
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'You will not be able to recover this database',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'No, keep it'
+      }).then(function (result) {
+        if (result.value) {
+          // this.$Progress.start()
+          axios["delete"]("/api/facility/booking/".concat(booking, "/permanent")).then(function (res) {
+            console.log(res.data);
+
+            if (res.data.success == true) {
+              toastr.success("Booking Permanently Deleted Successfully");
+              self.fetchBookings(); // this.$Progress.finish()
+            }
+          })["catch"](function (err) {
+            // this.$Progress.start()
+            _this6.displayError(err.response);
+          });
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          Swal.fire('Cancelled', 'Your imaginary file is safe :)', 'error');
+        }
+      });
+    },
+    closeModal: function closeModal() {
+      $('.modal').modal('hide');
+      $('.modal-backdrop').remove();
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/Facility/Resource.vue?vue&type=script&lang=js&":
+/*!***********************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/Facility/Resource.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _views_modals_ResourceModals_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../views/modals/ResourceModals.vue */ "./resources/js/views/modals/ResourceModals.vue");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    ResourceModals: _views_modals_ResourceModals_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
+  data: function data() {
+    return {
+      resources: [],
+      resource: {
+        title: '',
+        type: '',
+        business_hours: '',
+        booking: {
+          title: ''
+        }
+      },
+      bookings: [],
+      category: 'Create Resource',
+      action: 'add',
+      errors: []
+    };
+  },
+  mounted: function mounted() {
+    axios.defaults.headers.common['Content-Type'] = 'application/json';
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('playercoach.authToken');
+    this.fetchResources();
+  },
+  methods: {
+    fetchResources: function fetchResources() {
+      var _this = this;
+
+      axios.get('/api/facility/resource/all').then(function (res) {
+        console.log(res.data);
+        _this.resources = res.data.resources;
+        _this.bookings = res.data.bookings;
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
+
+        try {
+          for (var _iterator = _this.resources[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var resource = _step.value;
+            resource.business_hours = JSON.stringify(resource.business_hours, null, 4);
+          }
+        } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+              _iterator["return"]();
+            }
+          } finally {
+            if (_didIteratorError) {
+              throw _iteratorError;
+            }
+          }
+        }
+      });
+    },
+    showCreateForm: function showCreateForm() {
+      this.action = "add";
+      this.category = "Create resource";
+      this.resource = {
+        title: '',
+        settings: ''
+      };
+    },
+    showEditForm: function showEditForm(index) {
+      console.log(index);
+      this.action = "edit";
+      this.category = "Update Resource";
+      this.resource = this.resources[index];
+    },
+    viewResource: function viewResource(index) {
+      this.resource = this.resources[index];
+    },
+    addResource: function addResource() {
+      var _this2 = this;
+
+      axios.post('/api/facility/resource', this.resource).then(function (res) {
+        console.log(res.data);
+
+        if (res.data.success == true) {
+          // Flash success message
+          toastr.success('Added Successfully.');
+
+          _this2.fetchResources();
+
+          _this2.closeModal();
+        }
+
+        if (res.data.success == false) {
+          _this2.errors = [];
+          var _iteratorNormalCompletion2 = true;
+          var _didIteratorError2 = false;
+          var _iteratorError2 = undefined;
+
+          try {
+            for (var _iterator2 = res.data.errors[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+              var error = _step2.value;
+              toastr.error(error);
+
+              _this2.errors.push(error);
+            }
+          } catch (err) {
+            _didIteratorError2 = true;
+            _iteratorError2 = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
+                _iterator2["return"]();
+              }
+            } finally {
+              if (_didIteratorError2) {
+                throw _iteratorError2;
+              }
+            }
+          }
+        }
+      })["catch"](function (err) {
+        console.log(err);
+      });
+    },
+    updateResource: function updateResource() {
+      var _this3 = this;
+
+      // this.resource.settings = JSON.parse(this.resource.settings)
+      console.log(this.resource);
+      axios.put("/api/facility/resource/".concat(this.resource.id), this.resource).then(function (res) {
+        console.log(res.data);
+
+        if (res.data.success == true) {
+          // Flash success message
+          toastr.success('Updated Successfully into template.');
+
+          _this3.fetchResources();
+
+          _this3.closeModal();
+        }
+
+        if (res.data.success == false) {
+          _this3.errors = [];
+          var _iteratorNormalCompletion3 = true;
+          var _didIteratorError3 = false;
+          var _iteratorError3 = undefined;
+
+          try {
+            for (var _iterator3 = res.data.errors[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+              var error = _step3.value;
+              toastr.error(error);
+
+              _this3.errors.push(error);
+            }
+          } catch (err) {
+            _didIteratorError3 = true;
+            _iteratorError3 = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion3 && _iterator3["return"] != null) {
+                _iterator3["return"]();
+              }
+            } finally {
+              if (_didIteratorError3) {
+                throw _iteratorError3;
+              }
+            }
+          }
+        }
+      })["catch"](function (err) {
+        return console.log(err);
+      });
+    },
+    remove: function remove(resource) {
+      var _this4 = this;
+
+      var self = this;
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'You will not be able to recover this database',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'No, keep it'
+      }).then(function (result) {
+        if (result.value) {
+          // this.$Progress.start()
+          axios["delete"]("/api/facility/resource/".concat(resource)).then(function (res) {
+            console.log(res.data);
+
+            if (res.data.success == true) {
+              toastr.success("Resource Deleted Successfully");
+              self.fetchResources(); // this.$Progress.finish()
+            }
+          })["catch"](function (err) {
+            // this.$Progress.start()
+            _this4.displayError(err.response);
+          });
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          Swal.fire('Cancelled', 'Your imaginary file is safe :)', 'error');
+        }
+      });
+    },
+    closeModal: function closeModal() {
+      $('.modal').modal('hide');
+      $('.modal-backdrop').remove();
+    }
+  }
 });
 
 /***/ }),
@@ -3313,7 +4146,10 @@ __webpack_require__.r(__webpack_exports__);
     return {};
   },
   created: function created() {},
-  mounted: function mounted() {}
+  mounted: function mounted() {
+    axios.defaults.headers.common['Content-Type'] = 'application/json';
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('playercoach.authToken');
+  }
 });
 
 /***/ }),
@@ -3339,7 +4175,10 @@ __webpack_require__.r(__webpack_exports__);
     return {};
   },
   created: function created() {},
-  mounted: function mounted() {}
+  mounted: function mounted() {
+    axios.defaults.headers.common['Content-Type'] = 'application/json';
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('playercoach.authToken');
+  }
 });
 
 /***/ }),
@@ -3459,6 +4298,8 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   created: function created() {
+    axios.defaults.headers.common['Content-Type'] = 'application/json';
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('playercoach.authToken');
     this.fetchUserData();
   },
   methods: {
@@ -3490,7 +4331,88 @@ __webpack_require__.r(__webpack_exports__);
     return {};
   },
   created: function created() {},
-  mounted: function mounted() {}
+  mounted: function mounted() {
+    axios.defaults.headers.common['Content-Type'] = 'application/json';
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('playercoach.authToken');
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/modals/BookingModals.vue?vue&type=script&lang=js&":
+/*!**************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/modals/BookingModals.vue?vue&type=script&lang=js& ***!
+  \**************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: {
+    booking: Object,
+    action: String,
+    category: String,
+    addBooking: Function,
+    updateBooking: Function
+  }
 });
 
 /***/ }),
@@ -3683,6 +4605,103 @@ __webpack_require__.r(__webpack_exports__);
     category: String,
     addPermission: Function,
     updatePermission: Function
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/modals/ResourceModals.vue?vue&type=script&lang=js&":
+/*!***************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/modals/ResourceModals.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: {
+    resource: Object,
+    bookings: Array,
+    action: String,
+    category: String,
+    addResource: Function,
+    updateResource: Function
   }
 });
 
@@ -4026,6 +5045,16 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
@@ -4035,9 +5064,7 @@ __webpack_require__.r(__webpack_exports__);
   components: {
     'nestmenu': _NestMenu__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
-  created: function created() {
-    console.log(this.$router.options.routes);
-  },
+  created: function created() {},
   methods: {
     isActiveMenu: function isActiveMenu(routes) {
       routes = routes.split('|');
@@ -8711,6 +9738,25 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 // module
 exports.push([module.i, "\n.loading {\n    position: absolute;\n    top: 0px;\n    left: 0px;\n    z-index: 99999;\n    width: 100%;\n    height: 100vh;\n    background-color: rgba(255,255,255);\n    color: red;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    color: #ffffff;\n    transition: 0.5s;\n}\n.fade-enter {\n    transform: translateY(10px);\n    opacity: 0;\n}\n.fade-enter-to {\n    transform: translateX(0px);\n}\n.fade-enter-active {\n    transition: all 0.3s cubic-bezier(1.0, 0.5, 0.8, 1.0);\n}\n.fade-leave-active, .fade-leave-to {\n    opacity: 0;\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/Facility.vue?vue&type=style&index=0&id=61306942&scoped=scoped&lang=css&":
+/*!***********************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/Facility.vue?vue&type=style&index=0&id=61306942&scoped=scoped&lang=css& ***!
+  \***********************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n.cms_level[data-v-61306942] {\n  max-width: 60px;\n}\n.cms_input[data-v-61306942] {\n  opacity: 0;\n  position: absolute;\n}\n", ""]);
 
 // exports
 
@@ -59994,6 +61040,36 @@ if(false) {}
 
 /***/ }),
 
+/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/Facility.vue?vue&type=style&index=0&id=61306942&scoped=scoped&lang=css&":
+/*!***************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/Facility.vue?vue&type=style&index=0&id=61306942&scoped=scoped&lang=css& ***!
+  \***************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../../../node_modules/css-loader??ref--7-1!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/src??ref--7-2!../../../node_modules/vue-loader/lib??vue-loader-options!./Facility.vue?vue&type=style&index=0&id=61306942&scoped=scoped&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/Facility.vue?vue&type=style&index=0&id=61306942&scoped=scoped&lang=css&");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {}
+
+/***/ }),
+
 /***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/Setting/Profile.vue?vue&type=style&index=0&id=133cda0a&scoped=scoped&lang=css&":
 /*!**********************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/style-loader!./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/Setting/Profile.vue?vue&type=style&index=0&id=133cda0a&scoped=scoped&lang=css& ***!
@@ -65531,10 +66607,10 @@ render._withStripped = true
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/CourtBooking/Resource.vue?vue&type=template&id=b3a96c80&":
-/*!*******************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/CourtBooking/Resource.vue?vue&type=template&id=b3a96c80& ***!
-  \*******************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/Facility.vue?vue&type=template&id=61306942&scoped=true&":
+/*!******************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/Facility.vue?vue&type=template&id=61306942&scoped=true& ***!
+  \******************************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -65546,15 +66622,846 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
+  return _c("div", { staticClass: "wrapper" }, [
+    _c("div", { staticClass: "card" }, [
+      _c("div", { staticClass: "card-header" }, [_vm._v("Facility")]),
+      _vm._v(" "),
+      _c("div", { staticClass: "card-body" }, [
+        _c(
+          "form",
+          {
+            attrs: { id: "wizard" },
+            on: {
+              submit: function($event) {
+                $event.preventDefault()
+                return _vm.createFacility($event)
+              }
+            }
+          },
+          [
+            _c("h3", [_vm._v("Tenant Info")]),
+            _vm._v(" "),
+            _c("div", { staticClass: "form-group row" }, [
+              _c(
+                "select",
+                {
+                  staticClass: "form-control col-md-4",
+                  on: {
+                    change: function($event) {
+                      !_vm.isDomain
+                    }
+                  }
+                },
+                [
+                  _c("option", { attrs: { value: "username" } }, [
+                    _vm._v("Choose Username")
+                  ]),
+                  _vm._v(" "),
+                  _c("option", { attrs: { value: "domain" } }, [
+                    _vm._v("Choose Domain")
+                  ])
+                ]
+              ),
+              _vm._v(" "),
+              _c("div", { staticClass: "form-group col-md-8" }, [
+                _c(
+                  "div",
+                  {
+                    directives: [
+                      {
+                        name: "show",
+                        rawName: "v-show",
+                        value: !_vm.isDomain,
+                        expression: "!isDomain"
+                      }
+                    ],
+                    staticClass: "input-group mb-3"
+                  },
+                  [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.facility.username,
+                          expression: "facility.username"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      attrs: { type: "text", placeholder: "Username" },
+                      domProps: { value: _vm.facility.username },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(
+                            _vm.facility,
+                            "username",
+                            $event.target.value
+                          )
+                        }
+                      }
+                    }),
+                    _vm._v(" "),
+                    _vm._m(0)
+                  ]
+                ),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "show",
+                      rawName: "v-show",
+                      value: _vm.isDomain,
+                      expression: "isDomain"
+                    },
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.facility.domain,
+                      expression: "facility.domain"
+                    }
+                  ],
+                  staticClass: "form-control",
+                  attrs: { type: "text", placeholder: "Domain" },
+                  domProps: { value: _vm.facility.domain },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.facility, "domain", $event.target.value)
+                    }
+                  }
+                })
+              ])
+            ]),
+            _vm._v(" "),
+            _c("h3", [_vm._v("Choose CMS")]),
+            _vm._v(" "),
+            _c(
+              "div",
+              { staticClass: "form-group row" },
+              [
+                _c("label", { staticClass: "col-md-12 col-form-label" }, [
+                  _vm._v("Choose CMS (max 2)")
+                ]),
+                _vm._v(" "),
+                _vm._l(_vm.cms, function(option, index) {
+                  return _c(
+                    "a",
+                    {
+                      key: index,
+                      attrs: { href: "#" },
+                      on: {
+                        click: function($event) {
+                          $event.preventDefault()
+                          return _vm.selectCMS($event)
+                        }
+                      }
+                    },
+                    [
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.facility.cms,
+                            expression: "facility.cms"
+                          }
+                        ],
+                        staticClass: "cms_input",
+                        attrs: { type: "checkbox", id: option },
+                        domProps: {
+                          value: option,
+                          checked: Array.isArray(_vm.facility.cms)
+                            ? _vm._i(_vm.facility.cms, option) > -1
+                            : _vm.facility.cms
+                        },
+                        on: {
+                          change: [
+                            function($event) {
+                              var $$a = _vm.facility.cms,
+                                $$el = $event.target,
+                                $$c = $$el.checked ? true : false
+                              if (Array.isArray($$a)) {
+                                var $$v = option,
+                                  $$i = _vm._i($$a, $$v)
+                                if ($$el.checked) {
+                                  $$i < 0 &&
+                                    _vm.$set(
+                                      _vm.facility,
+                                      "cms",
+                                      $$a.concat([$$v])
+                                    )
+                                } else {
+                                  $$i > -1 &&
+                                    _vm.$set(
+                                      _vm.facility,
+                                      "cms",
+                                      $$a
+                                        .slice(0, $$i)
+                                        .concat($$a.slice($$i + 1))
+                                    )
+                                }
+                              } else {
+                                _vm.$set(_vm.facility, "cms", $$c)
+                              }
+                            },
+                            _vm.chnageCMS
+                          ]
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c(
+                        "label",
+                        { staticClass: "cms_level", attrs: { for: option } },
+                        [
+                          _c("img", {
+                            staticClass: "img-fluid",
+                            attrs: { src: "/images/" + option + ".png" }
+                          })
+                        ]
+                      )
+                    ]
+                  )
+                })
+              ],
+              2
+            ),
+            _vm._v(" "),
+            _vm._m(1)
+          ]
+        )
+      ])
+    ])
+  ])
 }
 var staticRenderFns = [
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "wrapper d-flex align-items-stretch" }, [
-      _c("h1", [_vm._v("Resource")])
+    return _c("div", { staticClass: "input-group-append" }, [
+      _c("span", { staticClass: "input-group-text" }, [
+        _vm._v(".playercoach.com")
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "form-group" }, [
+      _c("input", {
+        staticClass: "btn btn-success",
+        attrs: { type: "submit", value: "Create Facility" }
+      })
+    ])
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/Facility/Booking.vue?vue&type=template&id=3590576c&":
+/*!**************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/Facility/Booking.vue?vue&type=template&id=3590576c& ***!
+  \**************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    { staticClass: "container-fluid" },
+    [
+      _c(
+        "a",
+        {
+          staticClass: "btn btn-success",
+          attrs: {
+            href: "#",
+            "data-toggle": "modal",
+            "data-target": "#addEditBookingModal"
+          },
+          on: {
+            click: function($event) {
+              $event.preventDefault()
+              return _vm.showCreateForm()
+            }
+          }
+        },
+        [_c("i", { staticClass: "fas fa-plus" }), _vm._v("New Booking Sheet")]
+      ),
+      _vm._v(" "),
+      _vm._l(_vm.errors, function(error, key) {
+        return _c(
+          "div",
+          {
+            key: key,
+            staticClass: "errors alert alert-danger mt-3",
+            attrs: { role: "alert" }
+          },
+          [_vm._v(" " + _vm._s(error) + " ")]
+        )
+      }),
+      _vm._v(" "),
+      _c("div", { staticClass: "nav-tabs-custom" }, [
+        _vm._m(0),
+        _vm._v(" "),
+        _c("div", { staticClass: "tab-content" }, [
+          _c(
+            "div",
+            { staticClass: "tab-pane active", attrs: { id: "profile" } },
+            [
+              _c("div", { staticClass: "table-responsive mt-3" }, [
+                _c(
+                  "table",
+                  {
+                    staticClass:
+                      "table table-striped table-bordered database-tables",
+                    staticStyle: { width: "100%" }
+                  },
+                  [
+                    _vm._m(1),
+                    _vm._v(" "),
+                    _c(
+                      "tbody",
+                      _vm._l(_vm.bookings, function(booking, index) {
+                        return _c(
+                          "tr",
+                          { key: index, attrs: { "data-id": index + 1 } },
+                          [
+                            _c("td", [_vm._v(_vm._s(booking.title))]),
+                            _vm._v(" "),
+                            _c("td", [_vm._v(_vm._s(booking.settings))]),
+                            _vm._v(" "),
+                            _c("td", [_vm._v(_vm._s(booking.deleted_at))]),
+                            _vm._v(" "),
+                            _c("td", { staticClass: "action" }, [
+                              _c(
+                                "a",
+                                {
+                                  staticClass: "btn btn-info",
+                                  attrs: {
+                                    href: "#",
+                                    "data-toggle": "modal",
+                                    "data-target": "#viewBookingModal"
+                                  },
+                                  on: {
+                                    click: function($event) {
+                                      $event.preventDefault()
+                                      return _vm.viewBooking(index)
+                                    }
+                                  }
+                                },
+                                [_vm._v("View")]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "a",
+                                {
+                                  staticClass: "btn btn-success",
+                                  attrs: {
+                                    href: "#",
+                                    "data-toggle": "modal",
+                                    "data-target": "#addEditBookingModal"
+                                  },
+                                  on: {
+                                    click: function($event) {
+                                      $event.preventDefault()
+                                      return _vm.showEditForm(index)
+                                    }
+                                  }
+                                },
+                                [_vm._v("Edit")]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "a",
+                                {
+                                  staticClass: "btn btn-danger",
+                                  on: {
+                                    click: function($event) {
+                                      $event.preventDefault()
+                                      return _vm.remove(booking.id)
+                                    }
+                                  }
+                                },
+                                [_vm._v("Delete")]
+                              )
+                            ])
+                          ]
+                        )
+                      }),
+                      0
+                    )
+                  ]
+                )
+              ])
+            ]
+          ),
+          _vm._v(" "),
+          _c("div", { staticClass: "tab-pane", attrs: { id: "orders" } }, [
+            _c(
+              "table",
+              {
+                staticClass:
+                  "table table-striped table-bordered database-tables",
+                staticStyle: { width: "100%" }
+              },
+              [
+                _vm._m(2),
+                _vm._v(" "),
+                _c(
+                  "tbody",
+                  _vm._l(_vm.published_bookings, function(
+                    published_booking,
+                    index
+                  ) {
+                    return _c(
+                      "tr",
+                      { key: index, attrs: { "data-id": index + 1 } },
+                      [
+                        _c("td", [_vm._v(_vm._s(published_booking.title))]),
+                        _vm._v(" "),
+                        _c("td", [_vm._v(_vm._s(published_booking.settings))]),
+                        _vm._v(" "),
+                        _c("td", { staticClass: "action" }, [
+                          _c(
+                            "a",
+                            {
+                              staticClass: "btn btn-info",
+                              attrs: {
+                                href: "#",
+                                "data-toggle": "modal",
+                                "data-target": "#viewBookingModal"
+                              },
+                              on: {
+                                click: function($event) {
+                                  $event.preventDefault()
+                                  return _vm.viewBooking(index)
+                                }
+                              }
+                            },
+                            [_vm._v("View")]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "a",
+                            {
+                              staticClass: "btn btn-success",
+                              attrs: {
+                                href: "#",
+                                "data-toggle": "modal",
+                                "data-target": "#addEditBookingModal"
+                              },
+                              on: {
+                                click: function($event) {
+                                  $event.preventDefault()
+                                  return _vm.showEditForm(index)
+                                }
+                              }
+                            },
+                            [_vm._v("Edit")]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "a",
+                            {
+                              staticClass: "btn btn-danger",
+                              on: {
+                                click: function($event) {
+                                  $event.preventDefault()
+                                  return _vm.remove(published_booking.id)
+                                }
+                              }
+                            },
+                            [_vm._v("Delete")]
+                          )
+                        ])
+                      ]
+                    )
+                  }),
+                  0
+                )
+              ]
+            )
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "tab-pane", attrs: { id: "invoices" } }, [
+            _c(
+              "table",
+              {
+                staticClass:
+                  "table table-striped table-bordered database-tables",
+                staticStyle: { width: "100%" }
+              },
+              [
+                _vm._m(3),
+                _vm._v(" "),
+                _c(
+                  "tbody",
+                  _vm._l(_vm.unpublished_bookings, function(
+                    unpublished_booking,
+                    index
+                  ) {
+                    return _c(
+                      "tr",
+                      { key: index, attrs: { "data-id": index + 1 } },
+                      [
+                        _c("td", [_vm._v(_vm._s(unpublished_booking.title))]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _vm._v(_vm._s(unpublished_booking.settings))
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _vm._v(_vm._s(unpublished_booking.deleted_at))
+                        ]),
+                        _vm._v(" "),
+                        _c("td", { staticClass: "action" }, [
+                          _c(
+                            "a",
+                            {
+                              staticClass: "btn btn-success",
+                              on: {
+                                click: function($event) {
+                                  $event.preventDefault()
+                                  return _vm.restore(unpublished_booking.id)
+                                }
+                              }
+                            },
+                            [_vm._v("Restore")]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "a",
+                            {
+                              staticClass: "btn btn-danger",
+                              on: {
+                                click: function($event) {
+                                  $event.preventDefault()
+                                  return _vm.removePermanently(
+                                    unpublished_booking.id
+                                  )
+                                }
+                              }
+                            },
+                            [_vm._v("Delete Permanently")]
+                          )
+                        ])
+                      ]
+                    )
+                  }),
+                  0
+                )
+              ]
+            )
+          ])
+        ])
+      ]),
+      _vm._v(" "),
+      _c("booking-modals", {
+        attrs: {
+          action: _vm.action,
+          category: _vm.category,
+          booking: _vm.booking,
+          addBooking: _vm.addBooking,
+          updateBooking: _vm.updateBooking
+        }
+      })
+    ],
+    2
+  )
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("ul", { staticClass: "nav nav-tabs" }, [
+      _c("li", { staticClass: "active" }, [
+        _c(
+          "a",
+          {
+            staticClass: "nav-link active",
+            attrs: {
+              href: "#profile",
+              "data-toggle": "tab",
+              "aria-expanded": "true"
+            }
+          },
+          [_c("i", { staticClass: "fa fa-user-o" }), _vm._v(" All Booking")]
+        )
+      ]),
+      _vm._v(" "),
+      _c("li", { staticClass: "nav-item" }, [
+        _c(
+          "a",
+          {
+            staticClass: "nav-link",
+            attrs: {
+              href: "#orders",
+              "data-toggle": "tab",
+              "aria-expanded": "false"
+            }
+          },
+          [
+            _c("i", { staticClass: "fa fa-shopping-cart" }),
+            _vm._v(" Published")
+          ]
+        )
+      ]),
+      _vm._v(" "),
+      _c("li", { staticClass: "nav-item" }, [
+        _c(
+          "a",
+          {
+            staticClass: "nav-link",
+            attrs: {
+              href: "#invoices",
+              "data-toggle": "tab",
+              "aria-expanded": "false"
+            }
+          },
+          [_c("i", { staticClass: "fa fa-trash-o" }), _vm._v(" Unpublished")]
+        )
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("Title")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Settings")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Deleted At")]),
+        _vm._v(" "),
+        _c("th", { staticClass: "action" }, [_vm._v("Action")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("Title")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Settings")]),
+        _vm._v(" "),
+        _c("th", { staticClass: "action" }, [_vm._v("Action")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("Title")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Settings")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Deleted At")]),
+        _vm._v(" "),
+        _c("th", { staticClass: "action" }, [_vm._v("Action")])
+      ])
+    ])
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/Facility/Resource.vue?vue&type=template&id=11d123ea&":
+/*!***************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/Facility/Resource.vue?vue&type=template&id=11d123ea& ***!
+  \***************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    { staticClass: "container-fluid" },
+    [
+      _vm._l(_vm.errors, function(error, key) {
+        return _c(
+          "div",
+          {
+            key: key,
+            staticClass: "errors alert alert-danger mt-3",
+            attrs: { role: "alert" }
+          },
+          [_vm._v(" " + _vm._s(error) + " ")]
+        )
+      }),
+      _vm._v(" "),
+      _c(
+        "a",
+        {
+          staticClass: "btn btn-success",
+          attrs: {
+            href: "#",
+            "data-toggle": "modal",
+            "data-target": "#addEditResourceModal"
+          },
+          on: {
+            click: function($event) {
+              $event.preventDefault()
+              return _vm.showCreateForm()
+            }
+          }
+        },
+        [_c("i", { staticClass: "fas fa-plus" }), _vm._v("Add Resource")]
+      ),
+      _vm._v(" "),
+      _c("div", { staticClass: "table-responsive mt-3" }, [
+        _c(
+          "table",
+          {
+            staticClass: "table table-striped table-bordered database-tables",
+            staticStyle: { width: "100%" }
+          },
+          [
+            _vm._m(0),
+            _vm._v(" "),
+            _c(
+              "tbody",
+              _vm._l(_vm.resources, function(resource, index) {
+                return _c(
+                  "tr",
+                  { key: index, attrs: { "data-id": index + 1 } },
+                  [
+                    _c("td", [_vm._v(_vm._s(resource.booking.title))]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(resource.title))]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(resource.type))]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(resource.business_hours))]),
+                    _vm._v(" "),
+                    _c("td", { staticClass: "action" }, [
+                      _c(
+                        "a",
+                        {
+                          staticClass: "btn btn-info",
+                          attrs: {
+                            href: "#",
+                            "data-toggle": "modal",
+                            "data-target": "#viewResourceModal"
+                          },
+                          on: {
+                            click: function($event) {
+                              $event.preventDefault()
+                              return _vm.viewResource(index)
+                            }
+                          }
+                        },
+                        [_vm._v("View")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "a",
+                        {
+                          staticClass: "btn btn-success",
+                          attrs: {
+                            href: "#",
+                            "data-toggle": "modal",
+                            "data-target": "#addEditResourceModal"
+                          },
+                          on: {
+                            click: function($event) {
+                              $event.preventDefault()
+                              return _vm.showEditForm(index)
+                            }
+                          }
+                        },
+                        [_vm._v("Edit")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "a",
+                        {
+                          staticClass: "btn btn-danger",
+                          on: {
+                            click: function($event) {
+                              $event.preventDefault()
+                              return _vm.remove(resource.id)
+                            }
+                          }
+                        },
+                        [_vm._v("Delete")]
+                      )
+                    ])
+                  ]
+                )
+              }),
+              0
+            )
+          ]
+        )
+      ]),
+      _vm._v(" "),
+      _c("resource-modals", {
+        attrs: {
+          action: _vm.action,
+          category: _vm.category,
+          resource: _vm.resource,
+          bookings: _vm.bookings,
+          addResource: _vm.addResource,
+          updateResource: _vm.updateResource
+        }
+      })
+    ],
+    2
+  )
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("Booking Sheet")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Title")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("type")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Business Hours")]),
+        _vm._v(" "),
+        _c("th", { staticClass: "action" }, [_vm._v("Action")])
+      ])
     ])
   }
 ]
@@ -65962,6 +67869,237 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "wrapper d-flex align-items-stretch" }, [
       _c("h1", [_vm._v("Subscription")])
+    ])
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/modals/BookingModals.vue?vue&type=template&id=9ac93ed6&":
+/*!******************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/modals/BookingModals.vue?vue&type=template&id=9ac93ed6& ***!
+  \******************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "row" }, [
+    _c("div", { staticClass: "col-sm-12" }, [
+      _c(
+        "div",
+        { staticClass: "modal fade", attrs: { id: "addEditBookingModal" } },
+        [
+          _c(
+            "div",
+            {
+              staticClass: "modal-dialog view-modal-dialog",
+              attrs: { role: "document" }
+            },
+            [
+              _c("div", { staticClass: "modal-content" }, [
+                _c("div", { staticClass: "modal-header" }, [
+                  _c("h4", { staticClass: "modal-title font-weight-bold" }, [
+                    _vm._v(_vm._s(_vm.category))
+                  ]),
+                  _vm._v(" "),
+                  _vm._m(0)
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "modal-body" }, [
+                  _c(
+                    "form",
+                    {
+                      on: {
+                        submit: function($event) {
+                          $event.preventDefault()
+                          _vm.action == "add"
+                            ? _vm.addBooking()
+                            : _vm.updateBooking()
+                        }
+                      }
+                    },
+                    [
+                      _c("div", { staticClass: "form-group" }, [
+                        _c("label", { attrs: { for: "title" } }, [
+                          _vm._v("Title")
+                        ]),
+                        _vm._v(" "),
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.booking.title,
+                              expression: "booking.title"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: { type: "text", placeholder: "Booking Title" },
+                          domProps: { value: _vm.booking.title },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.$set(
+                                _vm.booking,
+                                "title",
+                                $event.target.value
+                              )
+                            }
+                          }
+                        })
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "form-group" }, [
+                        _c("label", { attrs: { for: "title" } }, [
+                          _vm._v("Settings (PUT valid JSON)")
+                        ]),
+                        _vm._v(" "),
+                        _c("textarea", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.booking.settings,
+                              expression: "booking.settings"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: { placeholder: "Booking Settings", rows: "5" },
+                          domProps: { value: _vm.booking.settings },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.$set(
+                                _vm.booking,
+                                "settings",
+                                $event.target.value
+                              )
+                            }
+                          }
+                        })
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "form-group" }, [
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-danger",
+                            attrs: { type: "button", "data-dismiss": "modal" }
+                          },
+                          [_vm._v("Close")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-success",
+                            attrs: { type: "submit" }
+                          },
+                          [_vm._v(_vm._s(_vm.action))]
+                        )
+                      ])
+                    ]
+                  )
+                ])
+              ])
+            ]
+          )
+        ]
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "modal fade", attrs: { id: "viewBookingModal" } },
+        [
+          _c(
+            "div",
+            {
+              staticClass: "modal-dialog view-modal-dialog",
+              attrs: { role: "document" }
+            },
+            [
+              _c("div", { staticClass: "modal-content" }, [
+                _c("div", { staticClass: "modal-header" }, [
+                  _c("h4", { staticClass: "modal-title font-weight-bold" }, [
+                    _vm._v(_vm._s(_vm.category))
+                  ]),
+                  _vm._v(" "),
+                  _vm._m(1)
+                ]),
+                _vm._v(" "),
+                _vm._m(2)
+              ])
+            ]
+          )
+        ]
+      )
+    ])
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "button",
+      {
+        staticClass: "close",
+        attrs: {
+          type: "button",
+          "data-dismiss": "modal",
+          "aria-label": "Close"
+        }
+      },
+      [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "button",
+      {
+        staticClass: "close",
+        attrs: {
+          type: "button",
+          "data-dismiss": "modal",
+          "aria-label": "Close"
+        }
+      },
+      [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-body" }, [
+      _c("div", { staticClass: "form-group" }, [
+        _c(
+          "button",
+          {
+            staticClass: "btn btn-danger",
+            attrs: { type: "button", "data-dismiss": "modal" }
+          },
+          [_vm._v("Close")]
+        )
+      ])
     ])
   }
 ]
@@ -66493,6 +68631,313 @@ var staticRenderFns = [
         },
         [_vm._v("Close")]
       )
+    ])
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/modals/ResourceModals.vue?vue&type=template&id=a2751de4&":
+/*!*******************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/modals/ResourceModals.vue?vue&type=template&id=a2751de4& ***!
+  \*******************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "row" }, [
+    _c("div", { staticClass: "col-sm-12" }, [
+      _c(
+        "div",
+        { staticClass: "modal fade", attrs: { id: "addEditResourceModal" } },
+        [
+          _c(
+            "div",
+            {
+              staticClass: "modal-dialog view-modal-dialog",
+              attrs: { role: "document" }
+            },
+            [
+              _c("div", { staticClass: "modal-content" }, [
+                _c("div", { staticClass: "modal-header" }, [
+                  _c("h4", { staticClass: "modal-title font-weight-bold" }, [
+                    _vm._v(_vm._s(_vm.category))
+                  ]),
+                  _vm._v(" "),
+                  _vm._m(0)
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "modal-body" }, [
+                  _c(
+                    "form",
+                    {
+                      on: {
+                        submit: function($event) {
+                          $event.preventDefault()
+                          _vm.action == "add"
+                            ? _vm.addResource()
+                            : _vm.updateResource()
+                        }
+                      }
+                    },
+                    [
+                      _c(
+                        "div",
+                        { staticClass: "form-group" },
+                        [
+                          _c(
+                            "label",
+                            {
+                              staticClass: "col-form-lebel text-md-right",
+                              attrs: { for: "permissions" }
+                            },
+                            [_vm._v("Booking Sheet")]
+                          ),
+                          _vm._v(" "),
+                          _c("multiselect", {
+                            attrs: {
+                              options: _vm.bookings,
+                              multiple: false,
+                              "close-on-select": true,
+                              "clear-on-select": false,
+                              "preserve-search": true,
+                              placeholder: "'Pick Booking Sheet'",
+                              label: "title",
+                              "track-by": "title",
+                              "preselect-first": false,
+                              id: "booking_sheet"
+                            },
+                            model: {
+                              value: _vm.resource.booking,
+                              callback: function($$v) {
+                                _vm.$set(_vm.resource, "booking", $$v)
+                              },
+                              expression: "resource.booking"
+                            }
+                          })
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "form-group" }, [
+                        _c("label", { attrs: { for: "title" } }, [
+                          _vm._v("Title")
+                        ]),
+                        _vm._v(" "),
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.resource.title,
+                              expression: "resource.title"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: {
+                            type: "text",
+                            placeholder: "Resource Title"
+                          },
+                          domProps: { value: _vm.resource.title },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.$set(
+                                _vm.resource,
+                                "title",
+                                $event.target.value
+                              )
+                            }
+                          }
+                        })
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "form-group" }, [
+                        _c("label", { attrs: { for: "title" } }, [
+                          _vm._v("Type")
+                        ]),
+                        _vm._v(" "),
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.resource.type,
+                              expression: "resource.type"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: { type: "text", placeholder: "Resource Type" },
+                          domProps: { value: _vm.resource.type },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.$set(
+                                _vm.resource,
+                                "type",
+                                $event.target.value
+                              )
+                            }
+                          }
+                        })
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "form-group" }, [
+                        _c("label", { attrs: { for: "title" } }, [
+                          _vm._v("Business Hours (JSON Formate Data)")
+                        ]),
+                        _vm._v(" "),
+                        _c("textarea", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.resource.business_hours,
+                              expression: "resource.business_hours"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: {
+                            placeholder: "Resource Business Hours",
+                            rows: "5"
+                          },
+                          domProps: { value: _vm.resource.business_hours },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.$set(
+                                _vm.resource,
+                                "business_hours",
+                                $event.target.value
+                              )
+                            }
+                          }
+                        })
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "form-group" }, [
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-danger",
+                            attrs: { type: "button", "data-dismiss": "modal" }
+                          },
+                          [_vm._v("Close")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-success",
+                            attrs: { type: "submit" }
+                          },
+                          [_vm._v(_vm._s(_vm.action))]
+                        )
+                      ])
+                    ]
+                  )
+                ])
+              ])
+            ]
+          )
+        ]
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "modal fade", attrs: { id: "viewResourceModal" } },
+        [
+          _c(
+            "div",
+            {
+              staticClass: "modal-dialog view-modal-dialog",
+              attrs: { role: "document" }
+            },
+            [
+              _c("div", { staticClass: "modal-content" }, [
+                _c("div", { staticClass: "modal-header" }, [
+                  _c("h4", { staticClass: "modal-title font-weight-bold" }, [
+                    _vm._v(_vm._s(_vm.category))
+                  ]),
+                  _vm._v(" "),
+                  _vm._m(1)
+                ]),
+                _vm._v(" "),
+                _vm._m(2)
+              ])
+            ]
+          )
+        ]
+      )
+    ])
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "button",
+      {
+        staticClass: "close",
+        attrs: {
+          type: "button",
+          "data-dismiss": "modal",
+          "aria-label": "Close"
+        }
+      },
+      [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "button",
+      {
+        staticClass: "close",
+        attrs: {
+          type: "button",
+          "data-dismiss": "modal",
+          "aria-label": "Close"
+        }
+      },
+      [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-body" }, [
+      _c("div", { staticClass: "form-group" }, [
+        _c(
+          "button",
+          {
+            staticClass: "btn btn-danger",
+            attrs: { type: "button", "data-dismiss": "modal" }
+          },
+          [_vm._v("Close")]
+        )
+      ])
     ])
   }
 ]
@@ -67290,6 +69735,67 @@ var render = function() {
             "div",
             {
               staticClass: "collapse",
+              class: { show: _vm.isActiveMenu("facility|booking|resource") },
+              attrs: { id: "facility" }
+            },
+            [
+              _c("ul", { staticClass: "list-unstyled components ml-3" }, [
+                _c(
+                  "li",
+                  [
+                    _c(
+                      "router-link",
+                      {
+                        staticClass: "nav-link",
+                        attrs: { to: { name: "facility" } }
+                      },
+                      [_vm._v("Facility")]
+                    )
+                  ],
+                  1
+                ),
+                _vm._v(" "),
+                _c(
+                  "li",
+                  [
+                    _c(
+                      "router-link",
+                      {
+                        staticClass: "nav-link",
+                        attrs: { to: { name: "booking" } }
+                      },
+                      [_vm._v("Booking")]
+                    )
+                  ],
+                  1
+                ),
+                _vm._v(" "),
+                _c(
+                  "li",
+                  [
+                    _c(
+                      "router-link",
+                      {
+                        staticClass: "nav-link",
+                        attrs: { to: { name: "resource" } }
+                      },
+                      [_vm._v("Resource")]
+                    )
+                  ],
+                  1
+                )
+              ])
+            ]
+          )
+        ]),
+        _vm._v(" "),
+        _c("li", [
+          _vm._m(3),
+          _vm._v(" "),
+          _c(
+            "div",
+            {
+              staticClass: "collapse",
               class: {
                 show: _vm.isActiveMenu("profile|subscription|order|invoice")
               },
@@ -67362,7 +69868,7 @@ var render = function() {
         ]),
         _vm._v(" "),
         _c("li", [
-          _vm._m(3),
+          _vm._m(4),
           _vm._v(" "),
           _c(
             "div",
@@ -67423,13 +69929,13 @@ var render = function() {
         ]),
         _vm._v(" "),
         _c("li", [
-          _vm._m(4),
+          _vm._m(5),
           _vm._v(" "),
           _c(
             "div",
             {
               staticClass: "collapse",
-              class: { show: _vm.isActiveMenu("court|resource") },
+              class: { show: _vm.isActiveMenu("court") },
               attrs: { id: "court_booking" }
             },
             [
@@ -67500,6 +70006,19 @@ var staticRenderFns = [
         _vm._v("Laravel")
       ])
     ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "a",
+      { attrs: { "data-toggle": "collapse", href: "#facility" } },
+      [
+        _c("span", { staticClass: "fa fa-suitcase mr-3" }),
+        _vm._v(" Facilities")
+      ]
+    )
   },
   function() {
     var _vm = this
@@ -82779,7 +85298,7 @@ __webpack_require__.r(__webpack_exports__);
  | customize this script as you desire and load your own components.
  |
  */
-__webpack_require__(/*! spark-bootstrap */ "./vendor/laravel/spark-aurelius/resources/assets/js/spark-bootstrap.js");
+__webpack_require__(/*! spark-bootstrap */ "./spark/resources/assets/js/spark-bootstrap.js");
 
 __webpack_require__(/*! ./components/bootstrap */ "./resources/js/components/bootstrap.js");
 
@@ -82816,7 +85335,7 @@ Vue.mixin(_mixin_js__WEBPACK_IMPORTED_MODULE_4__["default"]); // Routes
 
 
 var app = new Vue({
-  mixins: [__webpack_require__(/*! spark */ "./vendor/laravel/spark-aurelius/resources/assets/js/spark.js")],
+  mixins: [__webpack_require__(/*! spark */ "./spark/resources/assets/js/spark.js")],
   router: _routes_js__WEBPACK_IMPORTED_MODULE_5__["default"]
 });
 
@@ -82991,15 +85510,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _views_Auth_Role_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./views/Auth/Role.vue */ "./resources/js/views/Auth/Role.vue");
 /* harmony import */ var _views_Auth_Permission_vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./views/Auth/Permission.vue */ "./resources/js/views/Auth/Permission.vue");
 /* harmony import */ var _views_CourtBooking_Court_vue__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./views/CourtBooking/Court.vue */ "./resources/js/views/CourtBooking/Court.vue");
-/* harmony import */ var _views_CourtBooking_Resource_vue__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./views/CourtBooking/Resource.vue */ "./resources/js/views/CourtBooking/Resource.vue");
-/* harmony import */ var _views_Setting_Profile_vue__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./views/Setting/Profile.vue */ "./resources/js/views/Setting/Profile.vue");
-/* harmony import */ var _views_Setting_Subscription_vue__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./views/Setting/Subscription.vue */ "./resources/js/views/Setting/Subscription.vue");
-/* harmony import */ var _views_Setting_Order_vue__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./views/Setting/Order.vue */ "./resources/js/views/Setting/Order.vue");
-/* harmony import */ var _views_Setting_Invoice_vue__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./views/Setting/Invoice.vue */ "./resources/js/views/Setting/Invoice.vue");
+/* harmony import */ var _views_Setting_Profile_vue__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./views/Setting/Profile.vue */ "./resources/js/views/Setting/Profile.vue");
+/* harmony import */ var _views_Setting_Subscription_vue__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./views/Setting/Subscription.vue */ "./resources/js/views/Setting/Subscription.vue");
+/* harmony import */ var _views_Setting_Order_vue__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./views/Setting/Order.vue */ "./resources/js/views/Setting/Order.vue");
+/* harmony import */ var _views_Setting_Invoice_vue__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./views/Setting/Invoice.vue */ "./resources/js/views/Setting/Invoice.vue");
+/* harmony import */ var _views_Facility_vue__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./views/Facility.vue */ "./resources/js/views/Facility.vue");
+/* harmony import */ var _views_Facility_Booking_vue__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./views/Facility/Booking.vue */ "./resources/js/views/Facility/Booking.vue");
+/* harmony import */ var _views_Facility_Resource_vue__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./views/Facility/Resource.vue */ "./resources/js/views/Facility/Resource.vue");
 
 
 
 
+
+
+ // import Resource from './views/CourtBooking/Resource.vue'
 
 
 
@@ -83015,8 +85539,8 @@ __webpack_require__.r(__webpack_exports__);
 // if(prefix.charAt(0) != '/') {
 //     prefix = '/' + prefix;
 // }
-// localStorage.setItem('dbm.basePath', basePath)
-// localStorage.setItem('dbm.prefix', prefix)
+// localStorage.setItem('playercoach.basePath', basePath)
+// localStorage.setItem('playercoach.prefix', prefix)
 
 var prefix = '/admin'; // Set Routes
 
@@ -83031,10 +85555,59 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
       authorize: true
     }
   }, {
+    path: prefix + '/facility',
+    name: 'facility',
+    component: _views_Facility_vue__WEBPACK_IMPORTED_MODULE_11__["default"],
+    meta: {
+      authorize: true,
+      breadcrumbs: [{
+        name: 'admin',
+        display: 'Admin'
+      }, {
+        name: 'facility',
+        display: 'Faciliity'
+      }]
+    }
+  }, {
+    path: prefix + '/facility/bookings',
+    name: 'booking',
+    component: _views_Facility_Booking_vue__WEBPACK_IMPORTED_MODULE_12__["default"],
+    meta: {
+      authorize: true,
+      breadcrumbs: [{
+        name: 'admin',
+        display: 'Admin'
+      }, {
+        name: 'facility',
+        display: 'Faciliity'
+      }, {
+        name: 'booking',
+        display: 'Bookings'
+      }]
+    }
+  }, {
+    path: prefix + '/facility/resources',
+    name: 'resource',
+    component: _views_Facility_Resource_vue__WEBPACK_IMPORTED_MODULE_14__["default"],
+    meta: {
+      authorize: true,
+      breadcrumbs: [{
+        name: 'admin',
+        display: 'Admin'
+      }, {
+        name: 'facility',
+        display: 'Faciliity'
+      }, {
+        name: 'resource',
+        display: 'Resources'
+      }]
+    }
+  }, {
     path: prefix + '/users',
     name: 'user',
     component: _views_Auth_User_vue__WEBPACK_IMPORTED_MODULE_3__["default"],
     meta: {
+      authorize: true,
       breadcrumbs: [{
         name: 'admin',
         display: 'Admin'
@@ -83048,6 +85621,7 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
     name: 'role',
     component: _views_Auth_Role_vue__WEBPACK_IMPORTED_MODULE_4__["default"],
     meta: {
+      authorize: true,
       breadcrumbs: [{
         name: 'admin',
         display: 'Admin'
@@ -83061,6 +85635,7 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
     name: 'permission',
     component: _views_Auth_Permission_vue__WEBPACK_IMPORTED_MODULE_5__["default"],
     meta: {
+      authorize: true,
       breadcrumbs: [{
         name: 'admin',
         display: 'Admin'
@@ -83074,6 +85649,7 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
     name: 'court',
     component: _views_CourtBooking_Court_vue__WEBPACK_IMPORTED_MODULE_6__["default"],
     meta: {
+      authorize: true,
       breadcrumbs: [{
         name: 'admin',
         display: 'Admin'
@@ -83082,24 +85658,30 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
         display: 'Courts'
       }]
     }
-  }, {
-    path: '/courtbooking/resources',
-    name: 'resource',
-    component: _views_CourtBooking_Resource_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
-    meta: {
-      breadcrumbs: [{
-        name: 'admin',
-        display: 'Admin'
-      }, {
-        name: 'resource',
-        display: 'Resources'
-      }]
-    }
-  }, {
+  }, // {
+  //     path: '/courtbooking/resources',
+  //     name: 'resource',
+  //     component: Resource,
+  //     meta: {
+  //         authorize: true,
+  //         breadcrumbs: [
+  //             {
+  //                 name: 'admin',
+  //                 display: 'Admin'
+  //             },
+  //             {
+  //                 name: 'resource',
+  //                 display: 'Resources'
+  //             }
+  //         ]
+  //     }
+  // },
+  {
     path: '/settings/profile',
     name: 'profile',
-    component: _views_Setting_Profile_vue__WEBPACK_IMPORTED_MODULE_8__["default"],
+    component: _views_Setting_Profile_vue__WEBPACK_IMPORTED_MODULE_7__["default"],
     meta: {
+      authorize: true,
       breadcrumbs: [{
         name: 'admin',
         display: 'Admin'
@@ -83111,8 +85693,9 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
   }, {
     path: '/settings/subscriptions',
     name: 'subscription',
-    component: _views_Setting_Subscription_vue__WEBPACK_IMPORTED_MODULE_9__["default"],
+    component: _views_Setting_Subscription_vue__WEBPACK_IMPORTED_MODULE_8__["default"],
     meta: {
+      authorize: true,
       breadcrumbs: [{
         name: 'admin',
         display: 'Admin'
@@ -83124,8 +85707,9 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
   }, {
     path: '/settings/orders',
     name: 'order',
-    component: _views_Setting_Order_vue__WEBPACK_IMPORTED_MODULE_10__["default"],
+    component: _views_Setting_Order_vue__WEBPACK_IMPORTED_MODULE_9__["default"],
     meta: {
+      authorize: true,
       breadcrumbs: [{
         name: 'admin',
         display: 'Admin'
@@ -83137,8 +85721,9 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
   }, {
     path: '/settings/invoices',
     name: 'invoice',
-    component: _views_Setting_Invoice_vue__WEBPACK_IMPORTED_MODULE_11__["default"],
+    component: _views_Setting_Invoice_vue__WEBPACK_IMPORTED_MODULE_10__["default"],
     meta: {
+      authorize: true,
       breadcrumbs: [{
         name: 'admin',
         display: 'Admin'
@@ -83161,29 +85746,35 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
       }]
     }
   }]
-}); // router.beforeEach((to, from, next) => {
-//     if (to.matched.some(record => record.meta.authorize)) {
-//         if (localStorage.getItem('dbm.authToken') == null) {
-//             router.push({
-//                 name: "login", 
-//                 params: {nextUrl: to.fullPath}
-//             })
-//         }else if(new Date().getTime() > localStorage.getItem('dbm.authTokenExpiry')){
-//             localStorage.removeItem('dbm.user')
-//             localStorage.removeItem('dbm.authToken')
-//             localStorage.removeItem('dbm.authTokenExpiry')
-//             router.push({
-//                 name: "login", 
-//                 params: {nextUrl: to.fullPath}
-//             })
-//         } else {
-//             next() 
-//         }
-//     } else {
-//         next()
-//     }
-// })
-
+});
+router.beforeEach(function (to, from, next) {
+  if (to.matched.some(function (record) {
+    return record.meta.authorize;
+  })) {
+    if (localStorage.getItem('playercoach.authToken') == null) {
+      router.push({
+        name: "login",
+        params: {
+          nextUrl: to.fullPath
+        }
+      });
+    } else if (new Date().getTime() > localStorage.getItem('playercoach.authTokenExpiry')) {
+      localStorage.removeItem('playercoach.user');
+      localStorage.removeItem('playercoach.authToken');
+      localStorage.removeItem('playercoach.authTokenExpiry');
+      router.push({
+        name: "login",
+        params: {
+          nextUrl: to.fullPath
+        }
+      });
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
+});
 /* harmony default export */ __webpack_exports__["default"] = (router);
 
 /***/ }),
@@ -83195,7 +85786,7 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! auth/register-stripe */ "./vendor/laravel/spark-aurelius/resources/assets/js/auth/register-stripe.js");
+var base = __webpack_require__(/*! auth/register-stripe */ "./spark/resources/assets/js/auth/register-stripe.js");
 
 Vue.component('spark-register-stripe', {
   mixins: [base]
@@ -83350,7 +85941,7 @@ __webpack_require__(/*! ./kiosk/add-discount */ "./resources/js/spark-components
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! kiosk/add-discount */ "./vendor/laravel/spark-aurelius/resources/assets/js/kiosk/add-discount.js");
+var base = __webpack_require__(/*! kiosk/add-discount */ "./spark/resources/assets/js/kiosk/add-discount.js");
 
 Vue.component('spark-kiosk-add-discount', {
   mixins: [base]
@@ -83365,7 +85956,7 @@ Vue.component('spark-kiosk-add-discount', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! kiosk/announcements */ "./vendor/laravel/spark-aurelius/resources/assets/js/kiosk/announcements.js");
+var base = __webpack_require__(/*! kiosk/announcements */ "./spark/resources/assets/js/kiosk/announcements.js");
 
 Vue.component('spark-kiosk-announcements', {
   mixins: [base]
@@ -83380,7 +85971,7 @@ Vue.component('spark-kiosk-announcements', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! kiosk/kiosk */ "./vendor/laravel/spark-aurelius/resources/assets/js/kiosk/kiosk.js");
+var base = __webpack_require__(/*! kiosk/kiosk */ "./spark/resources/assets/js/kiosk/kiosk.js");
 
 Vue.component('spark-kiosk', {
   mixins: [base]
@@ -83395,7 +85986,7 @@ Vue.component('spark-kiosk', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! kiosk/metrics */ "./vendor/laravel/spark-aurelius/resources/assets/js/kiosk/metrics.js");
+var base = __webpack_require__(/*! kiosk/metrics */ "./spark/resources/assets/js/kiosk/metrics.js");
 
 Vue.component('spark-kiosk-metrics', {
   mixins: [base]
@@ -83410,7 +86001,7 @@ Vue.component('spark-kiosk-metrics', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! kiosk/profile */ "./vendor/laravel/spark-aurelius/resources/assets/js/kiosk/profile.js");
+var base = __webpack_require__(/*! kiosk/profile */ "./spark/resources/assets/js/kiosk/profile.js");
 
 Vue.component('spark-kiosk-profile', {
   mixins: [base]
@@ -83425,7 +86016,7 @@ Vue.component('spark-kiosk-profile', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! kiosk/users */ "./vendor/laravel/spark-aurelius/resources/assets/js/kiosk/users.js");
+var base = __webpack_require__(/*! kiosk/users */ "./spark/resources/assets/js/kiosk/users.js");
 
 Vue.component('spark-kiosk-users', {
   mixins: [base]
@@ -83440,7 +86031,7 @@ Vue.component('spark-kiosk-users', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! navbar/navbar */ "./vendor/laravel/spark-aurelius/resources/assets/js/navbar/navbar.js");
+var base = __webpack_require__(/*! navbar/navbar */ "./spark/resources/assets/js/navbar/navbar.js");
 
 Vue.component('spark-navbar', {
   mixins: [base]
@@ -83455,7 +86046,7 @@ Vue.component('spark-navbar', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! notifications/notifications */ "./vendor/laravel/spark-aurelius/resources/assets/js/notifications/notifications.js");
+var base = __webpack_require__(/*! notifications/notifications */ "./spark/resources/assets/js/notifications/notifications.js");
 
 Vue.component('spark-notifications', {
   mixins: [base]
@@ -83470,7 +86061,7 @@ Vue.component('spark-notifications', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! settings/api */ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/api.js");
+var base = __webpack_require__(/*! settings/api */ "./spark/resources/assets/js/settings/api.js");
 
 Vue.component('spark-api', {
   mixins: [base]
@@ -83485,7 +86076,7 @@ Vue.component('spark-api', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! settings/api/create-token */ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/api/create-token.js");
+var base = __webpack_require__(/*! settings/api/create-token */ "./spark/resources/assets/js/settings/api/create-token.js");
 
 Vue.component('spark-create-token', {
   mixins: [base]
@@ -83500,7 +86091,7 @@ Vue.component('spark-create-token', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! settings/api/tokens */ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/api/tokens.js");
+var base = __webpack_require__(/*! settings/api/tokens */ "./spark/resources/assets/js/settings/api/tokens.js");
 
 Vue.component('spark-tokens', {
   mixins: [base]
@@ -83515,7 +86106,7 @@ Vue.component('spark-tokens', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! settings/invoices */ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/invoices.js");
+var base = __webpack_require__(/*! settings/invoices */ "./spark/resources/assets/js/settings/invoices.js");
 
 Vue.component('spark-invoices', {
   mixins: [base]
@@ -83530,7 +86121,7 @@ Vue.component('spark-invoices', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! settings/invoices/invoice-list */ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/invoices/invoice-list.js");
+var base = __webpack_require__(/*! settings/invoices/invoice-list */ "./spark/resources/assets/js/settings/invoices/invoice-list.js");
 
 Vue.component('spark-invoice-list', {
   mixins: [base]
@@ -83545,7 +86136,7 @@ Vue.component('spark-invoice-list', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! settings/invoices/update-extra-billing-information */ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/invoices/update-extra-billing-information.js");
+var base = __webpack_require__(/*! settings/invoices/update-extra-billing-information */ "./spark/resources/assets/js/settings/invoices/update-extra-billing-information.js");
 
 Vue.component('spark-update-extra-billing-information', {
   mixins: [base]
@@ -83560,7 +86151,7 @@ Vue.component('spark-update-extra-billing-information', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! settings/payment-method-stripe */ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/payment-method-stripe.js");
+var base = __webpack_require__(/*! settings/payment-method-stripe */ "./spark/resources/assets/js/settings/payment-method-stripe.js");
 
 Vue.component('spark-payment-method-stripe', {
   mixins: [base]
@@ -83575,7 +86166,7 @@ Vue.component('spark-payment-method-stripe', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! settings/payment-method/redeem-coupon */ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/payment-method/redeem-coupon.js");
+var base = __webpack_require__(/*! settings/payment-method/redeem-coupon */ "./spark/resources/assets/js/settings/payment-method/redeem-coupon.js");
 
 Vue.component('spark-redeem-coupon', {
   mixins: [base]
@@ -83590,7 +86181,7 @@ Vue.component('spark-redeem-coupon', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! settings/payment-method/update-payment-method-stripe */ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/payment-method/update-payment-method-stripe.js");
+var base = __webpack_require__(/*! settings/payment-method/update-payment-method-stripe */ "./spark/resources/assets/js/settings/payment-method/update-payment-method-stripe.js");
 
 Vue.component('spark-update-payment-method-stripe', {
   mixins: [base]
@@ -83605,7 +86196,7 @@ Vue.component('spark-update-payment-method-stripe', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! settings/payment-method/update-vat-id */ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/payment-method/update-vat-id.js");
+var base = __webpack_require__(/*! settings/payment-method/update-vat-id */ "./spark/resources/assets/js/settings/payment-method/update-vat-id.js");
 
 Vue.component('spark-update-vat-id', {
   mixins: [base]
@@ -83620,7 +86211,7 @@ Vue.component('spark-update-vat-id', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! settings/profile */ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/profile.js");
+var base = __webpack_require__(/*! settings/profile */ "./spark/resources/assets/js/settings/profile.js");
 
 Vue.component('spark-profile', {
   mixins: [base]
@@ -83635,7 +86226,7 @@ Vue.component('spark-profile', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! settings/profile/update-contact-information */ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/profile/update-contact-information.js");
+var base = __webpack_require__(/*! settings/profile/update-contact-information */ "./spark/resources/assets/js/settings/profile/update-contact-information.js");
 
 Vue.component('spark-update-contact-information', {
   mixins: [base]
@@ -83650,7 +86241,7 @@ Vue.component('spark-update-contact-information', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! settings/profile/update-profile-photo */ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/profile/update-profile-photo.js");
+var base = __webpack_require__(/*! settings/profile/update-profile-photo */ "./spark/resources/assets/js/settings/profile/update-profile-photo.js");
 
 Vue.component('spark-update-profile-photo', {
   mixins: [base]
@@ -83665,7 +86256,7 @@ Vue.component('spark-update-profile-photo', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! settings/security */ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/security.js");
+var base = __webpack_require__(/*! settings/security */ "./spark/resources/assets/js/settings/security.js");
 
 Vue.component('spark-security', {
   mixins: [base]
@@ -83680,7 +86271,7 @@ Vue.component('spark-security', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! settings/security/disable-two-factor-auth */ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/security/disable-two-factor-auth.js");
+var base = __webpack_require__(/*! settings/security/disable-two-factor-auth */ "./spark/resources/assets/js/settings/security/disable-two-factor-auth.js");
 
 Vue.component('spark-disable-two-factor-auth', {
   mixins: [base]
@@ -83695,7 +86286,7 @@ Vue.component('spark-disable-two-factor-auth', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! settings/security/enable-two-factor-auth */ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/security/enable-two-factor-auth.js");
+var base = __webpack_require__(/*! settings/security/enable-two-factor-auth */ "./spark/resources/assets/js/settings/security/enable-two-factor-auth.js");
 
 Vue.component('spark-enable-two-factor-auth', {
   mixins: [base]
@@ -83710,7 +86301,7 @@ Vue.component('spark-enable-two-factor-auth', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! settings/security/update-password */ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/security/update-password.js");
+var base = __webpack_require__(/*! settings/security/update-password */ "./spark/resources/assets/js/settings/security/update-password.js");
 
 Vue.component('spark-update-password', {
   mixins: [base]
@@ -83725,7 +86316,7 @@ Vue.component('spark-update-password', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! settings/settings */ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/settings.js");
+var base = __webpack_require__(/*! settings/settings */ "./spark/resources/assets/js/settings/settings.js");
 
 Vue.component('spark-settings', {
   mixins: [base]
@@ -83740,7 +86331,7 @@ Vue.component('spark-settings', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! settings/subscription */ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/subscription.js");
+var base = __webpack_require__(/*! settings/subscription */ "./spark/resources/assets/js/settings/subscription.js");
 
 Vue.component('spark-subscription', {
   mixins: [base]
@@ -83755,7 +86346,7 @@ Vue.component('spark-subscription', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! settings/subscription/cancel-subscription */ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/subscription/cancel-subscription.js");
+var base = __webpack_require__(/*! settings/subscription/cancel-subscription */ "./spark/resources/assets/js/settings/subscription/cancel-subscription.js");
 
 Vue.component('spark-cancel-subscription', {
   mixins: [base]
@@ -83770,7 +86361,7 @@ Vue.component('spark-cancel-subscription', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! settings/subscription/resume-subscription */ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/subscription/resume-subscription.js");
+var base = __webpack_require__(/*! settings/subscription/resume-subscription */ "./spark/resources/assets/js/settings/subscription/resume-subscription.js");
 
 Vue.component('spark-resume-subscription', {
   mixins: [base]
@@ -83785,7 +86376,7 @@ Vue.component('spark-resume-subscription', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! settings/subscription/subscribe-stripe */ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/subscription/subscribe-stripe.js");
+var base = __webpack_require__(/*! settings/subscription/subscribe-stripe */ "./spark/resources/assets/js/settings/subscription/subscribe-stripe.js");
 
 Vue.component('spark-subscribe-stripe', {
   mixins: [base]
@@ -83800,7 +86391,7 @@ Vue.component('spark-subscribe-stripe', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! settings/subscription/update-subscription */ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/subscription/update-subscription.js");
+var base = __webpack_require__(/*! settings/subscription/update-subscription */ "./spark/resources/assets/js/settings/subscription/update-subscription.js");
 
 Vue.component('spark-update-subscription', {
   mixins: [base]
@@ -83815,7 +86406,7 @@ Vue.component('spark-update-subscription', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! settings/teams */ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/teams.js");
+var base = __webpack_require__(/*! settings/teams */ "./spark/resources/assets/js/settings/teams.js");
 
 Vue.component('spark-teams', {
   mixins: [base]
@@ -83830,7 +86421,7 @@ Vue.component('spark-teams', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! settings/teams/create-team */ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/teams/create-team.js");
+var base = __webpack_require__(/*! settings/teams/create-team */ "./spark/resources/assets/js/settings/teams/create-team.js");
 
 Vue.component('spark-create-team', {
   mixins: [base]
@@ -83845,7 +86436,7 @@ Vue.component('spark-create-team', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! settings/teams/current-teams */ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/teams/current-teams.js");
+var base = __webpack_require__(/*! settings/teams/current-teams */ "./spark/resources/assets/js/settings/teams/current-teams.js");
 
 Vue.component('spark-current-teams', {
   mixins: [base]
@@ -83860,7 +86451,7 @@ Vue.component('spark-current-teams', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! settings/teams/mailed-invitations */ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/teams/mailed-invitations.js");
+var base = __webpack_require__(/*! settings/teams/mailed-invitations */ "./spark/resources/assets/js/settings/teams/mailed-invitations.js");
 
 Vue.component('spark-mailed-invitations', {
   mixins: [base]
@@ -83875,7 +86466,7 @@ Vue.component('spark-mailed-invitations', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! settings/teams/pending-invitations */ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/teams/pending-invitations.js");
+var base = __webpack_require__(/*! settings/teams/pending-invitations */ "./spark/resources/assets/js/settings/teams/pending-invitations.js");
 
 Vue.component('spark-pending-invitations', {
   mixins: [base]
@@ -83890,7 +86481,7 @@ Vue.component('spark-pending-invitations', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! settings/teams/send-invitation */ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/teams/send-invitation.js");
+var base = __webpack_require__(/*! settings/teams/send-invitation */ "./spark/resources/assets/js/settings/teams/send-invitation.js");
 
 Vue.component('spark-send-invitation', {
   mixins: [base]
@@ -83905,7 +86496,7 @@ Vue.component('spark-send-invitation', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! settings/teams/team-members */ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/teams/team-members.js");
+var base = __webpack_require__(/*! settings/teams/team-members */ "./spark/resources/assets/js/settings/teams/team-members.js");
 
 Vue.component('spark-team-members', {
   mixins: [base]
@@ -83920,7 +86511,7 @@ Vue.component('spark-team-members', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! settings/teams/team-membership */ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/teams/team-membership.js");
+var base = __webpack_require__(/*! settings/teams/team-membership */ "./spark/resources/assets/js/settings/teams/team-membership.js");
 
 Vue.component('spark-team-membership', {
   mixins: [base]
@@ -83935,7 +86526,7 @@ Vue.component('spark-team-membership', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! settings/teams/team-profile */ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/teams/team-profile.js");
+var base = __webpack_require__(/*! settings/teams/team-profile */ "./spark/resources/assets/js/settings/teams/team-profile.js");
 
 Vue.component('spark-team-profile', {
   mixins: [base]
@@ -83950,7 +86541,7 @@ Vue.component('spark-team-profile', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! settings/teams/team-settings */ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/teams/team-settings.js");
+var base = __webpack_require__(/*! settings/teams/team-settings */ "./spark/resources/assets/js/settings/teams/team-settings.js");
 
 Vue.component('spark-team-settings', {
   mixins: [base]
@@ -83965,7 +86556,7 @@ Vue.component('spark-team-settings', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! settings/teams/update-team-name */ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/teams/update-team-name.js");
+var base = __webpack_require__(/*! settings/teams/update-team-name */ "./spark/resources/assets/js/settings/teams/update-team-name.js");
 
 Vue.component('spark-update-team-name', {
   mixins: [base]
@@ -83980,7 +86571,7 @@ Vue.component('spark-update-team-name', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var base = __webpack_require__(/*! settings/teams/update-team-photo */ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/teams/update-team-photo.js");
+var base = __webpack_require__(/*! settings/teams/update-team-photo */ "./spark/resources/assets/js/settings/teams/update-team-photo.js");
 
 Vue.component('spark-update-team-photo', {
   mixins: [base]
@@ -84489,17 +87080,173 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/js/views/CourtBooking/Resource.vue":
-/*!******************************************************!*\
-  !*** ./resources/js/views/CourtBooking/Resource.vue ***!
-  \******************************************************/
+/***/ "./resources/js/views/Facility.vue":
+/*!*****************************************!*\
+  !*** ./resources/js/views/Facility.vue ***!
+  \*****************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _Resource_vue_vue_type_template_id_b3a96c80___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Resource.vue?vue&type=template&id=b3a96c80& */ "./resources/js/views/CourtBooking/Resource.vue?vue&type=template&id=b3a96c80&");
-/* harmony import */ var _Resource_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Resource.vue?vue&type=script&lang=js& */ "./resources/js/views/CourtBooking/Resource.vue?vue&type=script&lang=js&");
+/* harmony import */ var _Facility_vue_vue_type_template_id_61306942_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Facility.vue?vue&type=template&id=61306942&scoped=true& */ "./resources/js/views/Facility.vue?vue&type=template&id=61306942&scoped=true&");
+/* harmony import */ var _Facility_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Facility.vue?vue&type=script&lang=js& */ "./resources/js/views/Facility.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _Facility_vue_vue_type_style_index_0_id_61306942_scoped_scoped_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Facility.vue?vue&type=style&index=0&id=61306942&scoped=scoped&lang=css& */ "./resources/js/views/Facility.vue?vue&type=style&index=0&id=61306942&scoped=scoped&lang=css&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
+  _Facility_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Facility_vue_vue_type_template_id_61306942_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Facility_vue_vue_type_template_id_61306942_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  "61306942",
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/views/Facility.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/views/Facility.vue?vue&type=script&lang=js&":
+/*!******************************************************************!*\
+  !*** ./resources/js/views/Facility.vue?vue&type=script&lang=js& ***!
+  \******************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Facility_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./Facility.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/Facility.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Facility_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/views/Facility.vue?vue&type=style&index=0&id=61306942&scoped=scoped&lang=css&":
+/*!****************************************************************************************************!*\
+  !*** ./resources/js/views/Facility.vue?vue&type=style&index=0&id=61306942&scoped=scoped&lang=css& ***!
+  \****************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Facility_vue_vue_type_style_index_0_id_61306942_scoped_scoped_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/style-loader!../../../node_modules/css-loader??ref--7-1!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/src??ref--7-2!../../../node_modules/vue-loader/lib??vue-loader-options!./Facility.vue?vue&type=style&index=0&id=61306942&scoped=scoped&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/Facility.vue?vue&type=style&index=0&id=61306942&scoped=scoped&lang=css&");
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Facility_vue_vue_type_style_index_0_id_61306942_scoped_scoped_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Facility_vue_vue_type_style_index_0_id_61306942_scoped_scoped_lang_css___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Facility_vue_vue_type_style_index_0_id_61306942_scoped_scoped_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Facility_vue_vue_type_style_index_0_id_61306942_scoped_scoped_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Facility_vue_vue_type_style_index_0_id_61306942_scoped_scoped_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
+
+/***/ }),
+
+/***/ "./resources/js/views/Facility.vue?vue&type=template&id=61306942&scoped=true&":
+/*!************************************************************************************!*\
+  !*** ./resources/js/views/Facility.vue?vue&type=template&id=61306942&scoped=true& ***!
+  \************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Facility_vue_vue_type_template_id_61306942_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./Facility.vue?vue&type=template&id=61306942&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/Facility.vue?vue&type=template&id=61306942&scoped=true&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Facility_vue_vue_type_template_id_61306942_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Facility_vue_vue_type_template_id_61306942_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/views/Facility/Booking.vue":
+/*!*************************************************!*\
+  !*** ./resources/js/views/Facility/Booking.vue ***!
+  \*************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Booking_vue_vue_type_template_id_3590576c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Booking.vue?vue&type=template&id=3590576c& */ "./resources/js/views/Facility/Booking.vue?vue&type=template&id=3590576c&");
+/* harmony import */ var _Booking_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Booking.vue?vue&type=script&lang=js& */ "./resources/js/views/Facility/Booking.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _Booking_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Booking_vue_vue_type_template_id_3590576c___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Booking_vue_vue_type_template_id_3590576c___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/views/Facility/Booking.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/views/Facility/Booking.vue?vue&type=script&lang=js&":
+/*!**************************************************************************!*\
+  !*** ./resources/js/views/Facility/Booking.vue?vue&type=script&lang=js& ***!
+  \**************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Booking_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./Booking.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/Facility/Booking.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Booking_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/views/Facility/Booking.vue?vue&type=template&id=3590576c&":
+/*!********************************************************************************!*\
+  !*** ./resources/js/views/Facility/Booking.vue?vue&type=template&id=3590576c& ***!
+  \********************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Booking_vue_vue_type_template_id_3590576c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./Booking.vue?vue&type=template&id=3590576c& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/Facility/Booking.vue?vue&type=template&id=3590576c&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Booking_vue_vue_type_template_id_3590576c___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Booking_vue_vue_type_template_id_3590576c___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/views/Facility/Resource.vue":
+/*!**************************************************!*\
+  !*** ./resources/js/views/Facility/Resource.vue ***!
+  \**************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Resource_vue_vue_type_template_id_11d123ea___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Resource.vue?vue&type=template&id=11d123ea& */ "./resources/js/views/Facility/Resource.vue?vue&type=template&id=11d123ea&");
+/* harmony import */ var _Resource_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Resource.vue?vue&type=script&lang=js& */ "./resources/js/views/Facility/Resource.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -84510,8 +87257,8 @@ __webpack_require__.r(__webpack_exports__);
 
 var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
   _Resource_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _Resource_vue_vue_type_template_id_b3a96c80___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _Resource_vue_vue_type_template_id_b3a96c80___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  _Resource_vue_vue_type_template_id_11d123ea___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Resource_vue_vue_type_template_id_11d123ea___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
   null,
   null,
@@ -84521,38 +87268,38 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 
 /* hot reload */
 if (false) { var api; }
-component.options.__file = "resources/js/views/CourtBooking/Resource.vue"
+component.options.__file = "resources/js/views/Facility/Resource.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
 
-/***/ "./resources/js/views/CourtBooking/Resource.vue?vue&type=script&lang=js&":
-/*!*******************************************************************************!*\
-  !*** ./resources/js/views/CourtBooking/Resource.vue?vue&type=script&lang=js& ***!
-  \*******************************************************************************/
+/***/ "./resources/js/views/Facility/Resource.vue?vue&type=script&lang=js&":
+/*!***************************************************************************!*\
+  !*** ./resources/js/views/Facility/Resource.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Resource_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./Resource.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/CourtBooking/Resource.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Resource_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./Resource.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/Facility/Resource.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Resource_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 
-/***/ "./resources/js/views/CourtBooking/Resource.vue?vue&type=template&id=b3a96c80&":
-/*!*************************************************************************************!*\
-  !*** ./resources/js/views/CourtBooking/Resource.vue?vue&type=template&id=b3a96c80& ***!
-  \*************************************************************************************/
+/***/ "./resources/js/views/Facility/Resource.vue?vue&type=template&id=11d123ea&":
+/*!*********************************************************************************!*\
+  !*** ./resources/js/views/Facility/Resource.vue?vue&type=template&id=11d123ea& ***!
+  \*********************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Resource_vue_vue_type_template_id_b3a96c80___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./Resource.vue?vue&type=template&id=b3a96c80& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/CourtBooking/Resource.vue?vue&type=template&id=b3a96c80&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Resource_vue_vue_type_template_id_b3a96c80___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Resource_vue_vue_type_template_id_11d123ea___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./Resource.vue?vue&type=template&id=11d123ea& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/Facility/Resource.vue?vue&type=template&id=11d123ea&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Resource_vue_vue_type_template_id_11d123ea___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Resource_vue_vue_type_template_id_b3a96c80___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Resource_vue_vue_type_template_id_11d123ea___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
@@ -84852,6 +87599,75 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/views/modals/BookingModals.vue":
+/*!*****************************************************!*\
+  !*** ./resources/js/views/modals/BookingModals.vue ***!
+  \*****************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _BookingModals_vue_vue_type_template_id_9ac93ed6___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./BookingModals.vue?vue&type=template&id=9ac93ed6& */ "./resources/js/views/modals/BookingModals.vue?vue&type=template&id=9ac93ed6&");
+/* harmony import */ var _BookingModals_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./BookingModals.vue?vue&type=script&lang=js& */ "./resources/js/views/modals/BookingModals.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _BookingModals_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _BookingModals_vue_vue_type_template_id_9ac93ed6___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _BookingModals_vue_vue_type_template_id_9ac93ed6___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/views/modals/BookingModals.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/views/modals/BookingModals.vue?vue&type=script&lang=js&":
+/*!******************************************************************************!*\
+  !*** ./resources/js/views/modals/BookingModals.vue?vue&type=script&lang=js& ***!
+  \******************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_BookingModals_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./BookingModals.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/modals/BookingModals.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_BookingModals_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/views/modals/BookingModals.vue?vue&type=template&id=9ac93ed6&":
+/*!************************************************************************************!*\
+  !*** ./resources/js/views/modals/BookingModals.vue?vue&type=template&id=9ac93ed6& ***!
+  \************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_BookingModals_vue_vue_type_template_id_9ac93ed6___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./BookingModals.vue?vue&type=template&id=9ac93ed6& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/modals/BookingModals.vue?vue&type=template&id=9ac93ed6&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_BookingModals_vue_vue_type_template_id_9ac93ed6___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_BookingModals_vue_vue_type_template_id_9ac93ed6___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./resources/js/views/modals/CourtModals.vue":
 /*!***************************************************!*\
   !*** ./resources/js/views/modals/CourtModals.vue ***!
@@ -84985,6 +87801,75 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PermissionModals_vue_vue_type_template_id_eddab5e2___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PermissionModals_vue_vue_type_template_id_eddab5e2___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/views/modals/ResourceModals.vue":
+/*!******************************************************!*\
+  !*** ./resources/js/views/modals/ResourceModals.vue ***!
+  \******************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _ResourceModals_vue_vue_type_template_id_a2751de4___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ResourceModals.vue?vue&type=template&id=a2751de4& */ "./resources/js/views/modals/ResourceModals.vue?vue&type=template&id=a2751de4&");
+/* harmony import */ var _ResourceModals_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ResourceModals.vue?vue&type=script&lang=js& */ "./resources/js/views/modals/ResourceModals.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _ResourceModals_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _ResourceModals_vue_vue_type_template_id_a2751de4___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _ResourceModals_vue_vue_type_template_id_a2751de4___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/views/modals/ResourceModals.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/views/modals/ResourceModals.vue?vue&type=script&lang=js&":
+/*!*******************************************************************************!*\
+  !*** ./resources/js/views/modals/ResourceModals.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ResourceModals_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./ResourceModals.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/modals/ResourceModals.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ResourceModals_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/views/modals/ResourceModals.vue?vue&type=template&id=a2751de4&":
+/*!*************************************************************************************!*\
+  !*** ./resources/js/views/modals/ResourceModals.vue?vue&type=template&id=a2751de4& ***!
+  \*************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ResourceModals_vue_vue_type_template_id_a2751de4___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./ResourceModals.vue?vue&type=template&id=a2751de4& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/modals/ResourceModals.vue?vue&type=template&id=a2751de4&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ResourceModals_vue_vue_type_template_id_a2751de4___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ResourceModals_vue_vue_type_template_id_a2751de4___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
@@ -85324,10 +88209,10 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/auth/register-stripe.js":
-/*!***********************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/auth/register-stripe.js ***!
-  \***********************************************************************************/
+/***/ "./spark/resources/assets/js/auth/register-stripe.js":
+/*!***********************************************************!*\
+  !*** ./spark/resources/assets/js/auth/register-stripe.js ***!
+  \***********************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -85335,7 +88220,7 @@ module.exports = {
   /**
    * Load mixins for the component.
    */
-  mixins: [__webpack_require__(/*! ./../mixins/register */ "./vendor/laravel/spark-aurelius/resources/assets/js/mixins/register.js"), __webpack_require__(/*! ./../mixins/plans */ "./vendor/laravel/spark-aurelius/resources/assets/js/mixins/plans.js"), __webpack_require__(/*! ./../mixins/vat */ "./vendor/laravel/spark-aurelius/resources/assets/js/mixins/vat.js"), __webpack_require__(/*! ./../mixins/stripe */ "./vendor/laravel/spark-aurelius/resources/assets/js/mixins/stripe.js")],
+  mixins: [__webpack_require__(/*! ./../mixins/register */ "./spark/resources/assets/js/mixins/register.js"), __webpack_require__(/*! ./../mixins/plans */ "./spark/resources/assets/js/mixins/plans.js"), __webpack_require__(/*! ./../mixins/vat */ "./spark/resources/assets/js/mixins/vat.js"), __webpack_require__(/*! ./../mixins/stripe */ "./spark/resources/assets/js/mixins/stripe.js")],
 
   /**
    * The component's data.
@@ -85551,10 +88436,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/filters.js":
-/*!**********************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/filters.js ***!
-  \**********************************************************************/
+/***/ "./spark/resources/assets/js/filters.js":
+/*!**********************************************!*\
+  !*** ./spark/resources/assets/js/filters.js ***!
+  \**********************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -85606,10 +88491,10 @@ Vue.filter('currency', function (value) {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/forms/bootstrap.js":
-/*!******************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/forms/bootstrap.js ***!
-  \******************************************************************************/
+/***/ "./spark/resources/assets/js/forms/bootstrap.js":
+/*!******************************************************!*\
+  !*** ./spark/resources/assets/js/forms/bootstrap.js ***!
+  \******************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -85625,26 +88510,26 @@ Spark.forms = {
  * Load the SparkForm helper class.
  */
 
-__webpack_require__(/*! ./form */ "./vendor/laravel/spark-aurelius/resources/assets/js/forms/form.js");
+__webpack_require__(/*! ./form */ "./spark/resources/assets/js/forms/form.js");
 /**
  * Define the SparkFormError collection class.
  */
 
 
-__webpack_require__(/*! ./errors */ "./vendor/laravel/spark-aurelius/resources/assets/js/forms/errors.js");
+__webpack_require__(/*! ./errors */ "./spark/resources/assets/js/forms/errors.js");
 /**
  * Add additional HTTP / form helpers to the Spark object.
  */
 
 
-$.extend(Spark, __webpack_require__(/*! ./http */ "./vendor/laravel/spark-aurelius/resources/assets/js/forms/http.js"));
+$.extend(Spark, __webpack_require__(/*! ./http */ "./spark/resources/assets/js/forms/http.js"));
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/forms/errors.js":
-/*!***************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/forms/errors.js ***!
-  \***************************************************************************/
+/***/ "./spark/resources/assets/js/forms/errors.js":
+/*!***************************************************!*\
+  !*** ./spark/resources/assets/js/forms/errors.js ***!
+  \***************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -85726,10 +88611,10 @@ window.SparkFormErrors = function () {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/forms/form.js":
-/*!*************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/forms/form.js ***!
-  \*************************************************************************/
+/***/ "./spark/resources/assets/js/forms/form.js":
+/*!*************************************************!*\
+  !*** ./spark/resources/assets/js/forms/form.js ***!
+  \*************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -85797,10 +88682,10 @@ window.SparkForm = function (data) {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/forms/http.js":
-/*!*************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/forms/http.js ***!
-  \*************************************************************************/
+/***/ "./spark/resources/assets/js/forms/http.js":
+/*!*************************************************!*\
+  !*** ./spark/resources/assets/js/forms/http.js ***!
+  \*************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -85854,10 +88739,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/kiosk/add-discount.js":
-/*!*********************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/kiosk/add-discount.js ***!
-  \*********************************************************************************/
+/***/ "./spark/resources/assets/js/kiosk/add-discount.js":
+/*!*********************************************************!*\
+  !*** ./spark/resources/assets/js/kiosk/add-discount.js ***!
+  \*********************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -85871,7 +88756,7 @@ function kioskAddDiscountForm() {
 }
 
 module.exports = {
-  mixins: [__webpack_require__(/*! ./../mixins/discounts */ "./vendor/laravel/spark-aurelius/resources/assets/js/mixins/discounts.js")],
+  mixins: [__webpack_require__(/*! ./../mixins/discounts */ "./spark/resources/assets/js/mixins/discounts.js")],
 
   /**
    * The component's data.
@@ -85918,10 +88803,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/kiosk/announcements.js":
-/*!**********************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/kiosk/announcements.js ***!
-  \**********************************************************************************/
+/***/ "./spark/resources/assets/js/kiosk/announcements.js":
+/*!**********************************************************!*\
+  !*** ./spark/resources/assets/js/kiosk/announcements.js ***!
+  \**********************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -86034,10 +88919,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/kiosk/kiosk.js":
-/*!**************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/kiosk/kiosk.js ***!
-  \**************************************************************************/
+/***/ "./spark/resources/assets/js/kiosk/kiosk.js":
+/*!**************************************************!*\
+  !*** ./spark/resources/assets/js/kiosk/kiosk.js ***!
+  \**************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -86047,7 +88932,7 @@ module.exports = {
   /**
    * Load mixins for the component.
    */
-  mixins: [__webpack_require__(/*! ./../mixins/tab-state */ "./vendor/laravel/spark-aurelius/resources/assets/js/mixins/tab-state.js")],
+  mixins: [__webpack_require__(/*! ./../mixins/tab-state */ "./spark/resources/assets/js/mixins/tab-state.js")],
 
   /**
    * Prepare the component.
@@ -86074,10 +88959,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/kiosk/metrics.js":
-/*!****************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/kiosk/metrics.js ***!
-  \****************************************************************************/
+/***/ "./spark/resources/assets/js/kiosk/metrics.js":
+/*!****************************************************!*\
+  !*** ./spark/resources/assets/js/kiosk/metrics.js ***!
+  \****************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -86341,10 +89226,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/kiosk/profile.js":
-/*!****************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/kiosk/profile.js ***!
-  \****************************************************************************/
+/***/ "./spark/resources/assets/js/kiosk/profile.js":
+/*!****************************************************!*\
+  !*** ./spark/resources/assets/js/kiosk/profile.js ***!
+  \****************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -86476,10 +89361,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/kiosk/users.js":
-/*!**************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/kiosk/users.js ***!
-  \**************************************************************************/
+/***/ "./spark/resources/assets/js/kiosk/users.js":
+/*!**************************************************!*\
+  !*** ./spark/resources/assets/js/kiosk/users.js ***!
+  \**************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -86592,10 +89477,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/mixin.js":
-/*!********************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/mixin.js ***!
-  \********************************************************************/
+/***/ "./spark/resources/assets/js/mixin.js":
+/*!********************************************!*\
+  !*** ./spark/resources/assets/js/mixin.js ***!
+  \********************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -86630,10 +89515,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/mixins/discounts.js":
-/*!*******************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/mixins/discounts.js ***!
-  \*******************************************************************************/
+/***/ "./spark/resources/assets/js/mixins/discounts.js":
+/*!*******************************************************!*\
+  !*** ./spark/resources/assets/js/mixins/discounts.js ***!
+  \*******************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -86710,10 +89595,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/mixins/plans.js":
-/*!***************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/mixins/plans.js ***!
-  \***************************************************************************/
+/***/ "./spark/resources/assets/js/mixins/plans.js":
+/*!***************************************************!*\
+  !*** ./spark/resources/assets/js/mixins/plans.js ***!
+  \***************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -86851,10 +89736,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/mixins/register.js":
-/*!******************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/mixins/register.js ***!
-  \******************************************************************************/
+/***/ "./spark/resources/assets/js/mixins/register.js":
+/*!******************************************************!*\
+  !*** ./spark/resources/assets/js/mixins/register.js ***!
+  \******************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -86996,10 +89881,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/mixins/stripe.js":
-/*!****************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/mixins/stripe.js ***!
-  \****************************************************************************/
+/***/ "./spark/resources/assets/js/mixins/stripe.js":
+/*!****************************************************!*\
+  !*** ./spark/resources/assets/js/mixins/stripe.js ***!
+  \****************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -87048,10 +89933,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/mixins/subscriptions.js":
-/*!***********************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/mixins/subscriptions.js ***!
-  \***********************************************************************************/
+/***/ "./spark/resources/assets/js/mixins/subscriptions.js":
+/*!***********************************************************!*\
+  !*** ./spark/resources/assets/js/mixins/subscriptions.js ***!
+  \***********************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -87221,10 +90106,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/mixins/tab-state.js":
-/*!*******************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/mixins/tab-state.js ***!
-  \*******************************************************************************/
+/***/ "./spark/resources/assets/js/mixins/tab-state.js":
+/*!*******************************************************!*\
+  !*** ./spark/resources/assets/js/mixins/tab-state.js ***!
+  \*******************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -87310,10 +90195,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/mixins/vat.js":
-/*!*************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/mixins/vat.js ***!
-  \*************************************************************************/
+/***/ "./spark/resources/assets/js/mixins/vat.js":
+/*!*************************************************!*\
+  !*** ./spark/resources/assets/js/mixins/vat.js ***!
+  \*************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -87355,10 +90240,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/navbar/navbar.js":
-/*!****************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/navbar/navbar.js ***!
-  \****************************************************************************/
+/***/ "./spark/resources/assets/js/navbar/navbar.js":
+/*!****************************************************!*\
+  !*** ./spark/resources/assets/js/navbar/navbar.js ***!
+  \****************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -87388,10 +90273,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/notifications/notifications.js":
-/*!******************************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/notifications/notifications.js ***!
-  \******************************************************************************************/
+/***/ "./spark/resources/assets/js/notifications/notifications.js":
+/*!******************************************************************!*\
+  !*** ./spark/resources/assets/js/notifications/notifications.js ***!
+  \******************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -87468,10 +90353,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/api.js":
-/*!***************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/settings/api.js ***!
-  \***************************************************************************/
+/***/ "./spark/resources/assets/js/settings/api.js":
+/*!***************************************************!*\
+  !*** ./spark/resources/assets/js/settings/api.js ***!
+  \***************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -87530,10 +90415,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/api/create-token.js":
-/*!****************************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/settings/api/create-token.js ***!
-  \****************************************************************************************/
+/***/ "./spark/resources/assets/js/settings/api/create-token.js":
+/*!****************************************************************!*\
+  !*** ./spark/resources/assets/js/settings/api/create-token.js ***!
+  \****************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -87663,10 +90548,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/api/tokens.js":
-/*!**********************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/settings/api/tokens.js ***!
-  \**********************************************************************************/
+/***/ "./spark/resources/assets/js/settings/api/tokens.js":
+/*!**********************************************************!*\
+  !*** ./spark/resources/assets/js/settings/api/tokens.js ***!
+  \**********************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -87763,10 +90648,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/invoices.js":
-/*!********************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/settings/invoices.js ***!
-  \********************************************************************************/
+/***/ "./spark/resources/assets/js/settings/invoices.js":
+/*!********************************************************!*\
+  !*** ./spark/resources/assets/js/settings/invoices.js ***!
+  \********************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -87814,10 +90699,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/invoices/invoice-list.js":
-/*!*********************************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/settings/invoices/invoice-list.js ***!
-  \*********************************************************************************************/
+/***/ "./spark/resources/assets/js/settings/invoices/invoice-list.js":
+/*!*********************************************************************!*\
+  !*** ./spark/resources/assets/js/settings/invoices/invoice-list.js ***!
+  \*********************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -87835,10 +90720,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/invoices/update-extra-billing-information.js":
-/*!*****************************************************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/settings/invoices/update-extra-billing-information.js ***!
-  \*****************************************************************************************************************/
+/***/ "./spark/resources/assets/js/settings/invoices/update-extra-billing-information.js":
+/*!*****************************************************************************************!*\
+  !*** ./spark/resources/assets/js/settings/invoices/update-extra-billing-information.js ***!
+  \*****************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -87882,10 +90767,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/payment-method-stripe.js":
-/*!*********************************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/settings/payment-method-stripe.js ***!
-  \*********************************************************************************************/
+/***/ "./spark/resources/assets/js/settings/payment-method-stripe.js":
+/*!*********************************************************************!*\
+  !*** ./spark/resources/assets/js/settings/payment-method-stripe.js ***!
+  \*********************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -87895,7 +90780,7 @@ module.exports = {
   /**
    * Load mixins for the component.
    */
-  mixins: [__webpack_require__(/*! ./../mixins/discounts */ "./vendor/laravel/spark-aurelius/resources/assets/js/mixins/discounts.js")],
+  mixins: [__webpack_require__(/*! ./../mixins/discounts */ "./spark/resources/assets/js/mixins/discounts.js")],
 
   /**
    * The component's data.
@@ -87928,10 +90813,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/payment-method/redeem-coupon.js":
-/*!****************************************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/settings/payment-method/redeem-coupon.js ***!
-  \****************************************************************************************************/
+/***/ "./spark/resources/assets/js/settings/payment-method/redeem-coupon.js":
+/*!****************************************************************************!*\
+  !*** ./spark/resources/assets/js/settings/payment-method/redeem-coupon.js ***!
+  \****************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -87974,10 +90859,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/payment-method/update-payment-method-stripe.js":
-/*!*******************************************************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/settings/payment-method/update-payment-method-stripe.js ***!
-  \*******************************************************************************************************************/
+/***/ "./spark/resources/assets/js/settings/payment-method/update-payment-method-stripe.js":
+/*!*******************************************************************************************!*\
+  !*** ./spark/resources/assets/js/settings/payment-method/update-payment-method-stripe.js ***!
+  \*******************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -87987,7 +90872,7 @@ module.exports = {
   /**
    * Load mixins for the component.
    */
-  mixins: [__webpack_require__(/*! ./../../mixins/stripe */ "./vendor/laravel/spark-aurelius/resources/assets/js/mixins/stripe.js")],
+  mixins: [__webpack_require__(/*! ./../../mixins/stripe */ "./spark/resources/assets/js/mixins/stripe.js")],
 
   /**
    * The component's data.
@@ -88158,10 +91043,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/payment-method/update-vat-id.js":
-/*!****************************************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/settings/payment-method/update-vat-id.js ***!
-  \****************************************************************************************************/
+/***/ "./spark/resources/assets/js/settings/payment-method/update-vat-id.js":
+/*!****************************************************************************!*\
+  !*** ./spark/resources/assets/js/settings/payment-method/update-vat-id.js ***!
+  \****************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -88205,10 +91090,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/profile.js":
-/*!*******************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/settings/profile.js ***!
-  \*******************************************************************************/
+/***/ "./spark/resources/assets/js/settings/profile.js":
+/*!*******************************************************!*\
+  !*** ./spark/resources/assets/js/settings/profile.js ***!
+  \*******************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -88218,10 +91103,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/profile/update-contact-information.js":
-/*!**********************************************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/settings/profile/update-contact-information.js ***!
-  \**********************************************************************************************************/
+/***/ "./spark/resources/assets/js/settings/profile/update-contact-information.js":
+/*!**********************************************************************************!*\
+  !*** ./spark/resources/assets/js/settings/profile/update-contact-information.js ***!
+  \**********************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -88261,10 +91146,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/profile/update-profile-photo.js":
-/*!****************************************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/settings/profile/update-profile-photo.js ***!
-  \****************************************************************************************************/
+/***/ "./spark/resources/assets/js/settings/profile/update-profile-photo.js":
+/*!****************************************************************************!*\
+  !*** ./spark/resources/assets/js/settings/profile/update-profile-photo.js ***!
+  \****************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -88324,10 +91209,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/security.js":
-/*!********************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/settings/security.js ***!
-  \********************************************************************************/
+/***/ "./spark/resources/assets/js/settings/security.js":
+/*!********************************************************!*\
+  !*** ./spark/resources/assets/js/settings/security.js ***!
+  \********************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -88357,10 +91242,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/security/disable-two-factor-auth.js":
-/*!********************************************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/settings/security/disable-two-factor-auth.js ***!
-  \********************************************************************************************************/
+/***/ "./spark/resources/assets/js/settings/security/disable-two-factor-auth.js":
+/*!********************************************************************************!*\
+  !*** ./spark/resources/assets/js/settings/security/disable-two-factor-auth.js ***!
+  \********************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -88389,10 +91274,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/security/enable-two-factor-auth.js":
-/*!*******************************************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/settings/security/enable-two-factor-auth.js ***!
-  \*******************************************************************************************************/
+/***/ "./spark/resources/assets/js/settings/security/enable-two-factor-auth.js":
+/*!*******************************************************************************!*\
+  !*** ./spark/resources/assets/js/settings/security/enable-two-factor-auth.js ***!
+  \*******************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -88436,10 +91321,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/security/update-password.js":
-/*!************************************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/settings/security/update-password.js ***!
-  \************************************************************************************************/
+/***/ "./spark/resources/assets/js/settings/security/update-password.js":
+/*!************************************************************************!*\
+  !*** ./spark/resources/assets/js/settings/security/update-password.js ***!
+  \************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -88468,10 +91353,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/settings.js":
-/*!********************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/settings/settings.js ***!
-  \********************************************************************************/
+/***/ "./spark/resources/assets/js/settings/settings.js":
+/*!********************************************************!*\
+  !*** ./spark/resources/assets/js/settings/settings.js ***!
+  \********************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -88481,7 +91366,7 @@ module.exports = {
   /**
    * Load mixins for the component.
    */
-  mixins: [__webpack_require__(/*! ./../mixins/tab-state */ "./vendor/laravel/spark-aurelius/resources/assets/js/mixins/tab-state.js")],
+  mixins: [__webpack_require__(/*! ./../mixins/tab-state */ "./spark/resources/assets/js/mixins/tab-state.js")],
 
   /**
    * The component's data.
@@ -88503,10 +91388,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/subscription.js":
-/*!************************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/settings/subscription.js ***!
-  \************************************************************************************/
+/***/ "./spark/resources/assets/js/settings/subscription.js":
+/*!************************************************************!*\
+  !*** ./spark/resources/assets/js/settings/subscription.js ***!
+  \************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -88516,7 +91401,7 @@ module.exports = {
   /**
    * Load mixins for the component.
    */
-  mixins: [__webpack_require__(/*! ./../mixins/plans */ "./vendor/laravel/spark-aurelius/resources/assets/js/mixins/plans.js"), __webpack_require__(/*! ./../mixins/subscriptions */ "./vendor/laravel/spark-aurelius/resources/assets/js/mixins/subscriptions.js")],
+  mixins: [__webpack_require__(/*! ./../mixins/plans */ "./spark/resources/assets/js/mixins/plans.js"), __webpack_require__(/*! ./../mixins/subscriptions */ "./spark/resources/assets/js/mixins/subscriptions.js")],
 
   /**
    * The component's data.
@@ -88557,10 +91442,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/subscription/cancel-subscription.js":
-/*!********************************************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/settings/subscription/cancel-subscription.js ***!
-  \********************************************************************************************************/
+/***/ "./spark/resources/assets/js/settings/subscription/cancel-subscription.js":
+/*!********************************************************************************!*\
+  !*** ./spark/resources/assets/js/settings/subscription/cancel-subscription.js ***!
+  \********************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -88606,10 +91491,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/subscription/resume-subscription.js":
-/*!********************************************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/settings/subscription/resume-subscription.js ***!
-  \********************************************************************************************************/
+/***/ "./spark/resources/assets/js/settings/subscription/resume-subscription.js":
+/*!********************************************************************************!*\
+  !*** ./spark/resources/assets/js/settings/subscription/resume-subscription.js ***!
+  \********************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -88619,7 +91504,7 @@ module.exports = {
   /**
    * Load mixins for the component.
    */
-  mixins: [__webpack_require__(/*! ./../../mixins/plans */ "./vendor/laravel/spark-aurelius/resources/assets/js/mixins/plans.js"), __webpack_require__(/*! ./../../mixins/subscriptions */ "./vendor/laravel/spark-aurelius/resources/assets/js/mixins/subscriptions.js")],
+  mixins: [__webpack_require__(/*! ./../../mixins/plans */ "./spark/resources/assets/js/mixins/plans.js"), __webpack_require__(/*! ./../../mixins/subscriptions */ "./spark/resources/assets/js/mixins/subscriptions.js")],
 
   /**
    * Prepare the component.
@@ -88650,10 +91535,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/subscription/subscribe-stripe.js":
-/*!*****************************************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/settings/subscription/subscribe-stripe.js ***!
-  \*****************************************************************************************************/
+/***/ "./spark/resources/assets/js/settings/subscription/subscribe-stripe.js":
+/*!*****************************************************************************!*\
+  !*** ./spark/resources/assets/js/settings/subscription/subscribe-stripe.js ***!
+  \*****************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -88663,7 +91548,7 @@ module.exports = {
   /**
    * Load mixins for the component.
    */
-  mixins: [__webpack_require__(/*! ./../../mixins/plans */ "./vendor/laravel/spark-aurelius/resources/assets/js/mixins/plans.js"), __webpack_require__(/*! ./../../mixins/subscriptions */ "./vendor/laravel/spark-aurelius/resources/assets/js/mixins/subscriptions.js"), __webpack_require__(/*! ./../../mixins/vat */ "./vendor/laravel/spark-aurelius/resources/assets/js/mixins/vat.js"), __webpack_require__(/*! ./../../mixins/stripe */ "./vendor/laravel/spark-aurelius/resources/assets/js/mixins/stripe.js")],
+  mixins: [__webpack_require__(/*! ./../../mixins/plans */ "./spark/resources/assets/js/mixins/plans.js"), __webpack_require__(/*! ./../../mixins/subscriptions */ "./spark/resources/assets/js/mixins/subscriptions.js"), __webpack_require__(/*! ./../../mixins/vat */ "./spark/resources/assets/js/mixins/vat.js"), __webpack_require__(/*! ./../../mixins/stripe */ "./spark/resources/assets/js/mixins/stripe.js")],
 
   /**
    * The component's data.
@@ -88865,10 +91750,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/subscription/update-subscription.js":
-/*!********************************************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/settings/subscription/update-subscription.js ***!
-  \********************************************************************************************************/
+/***/ "./spark/resources/assets/js/settings/subscription/update-subscription.js":
+/*!********************************************************************************!*\
+  !*** ./spark/resources/assets/js/settings/subscription/update-subscription.js ***!
+  \********************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -88878,7 +91763,7 @@ module.exports = {
   /**
    * Load mixins for the component.
    */
-  mixins: [__webpack_require__(/*! ./../../mixins/plans */ "./vendor/laravel/spark-aurelius/resources/assets/js/mixins/plans.js"), __webpack_require__(/*! ./../../mixins/subscriptions */ "./vendor/laravel/spark-aurelius/resources/assets/js/mixins/subscriptions.js")],
+  mixins: [__webpack_require__(/*! ./../../mixins/plans */ "./spark/resources/assets/js/mixins/plans.js"), __webpack_require__(/*! ./../../mixins/subscriptions */ "./spark/resources/assets/js/mixins/subscriptions.js")],
 
   /**
    * The component's data.
@@ -88955,10 +91840,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/teams.js":
-/*!*****************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/settings/teams.js ***!
-  \*****************************************************************************/
+/***/ "./spark/resources/assets/js/settings/teams.js":
+/*!*****************************************************!*\
+  !*** ./spark/resources/assets/js/settings/teams.js ***!
+  \*****************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -88968,10 +91853,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/teams/create-team.js":
-/*!*****************************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/settings/teams/create-team.js ***!
-  \*****************************************************************************************/
+/***/ "./spark/resources/assets/js/settings/teams/create-team.js":
+/*!*****************************************************************!*\
+  !*** ./spark/resources/assets/js/settings/teams/create-team.js ***!
+  \*****************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -89105,10 +91990,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/teams/current-teams.js":
-/*!*******************************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/settings/teams/current-teams.js ***!
-  \*******************************************************************************************/
+/***/ "./spark/resources/assets/js/settings/teams/current-teams.js":
+/*!*******************************************************************!*\
+  !*** ./spark/resources/assets/js/settings/teams/current-teams.js ***!
+  \*******************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -89184,10 +92069,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/teams/mailed-invitations.js":
-/*!************************************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/settings/teams/mailed-invitations.js ***!
-  \************************************************************************************************/
+/***/ "./spark/resources/assets/js/settings/teams/mailed-invitations.js":
+/*!************************************************************************!*\
+  !*** ./spark/resources/assets/js/settings/teams/mailed-invitations.js ***!
+  \************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -89209,10 +92094,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/teams/pending-invitations.js":
-/*!*************************************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/settings/teams/pending-invitations.js ***!
-  \*************************************************************************************************/
+/***/ "./spark/resources/assets/js/settings/teams/pending-invitations.js":
+/*!*************************************************************************!*\
+  !*** ./spark/resources/assets/js/settings/teams/pending-invitations.js ***!
+  \*************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -89283,10 +92168,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/teams/send-invitation.js":
-/*!*********************************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/settings/teams/send-invitation.js ***!
-  \*********************************************************************************************/
+/***/ "./spark/resources/assets/js/settings/teams/send-invitation.js":
+/*!*********************************************************************!*\
+  !*** ./spark/resources/assets/js/settings/teams/send-invitation.js ***!
+  \*********************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -89416,10 +92301,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/teams/team-members.js":
-/*!******************************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/settings/teams/team-members.js ***!
-  \******************************************************************************************/
+/***/ "./spark/resources/assets/js/settings/teams/team-members.js":
+/*!******************************************************************!*\
+  !*** ./spark/resources/assets/js/settings/teams/team-members.js ***!
+  \******************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -89550,10 +92435,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/teams/team-membership.js":
-/*!*********************************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/settings/teams/team-membership.js ***!
-  \*********************************************************************************************/
+/***/ "./spark/resources/assets/js/settings/teams/team-membership.js":
+/*!*********************************************************************!*\
+  !*** ./spark/resources/assets/js/settings/teams/team-membership.js ***!
+  \*********************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -89595,10 +92480,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/teams/team-profile.js":
-/*!******************************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/settings/teams/team-profile.js ***!
-  \******************************************************************************************/
+/***/ "./spark/resources/assets/js/settings/teams/team-profile.js":
+/*!******************************************************************!*\
+  !*** ./spark/resources/assets/js/settings/teams/team-profile.js ***!
+  \******************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -89608,10 +92493,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/teams/team-settings.js":
-/*!*******************************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/settings/teams/team-settings.js ***!
-  \*******************************************************************************************/
+/***/ "./spark/resources/assets/js/settings/teams/team-settings.js":
+/*!*******************************************************************!*\
+  !*** ./spark/resources/assets/js/settings/teams/team-settings.js ***!
+  \*******************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -89621,7 +92506,7 @@ module.exports = {
   /**
    * Load mixins for the component.
    */
-  mixins: [__webpack_require__(/*! ./../../mixins/tab-state */ "./vendor/laravel/spark-aurelius/resources/assets/js/mixins/tab-state.js")],
+  mixins: [__webpack_require__(/*! ./../../mixins/tab-state */ "./spark/resources/assets/js/mixins/tab-state.js")],
 
   /**
    * The component's data.
@@ -89666,10 +92551,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/teams/update-team-name.js":
-/*!**********************************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/settings/teams/update-team-name.js ***!
-  \**********************************************************************************************/
+/***/ "./spark/resources/assets/js/settings/teams/update-team-name.js":
+/*!**********************************************************************!*\
+  !*** ./spark/resources/assets/js/settings/teams/update-team-name.js ***!
+  \**********************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -89708,10 +92593,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/settings/teams/update-team-photo.js":
-/*!***********************************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/settings/teams/update-team-photo.js ***!
-  \***********************************************************************************************/
+/***/ "./spark/resources/assets/js/settings/teams/update-team-photo.js":
+/*!***********************************************************************!*\
+  !*** ./spark/resources/assets/js/settings/teams/update-team-photo.js ***!
+  \***********************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -89779,10 +92664,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/spark-bootstrap.js":
-/*!******************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/spark-bootstrap.js ***!
-  \******************************************************************************/
+/***/ "./spark/resources/assets/js/spark-bootstrap.js":
+/*!******************************************************!*\
+  !*** ./spark/resources/assets/js/spark-bootstrap.js ***!
+  \******************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -89844,7 +92729,7 @@ __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap
 
 
 if ($('#spark-app').length > 0) {
-  __webpack_require__(/*! vue-bootstrap */ "./vendor/laravel/spark-aurelius/resources/assets/js/vue-bootstrap.js");
+  __webpack_require__(/*! vue-bootstrap */ "./spark/resources/assets/js/vue-bootstrap.js");
 }
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests
@@ -89886,10 +92771,10 @@ window.axios.interceptors.response.use(function (response) {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/spark.js":
-/*!********************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/spark.js ***!
-  \********************************************************************/
+/***/ "./spark/resources/assets/js/spark.js":
+/*!********************************************!*\
+  !*** ./spark/resources/assets/js/spark.js ***!
+  \********************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -90149,10 +93034,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./vendor/laravel/spark-aurelius/resources/assets/js/vue-bootstrap.js":
-/*!****************************************************************************!*\
-  !*** ./vendor/laravel/spark-aurelius/resources/assets/js/vue-bootstrap.js ***!
-  \****************************************************************************/
+/***/ "./spark/resources/assets/js/vue-bootstrap.js":
+/*!****************************************************!*\
+  !*** ./spark/resources/assets/js/vue-bootstrap.js ***!
+  \****************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -90168,18 +93053,18 @@ if (window.Vue === undefined) {
  */
 
 
-Vue.mixin(__webpack_require__(/*! ./mixin */ "./vendor/laravel/spark-aurelius/resources/assets/js/mixin.js"));
+Vue.mixin(__webpack_require__(/*! ./mixin */ "./spark/resources/assets/js/mixin.js"));
 /**
  * Define the Vue filters.
  */
 
-__webpack_require__(/*! ./filters */ "./vendor/laravel/spark-aurelius/resources/assets/js/filters.js");
+__webpack_require__(/*! ./filters */ "./spark/resources/assets/js/filters.js");
 /**
  * Load the Spark form utilities.
  */
 
 
-__webpack_require__(/*! ./forms/bootstrap */ "./vendor/laravel/spark-aurelius/resources/assets/js/forms/bootstrap.js");
+__webpack_require__(/*! ./forms/bootstrap */ "./spark/resources/assets/js/forms/bootstrap.js");
 
 /***/ }),
 

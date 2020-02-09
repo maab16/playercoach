@@ -12,16 +12,16 @@ $(function(){
         },
         onStepChanging: function (event, currentIndex, newIndex) { 
             if ( newIndex >= 1 ) {
-                $('.steps ul li:first-child a img').attr('src','images/step-1.png');
+                $('.steps ul li:first-child a img').attr('src','/images/step-1.png');
             } else {
-                $('.steps ul li:first-child a img').attr('src','images/step-1-active.png');
+                $('.steps ul li:first-child a img').attr('src','/images/step-1-active.png');
             }
 
             if ( newIndex === 1 ) {
-                $('.steps ul li:nth-child(2) a img').attr('src','images/step-2-active.png');
+                $('.steps ul li:nth-child(2) a img').attr('src','/images/step-2-active.png');
                 $('.actions ul').addClass('step-2');
             } else {
-                $('.steps ul li:nth-child(2) a img').attr('src','images/step-2.png');
+                $('.steps ul li:nth-child(2) a img').attr('src','/images/step-2.png');
                 $('.actions ul').removeClass('step-2');
             }
 
@@ -37,8 +37,8 @@ $(function(){
         $("#wizard").steps('previous');
     })
     // Create Steps Image
-    $('.steps ul li:first-child').append('<img src="images/step-arrow.png" alt="" class="step-arrow">').find('a').append('<img src="images/step-1-active.png" alt=""> ').append('<span class="step-order">Step 01</span>');
-    $('.steps ul li:last-child a').append('<img src="images/step-2.png" alt="">').append('<span class="step-order">Step 02</span>');
+    $('.steps ul li:first-child').append('<img src="/images/step-arrow.png" alt="" class="step-arrow">').find('a').append('<img src="/images/step-1-active.png" alt=""> ').append('<span class="step-order">Step 01</span>');
+    $('.steps ul li:last-child a').append('<img src="/images/step-2.png" alt="">').append('<span class="step-order">Step 02</span>');
     // Count input 
 
     $('.actions').find('a').each(function(){

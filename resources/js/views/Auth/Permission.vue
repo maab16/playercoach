@@ -73,11 +73,13 @@
 			}
 		},
 		mounted(){
+			axios.defaults.headers.common['Content-Type'] = 'application/json'
+      		axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('playercoach.authToken');
 			this.fetchPermissions()
 		},
 		methods: {
 			fetchPermissions: function(){
-				axios.get('/permissions/all').then(res =>{
+				axios.get('/api/permissions/all').then(res =>{
 					this.permissions = res.data.permissions
 				});
 			},
@@ -96,7 +98,7 @@
 				this.permissionData = this.permissions[index]
 			},
 			addPermission: function(){
-				axios.post('/permission', {
+				axios.post('/api/permission', {
 					name: this.permissionData.name,
 					guard_name: this.permissionData.permission
 				}).then(res =>{
@@ -111,7 +113,7 @@
 			},
 			updatePermission: function(){
 				console.log(this.permissionData.id)
-				axios.put(`/permission/${this.permissionData.id}`, this.permissionData).then(res =>{
+				axios.put(`/api/permission/${this.permissionData.id}`, this.permissionData).then(res =>{
 					console.log(res.data)
 	                if(res.data.success == true) {
 	                  // Flash success message
@@ -134,7 +136,7 @@
                 }).then((result) => {
                     if (result.value) {
                         // this.$Progress.start()
-                        axios.delete(`/permission/${permission}`).then(res => {
+                        axios.delete(`/api/permission/${permission}`).then(res => {
                             if( res.data.success == true ){
                                 toastr.success("Permission Deleted Successfully")
                                 self.fetchPermissions()

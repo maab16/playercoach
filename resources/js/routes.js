@@ -6,11 +6,14 @@ import User from './views/Auth/User.vue'
 import Role from './views/Auth/Role.vue'
 import Permission from './views/Auth/Permission.vue'
 import Court from './views/CourtBooking/Court.vue'
-import Resource from './views/CourtBooking/Resource.vue'
+// import Resource from './views/CourtBooking/Resource.vue'
 import Profile from './views/Setting/Profile.vue'
 import Subscription from './views/Setting/Subscription.vue'
 import Order from './views/Setting/Order.vue'
 import Invoice from './views/Setting/Invoice.vue'
+import Facility from './views/Facility.vue'
+import Booking from './views/Facility/Booking.vue'
+import Resource from './views/Facility/Resource.vue'
 
 // let basePath = document.querySelector('#app').getAttribute('base-path').trim().trimRight('/')
 // let prefix = document.querySelector('#app').getAttribute('prefix').trim().trimRight('/')
@@ -23,8 +26,8 @@ import Invoice from './views/Setting/Invoice.vue'
 //     prefix = '/' + prefix;
 // }
 
-// localStorage.setItem('dbm.basePath', basePath)
-// localStorage.setItem('dbm.prefix', prefix)
+// localStorage.setItem('playercoach.basePath', basePath)
+// localStorage.setItem('playercoach.prefix', prefix)
 let prefix = '/admin';
 // Set Routes
 
@@ -41,10 +44,73 @@ const router = new VueRouter({
             }
         },
         {
+            path: prefix+'/facility',
+            name: 'facility',
+            component: Facility,
+            meta: {
+                authorize: true,
+                breadcrumbs: [
+                    {
+                        name: 'admin',
+                        display: 'Admin'
+                    },
+                    {
+                        name: 'facility',
+                        display: 'Faciliity'
+                    }
+                ]
+            }
+        },
+        {
+            path: prefix+'/facility/bookings',
+            name: 'booking',
+            component: Booking,
+            meta: {
+                authorize: true,
+                breadcrumbs: [
+                    {
+                        name: 'admin',
+                        display: 'Admin'
+                    },
+                    {
+                        name: 'facility',
+                        display: 'Faciliity'
+                    },
+                    {
+                        name: 'booking',
+                        display: 'Bookings'
+                    }
+                ]
+            }
+        },
+        {
+            path: prefix+'/facility/resources',
+            name: 'resource',
+            component: Resource,
+            meta: {
+                authorize: true,
+                breadcrumbs: [
+                    {
+                        name: 'admin',
+                        display: 'Admin'
+                    },
+                    {
+                        name: 'facility',
+                        display: 'Faciliity'
+                    },
+                    {
+                        name: 'resource',
+                        display: 'Resources'
+                    }
+                ]
+            }
+        },
+        {
             path: prefix+'/users',
             name: 'user',
             component: User,
             meta: {
+                authorize: true,
                 breadcrumbs: [
                     {
                         name: 'admin',
@@ -62,6 +128,7 @@ const router = new VueRouter({
             name: 'role',
             component: Role,
             meta: {
+                authorize: true,
                 breadcrumbs: [
                     {
                         name: 'admin',
@@ -79,6 +146,7 @@ const router = new VueRouter({
             name: 'permission',
             component: Permission,
             meta: {
+                authorize: true,
                 breadcrumbs: [
                     {
                         name: 'admin',
@@ -96,6 +164,7 @@ const router = new VueRouter({
             name: 'court',
             component: Court,
             meta: {
+                authorize: true,
                 breadcrumbs: [
                     {
                         name: 'admin',
@@ -108,28 +177,30 @@ const router = new VueRouter({
                 ]
             }
         },
-        {
-            path: '/courtbooking/resources',
-            name: 'resource',
-            component: Resource,
-            meta: {
-                breadcrumbs: [
-                    {
-                        name: 'admin',
-                        display: 'Admin'
-                    },
-                    {
-                        name: 'resource',
-                        display: 'Resources'
-                    }
-                ]
-            }
-        },
+        // {
+        //     path: '/courtbooking/resources',
+        //     name: 'resource',
+        //     component: Resource,
+        //     meta: {
+        //         authorize: true,
+        //         breadcrumbs: [
+        //             {
+        //                 name: 'admin',
+        //                 display: 'Admin'
+        //             },
+        //             {
+        //                 name: 'resource',
+        //                 display: 'Resources'
+        //             }
+        //         ]
+        //     }
+        // },
         {
             path: '/settings/profile',
             name: 'profile',
             component: Profile,
             meta: {
+                authorize: true,
                 breadcrumbs: [
                     {
                         name: 'admin',
@@ -147,6 +218,7 @@ const router = new VueRouter({
             name: 'subscription',
             component: Subscription,
             meta: {
+                authorize: true,
                 breadcrumbs: [
                     {
                         name: 'admin',
@@ -164,6 +236,7 @@ const router = new VueRouter({
             name: 'order',
             component: Order,
             meta: {
+                authorize: true,
                 breadcrumbs: [
                     {
                         name: 'admin',
@@ -181,6 +254,7 @@ const router = new VueRouter({
             name: 'invoice',
             component: Invoice,
             meta: {
+                authorize: true,
                 breadcrumbs: [
                     {
                         name: 'admin',
@@ -213,27 +287,27 @@ const router = new VueRouter({
      ],
  });
 
-// router.beforeEach((to, from, next) => {
-//     if (to.matched.some(record => record.meta.authorize)) {
-//         if (localStorage.getItem('dbm.authToken') == null) {
-//             router.push({
-//                 name: "login", 
-//                 params: {nextUrl: to.fullPath}
-//             })
-//         }else if(new Date().getTime() > localStorage.getItem('dbm.authTokenExpiry')){
-//             localStorage.removeItem('dbm.user')
-//             localStorage.removeItem('dbm.authToken')
-//             localStorage.removeItem('dbm.authTokenExpiry')
-//             router.push({
-//                 name: "login", 
-//                 params: {nextUrl: to.fullPath}
-//             })
-//         } else {
-//             next() 
-//         }
-//     } else {
-//         next()
-//     }
-// })
+router.beforeEach((to, from, next) => {
+    if (to.matched.some(record => record.meta.authorize)) {
+        if (localStorage.getItem('playercoach.authToken') == null) {
+            router.push({
+                name: "login", 
+                params: {nextUrl: to.fullPath}
+            })
+        }else if(new Date().getTime() > localStorage.getItem('playercoach.authTokenExpiry')){
+            localStorage.removeItem('playercoach.user')
+            localStorage.removeItem('playercoach.authToken')
+            localStorage.removeItem('playercoach.authTokenExpiry')
+            router.push({
+                name: "login", 
+                params: {nextUrl: to.fullPath}
+            })
+        } else {
+            next() 
+        }
+    } else {
+        next()
+    }
+})
 
  export default router;

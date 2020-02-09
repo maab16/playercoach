@@ -4,10 +4,11 @@ namespace App;
 
 use Laravel\Spark\User as SparkUser;
 use Spatie\Permission\Traits\HasRoles;
+use Laravel\Passport\HasApiTokens;
 
 class User extends SparkUser
 {
-    use HasRoles;
+    use HasRoles, HasApiTokens;
     /**
      * The attributes that are mass assignable.
      *

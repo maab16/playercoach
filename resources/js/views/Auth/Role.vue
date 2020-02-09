@@ -80,11 +80,13 @@
 			}
 		},
 		mounted(){
+			axios.defaults.headers.common['Content-Type'] = 'application/json'
+			axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('playercoach.authToken');
 			this.fetchRoles()
 		},
 		methods: {
 			fetchRoles: function(){
-				axios.get('/roles/all').then(res =>{
+				axios.get('/api/roles/all').then(res =>{
 					this.roles = res.data.roles
 					let rolePermissions = [];
 					for(let permission of res.data.permissions) {
@@ -110,7 +112,7 @@
 				this.category = "Update"
 				let role = this.roles[index]
 
-				axios.get(`/roles/${role.id}/rolePermissions`).then(res =>{
+				axios.get(`/api/roles/${role.id}/rolePermissions`).then(res =>{
 					// console.log(res.data)
 					let rolePermissions = [];
 					for(let permission of res.data.permissions) {
@@ -133,7 +135,7 @@
 
 				let role = this.roles[index]
 
-				axios.get(`/roles/${role.id}/rolePermissions`).then(res =>{
+				axios.get(`/api/roles/${role.id}/rolePermissions`).then(res =>{
 					// console.log(res.data)
 					let rolePermissions = [];
 					for(let permission of res.data.permissions) {
@@ -154,7 +156,7 @@
 
 			},
 			addRole: function(){
-				axios.post('/role', this.roleData).then(res =>{
+				axios.post('/api/role', this.roleData).then(res =>{
 					console.log(res.data)
 	                if(res.data.success == true) {
 	                  // Flash success message
@@ -167,7 +169,7 @@
 			},
 			updateRole: function(){
 				console.log(this.roleData)
-				axios.put(`/role/${this.roleData.id}`, this.roleData).then(res =>{
+				axios.put(`/api/role/${this.roleData.id}`, this.roleData).then(res =>{
 					console.log(res.data)
 	                if(res.data.success == true) {
 	                  // Flash success message
@@ -190,7 +192,7 @@
                 }).then((result) => {
                     if (result.value) {
                         // this.$Progress.start()
-                        axios.delete(`/role/${role}`).then(res => {
+                        axios.delete(`/api/role/${role}`).then(res => {
                             if( res.data.success == true ){
                                 toastr.success("role Deleted Successfully")
                                 self.fetchRoles()

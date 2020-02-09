@@ -20,6 +20,7 @@
 
     <!-- CSS -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <!-- <link rel="stylesheet" href="{{ asset('css/style.css') }}"> -->
     <link href="{{ asset('css/theme/style.css') }}" rel="stylesheet">
 
    <!-- Styles -->
@@ -38,6 +39,8 @@
     <script src="{{ mix('js/app.js') }}"></script>
     <script src="{{ asset('/js/sweetalert.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/js/select2.min.js"></script>
+    <!-- <script src="{{ asset('/js/jquery.steps.js') }}"></script> -->
+    <!-- <script src="{{ asset('/js/main.js') }}"></script> -->
     <script>
         (function($) {
 

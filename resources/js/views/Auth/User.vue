@@ -91,11 +91,13 @@
 			}
 		},
 		mounted(){
+			axios.defaults.headers.common['Content-Type'] = 'application/json'
+			axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('playercoach.authToken');
 			this.fetchUsers()
 		},
 		methods: {
 			fetchUsers: function(){
-				axios.get('/users/all').then(res =>{
+				axios.get('/api/users/all').then(res =>{
 					console.log(res.data)
 					this.users = res.data.users
 					this.roles = []
@@ -129,7 +131,7 @@
 				this.user = this.users[index]
 			},
 			addUser: function(){
-				axios.post('/user', this.user).then(res =>{
+				axios.post('/api/user', this.user).then(res =>{
 					console.log(res.data)
 	                if(res.data.success == true) {
 	                  // Flash success message
@@ -152,7 +154,7 @@
 			},
 			updateUser: function(){
 				console.log(this.user)
-				axios.put(`/user/${this.user.id}`, this.user).then(res =>{
+				axios.put(`/api/user/${this.user.id}`, this.user).then(res =>{
 					console.log(res.data)
 	                if(res.data.success == true) {
 	                  // Flash success message
@@ -184,7 +186,7 @@
                 }).then((result) => {
                     if (result.value) {
                         // this.$Progress.start()
-                        axios.delete(`/user/${user}`).then(res => {
+                        axios.delete(`/api/user/${user}`).then(res => {
                         	console.log(res.data)
                             if( res.data.success == true ){
                                 toastr.success("User Deleted Successfully")

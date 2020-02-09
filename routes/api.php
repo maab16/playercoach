@@ -14,5 +14,32 @@
 Route::group([
     'middleware' => 'auth:api'
 ], function () {
-    //
+	// User
+	Route::get('users/all', 'UserController@all');
+	Route::get('user/add', 'UserController@showCreateForm')->name('user.add');
+	Route::get('user/{id}', 'UserController@index')->name('user.edit');
+	Route::post('user', 'UserController@store')->name('user.store');
+	Route::put('user/{id}', 'UserController@update')->name('user.update');
+	Route::delete('user/{id}', 'UserController@destroy')->name('user.delete');
+	// Permission
+	Route::resource('permission', 'PermissionController');
+	Route::get('/permissions/all', 'PermissionController@all');
+	// Role
+    Route::resource('role', 'RoleController');
+    Route::get('/roles/all', 'RoleController@all');
+	Route::get('/roles/{id}/rolePermissions', 'RoleController@getRolePermissions');
+	// Facility Booking
+	Route::get('/facility/booking/all', 'Facility\BookingController@all');
+	Route::post('/facility/booking', 'Facility\BookingController@store');
+	Route::put('/facility/booking/{id}', 'Facility\BookingController@update');
+	Route::put('/facility/booking/{id}/restore', 'Facility\BookingController@restore');
+	Route::delete('/facility/booking/{id}', 'Facility\BookingController@destroy');
+	Route::delete('/facility/booking/{id}/permanent', 'Facility\BookingController@destroyPermanent');
+	// Facility Resource
+	Route::get('/facility/resource/all', 'Facility\ResourceController@all');
+	Route::post('/facility/resource', 'Facility\ResourceController@store');
+	Route::put('/facility/resource/{id}', 'Facility\ResourceController@update');
+	Route::delete('/facility/resource/{id}', 'Facility\ResourceController@destroy');
 });
+
+Route::post('login', 'Usercontroller@login');
