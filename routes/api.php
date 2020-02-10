@@ -40,6 +40,24 @@ Route::group([
 	Route::post('/facility/resource', 'Facility\ResourceController@store');
 	Route::put('/facility/resource/{id}', 'Facility\ResourceController@update');
 	Route::delete('/facility/resource/{id}', 'Facility\ResourceController@destroy');
+	// Facility Court Booking
+	Route::get('/facility/courtbookings/all', 'Facility\CourtController@all');
+
+	// Courtbooking Settings
+	Route::get('/courtbooking/booking/all', 'CourtBooking\BookingSheetController@all');
+	Route::post('/courtbooking/booking', 'CourtBooking\BookingSheetController@store');
+	Route::put('/courtbooking/booking/{id}', 'CourtBooking\BookingSheetController@update');
+	Route::put('/courtbooking/booking/{id}/restore', 'CourtBooking\BookingSheetController@restore');
+	Route::delete('/courtbooking/booking/{id}', 'CourtBooking\BookingSheetController@destroy');
+	Route::delete(
+		'/courtbooking/booking/{id}/permanent', 
+		'CourtBooking\BookingSheetController@destroyPermanent'
+	);
+	// Courtcooking Resource Type
+	Route::get('/courtbooking/resource-type/all', 'CourtBooking\ResourceTypeController@all');
+	Route::post('/courtbooking/resource-type', 'CourtBooking\ResourceTypeController@store');
+	Route::put('/courtbooking/resource-type/{id}', 'CourtBooking\ResourceTypeController@update');
+	Route::delete('/courtbooking/resource-type/{id}', 'CourtBooking\ResourceTypeController@destroy');
 });
 
 Route::post('login', 'Usercontroller@login');

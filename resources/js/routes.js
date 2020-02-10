@@ -6,7 +6,7 @@ import User from './views/Auth/User.vue'
 import Role from './views/Auth/Role.vue'
 import Permission from './views/Auth/Permission.vue'
 import Court from './views/CourtBooking/Court.vue'
-// import Resource from './views/CourtBooking/Resource.vue'
+import Settings from './views/CourtBooking/Settings.vue'
 import Profile from './views/Setting/Profile.vue'
 import Subscription from './views/Setting/Subscription.vue'
 import Order from './views/Setting/Order.vue'
@@ -14,6 +14,7 @@ import Invoice from './views/Setting/Invoice.vue'
 import Facility from './views/Facility.vue'
 import Booking from './views/Facility/Booking.vue'
 import Resource from './views/Facility/Resource.vue'
+import CourtBooking from './views/Facility/CourtBooking.vue'
 
 // let basePath = document.querySelector('#app').getAttribute('base-path').trim().trimRight('/')
 // let prefix = document.querySelector('#app').getAttribute('prefix').trim().trimRight('/')
@@ -106,6 +107,28 @@ const router = new VueRouter({
             }
         },
         {
+            path: prefix+'/facility/courts',
+            name: 'court',
+            component: CourtBooking,
+            meta: {
+                authorize: true,
+                breadcrumbs: [
+                    {
+                        name: 'admin',
+                        display: 'Admin'
+                    },
+                    {
+                        name: 'court',
+                        display: 'Faciliity'
+                    },
+                    {
+                        name: 'resource',
+                        display: 'Courts'
+                    }
+                ]
+            }
+        },
+        {
             path: prefix+'/users',
             name: 'user',
             component: User,
@@ -159,28 +182,10 @@ const router = new VueRouter({
                 ]
             }
         },
-        {
-            path: '/courtbooking/courts',
-            name: 'court',
-            component: Court,
-            meta: {
-                authorize: true,
-                breadcrumbs: [
-                    {
-                        name: 'admin',
-                        display: 'Admin'
-                    },
-                    {
-                        name: 'court',
-                        display: 'Courts'
-                    }
-                ]
-            }
-        },
         // {
-        //     path: '/courtbooking/resources',
-        //     name: 'resource',
-        //     component: Resource,
+        //     path: '/courtbooking/courts',
+        //     name: 'court',
+        //     component: Court,
         //     meta: {
         //         authorize: true,
         //         breadcrumbs: [
@@ -189,12 +194,30 @@ const router = new VueRouter({
         //                 display: 'Admin'
         //             },
         //             {
-        //                 name: 'resource',
-        //                 display: 'Resources'
+        //                 name: 'court',
+        //                 display: 'Courts'
         //             }
         //         ]
         //     }
         // },
+        {
+            path: '/courtbooking/settings',
+            name: 'settings',
+            component: Settings,
+            meta: {
+                authorize: true,
+                breadcrumbs: [
+                    {
+                        name: 'admin',
+                        display: 'Admin'
+                    },
+                    {
+                        name: 'settings',
+                        display: 'Settings'
+                    }
+                ]
+            }
+        },
         {
             path: '/settings/profile',
             name: 'profile',

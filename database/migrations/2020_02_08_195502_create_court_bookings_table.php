@@ -22,8 +22,8 @@ class CreateCourtBookingsTable extends Migration
                 ->onDelete('cascade');
             $table->dateTime('start');
             $table->dateTime('end');
-            $table->string('resourceId', 100)->nullable();
-            $table->string('resourceIds', 100)->nullable();
+            $table->bigInteger('resource_id')->unsigned()->nullable();
+            $table->text('resourceIds', 100)->nullable();
             $table->string('title', 100)->nullable();
             $table->boolean('open')->default(1);
             $table->smallInteger('max_participants')->default(4);

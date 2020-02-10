@@ -15,13 +15,17 @@ class CreateResourcesTable extends Migration
     {
         Schema::create('resources', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('booking_id')->unsigned();
-            $table->foreign('booking_id')
+            $table->bigInteger('booking_sheet_id')->unsigned();
+            $table->foreign('booking_sheet_id')
                 ->references('id')
-                ->on('bookings')
+                ->on('booking_sheets')
+                ->onDelete('cascade');
+            $table->bigInteger('resource_type_id')->unsigned();
+            $table->foreign('resource_type_id')
+                ->references('id')
+                ->on('resource_types')
                 ->onDelete('cascade');
             $table->string('title', 100);
-            $table->string('type',100);
             $table->text('business_hours')->nullable();
             $table->timestamps();
         });

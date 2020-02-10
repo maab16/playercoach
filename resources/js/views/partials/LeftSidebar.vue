@@ -10,17 +10,18 @@
 	        <h1><a href="/" class="logo">Laravel</a></h1>
 	        <ul class="list-unstyled components mb-5">
 	        	<li><router-link :to="{ name: 'admin' }" class="nav-link">Admin</router-link></li>
-	        	<li>
+	        	<!-- <li>
 	                <a data-toggle="collapse" href="#facility"><span class="fa fa-suitcase mr-3"></span> Facilities</a>
-	                <div class="collapse" id="facility" :class="{show:isActiveMenu('facility|booking|resource')}">
+	                <div class="collapse" id="facility" :class="{show:isActiveMenu('facility|booking|resource|court')}">
 	                    <ul class="list-unstyled components ml-3">
 	                        <li><router-link :to="{ name: 'facility' }" class="nav-link">Facility</router-link></li>
 	                        <li><router-link :to="{ name: 'booking' }" class="nav-link">Booking</router-link></li>
 	                        <li><router-link :to="{ name: 'resource' }" class="nav-link">Resource</router-link></li>
+	                        <li><router-link :to="{ name: 'court' }" class="nav-link">Court Booking</router-link></li>
 	                    </ul>
 	                </div>
-	            </li>
-	        	<li>
+	            </li> -->
+	        	<!-- <li>
 	                <a data-toggle="collapse" href="#setting"><span class="fa fa-suitcase mr-3"></span> Settings</a>
 	                <div class="collapse" id="setting" :class="{show:isActiveMenu('profile|subscription|order|invoice')}">
 	                    <ul class="list-unstyled components ml-3">
@@ -30,8 +31,18 @@
 	                        <li><router-link :to="{ name: 'invoice' }" class="nav-link">My Invoices</router-link></li>
 	                    </ul>
 	                </div>
-	            </li>
+	            </li> -->
 	            <li>
+	                <a data-toggle="collapse" href="#court_booking"><span class="fa fa-suitcase mr-3"></span> Court Booking</a>
+	                <div class="collapse" id="court_booking" :class="{show:isActiveMenu('settings')}">
+	                    <ul class="list-unstyled components ml-3">
+	                    	<li><router-link :to="{ name: 'settings' }" class="nav-link">Settings</router-link></li>
+	                        <!-- <li><router-link :to="{ name: 'court' }" class="nav-link">Courts</router-link></li> -->
+	                        
+	                    </ul>
+	                </div>
+	            </li>
+	            <!-- <li>
 	                <a data-toggle="collapse" href="#user"><span class="fa fa-suitcase mr-3"></span> Users & Permissions</a>
 	                <div class="collapse" id="user" :class="{show:isActiveMenu('user|role|permission')}">
 	                    <ul class="list-unstyled components ml-3">
@@ -40,16 +51,7 @@
 	                        <li><router-link :to="{ name: 'permission' }" class="nav-link">Permissions</router-link></li>
 	                    </ul>
 	                </div>
-	            </li>
-	            <li>
-	                <a data-toggle="collapse" href="#court_booking"><span class="fa fa-suitcase mr-3"></span> Court Booking</a>
-	                <div class="collapse" id="court_booking" :class="{show:isActiveMenu('court')}">
-	                    <ul class="list-unstyled components ml-3">
-	                        <li><router-link :to="{ name: 'court' }" class="nav-link">Courts</router-link></li>
-	                        <li><router-link :to="{ name: 'resource' }" class="nav-link">Resources</router-link></li>
-	                    </ul>
-	                </div>
-	            </li>
+	            </li> -->
 	        </ul>
 
 	    </div>

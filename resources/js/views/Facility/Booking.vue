@@ -14,7 +14,7 @@
             v-for="(error,key) in errors" 
             :key="key"> {{ error }} </div>
 
-        <div class="nav-tabs-custom">
+    <div class="nav-tabs-custom">
       <ul class="nav nav-tabs">
         <li class="active">
           <a href="#profile" class="nav-link active" data-toggle="tab" aria-expanded="true">
