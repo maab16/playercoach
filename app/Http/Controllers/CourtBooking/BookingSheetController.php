@@ -25,7 +25,7 @@ class BookingSheetController extends Controller
 
         $bookings = BookingSheet::withTrashed()->get();
         $unpublished_bookings = BookingSheet::onlyTrashed()->get();
-        $published_bookings = BookingSheet::all();
+        $published_bookings = BookingSheet::with('resources')->get();
         return response()->json([
             'success' => true, 
             'bookings' => $bookings, 

@@ -58,6 +58,11 @@ Route::group([
 	Route::post('/courtbooking/resource-type', 'CourtBooking\ResourceTypeController@store');
 	Route::put('/courtbooking/resource-type/{id}', 'CourtBooking\ResourceTypeController@update');
 	Route::delete('/courtbooking/resource-type/{id}', 'CourtBooking\ResourceTypeController@destroy');
+	// Courtcooking Resource
+	Route::get('/courtbooking/resource/all', 'CourtBooking\ResourceController@all');
+	Route::post('/courtbooking/resource', 'CourtBooking\ResourceController@store');
+	Route::put('/courtbooking/resource/{id}', 'CourtBooking\ResourceController@update');
+	Route::delete('/courtbooking/resource/{id}', 'CourtBooking\ResourceController@destroy');
 });
 
 Route::post('login', 'Usercontroller@login');

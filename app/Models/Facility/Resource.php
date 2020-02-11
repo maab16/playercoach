@@ -2,7 +2,7 @@
 
 namespace App\Models\Facility;
 
-use App\Facility\Booking;
+use App\Models\CourtBooking\BookingSheet;
 use Illuminate\Database\Eloquent\Model;
 
 class Resource extends Model
@@ -12,14 +12,14 @@ class Resource extends Model
     ];
 
     protected $fillable = [
-    	'booking_id',
+    	'booking_sheet_id',
     	'title',
     	'type',
     	'business_hours',
     ];
 
-    public function booking()
+    public function booking_sheet()
     {
-    	return $this->belongsTo(Booking::class);
+    	return $this->belongsTo(BookingSheet::class);
     }
 }

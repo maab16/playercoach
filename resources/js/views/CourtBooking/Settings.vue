@@ -13,20 +13,55 @@
               data-target="#addEditBookingModal"><i class="fa fa-plus"></i> New Booking Sheet</a>
              <div class="nav-tabs-custom">
                <ul class="nav nav-tabs">
-                 <li class="active">
-                   <a href="#profile" class="nav-link active" data-toggle="tab" aria-expanded="true">
-                     <i class="fa fa-user-o"></i> All</a>
-                 </li>
-                 <li class="nav-item">
-                   <a class="nav-link" href="#orders" data-toggle="tab" aria-expanded="false">
+                  <li class="nav-item active">
+                   <a class="nav-link active" href="#orders" data-toggle="tab" aria-expanded="false">
                      <i class="fa fa-shopping-cart"></i> Published</a>
                  </li>
+                 <li class="nav-item">
+                   <a href="#profile" class="nav-link" data-toggle="tab" aria-expanded="true">
+                     <i class="fa fa-user-o"></i> All</a>
+                 </li>
+                 
                  <li class="nav-item">
                    <a class="nav-link" href="#invoices" data-toggle="tab" aria-expanded="false">
                      <i class="fa fa-trash-o"></i> Unpublished</a>
                  </li>
                </ul>
                <div class="tab-content">
+                  <div class="tab-pane" id="orders">
+                    <table class="table table-striped table-bordered database-tables" style="width: 100%;">
+                         <thead>
+                             <tr>
+                                 <th>Title</th>
+                                 <th>Settings</th>
+                                 <th class="action">Action</th>
+                             </tr>
+                         </thead>
+                         <tbody>
+                           <tr v-for="(published_booking,index) in published_bookings" :key="index" :data-id="index+1">
+                               <td>{{ published_booking.title }}</td>
+                               <td>{{ published_booking.settings }}</td>
+                               <td class="action">
+                                   <a 
+                                     href="#" 
+                                     class="btn btn-info" 
+                                     @click.prevent="showSheetSettings(index)">
+                                     <i class="fa fa-cogs"></i> Settings</a>
+                                   <a 
+                                     href="#" 
+                                     class="btn btn-success" 
+                                     @click.prevent="showEditForm(index)" 
+                                     data-toggle="modal" 
+                                     data-target="#addEditBookingModal">Edit</a>
+                                   <a 
+                                     @click.prevent="remove(published_booking.id)" 
+                                     class="btn btn-danger">Delete</a>
+                               </td>
+                           </tr>
+
+                         </tbody>
+                    </table>
+                  </div>
                  <div class="tab-pane active" id="profile">
                    <div class="table-responsive mt-3">
                      <table class="table table-striped table-bordered database-tables" style="width: 100%;">
@@ -47,9 +82,7 @@
                                    <a 
                                      href="#" 
                                      class="btn btn-info" 
-                                     @click.prevent="viewBooking(index)" 
-                                     data-toggle="modal" 
-                                     data-target="#settingBookingSheetModal"><i class="fa fa-cogs"></i> Settings</a>
+                                     @click.prevent="showSheetSettings(index)"><i class="fa fa-cogs"></i> Settings</a>
                                    <a 
                                      href="#" 
                                      class="btn btn-success" 
@@ -66,41 +99,7 @@
                      </table>
                    </div>
                  </div>
-                 <div class="tab-pane" id="orders">
-                   <table class="table table-striped table-bordered database-tables" style="width: 100%;">
-                       <thead>
-                           <tr>
-                               <th>Title</th>
-                               <th>Settings</th>
-                               <th class="action">Action</th>
-                           </tr>
-                       </thead>
-                       <tbody>
-                         <tr v-for="(published_booking,index) in published_bookings" :key="index" :data-id="index+1">
-                             <td>{{ published_booking.title }}</td>
-                             <td>{{ published_booking.settings }}</td>
-                             <td class="action">
-                                 <a 
-                                   href="#" 
-                                   class="btn btn-info" 
-                                   @click.prevent="viewBooking(index)" 
-                                   data-toggle="modal" 
-                                   data-target="#viewBookingModal">View</a>
-                                 <a 
-                                   href="#" 
-                                   class="btn btn-success" 
-                                   @click.prevent="showEditForm(index)" 
-                                   data-toggle="modal" 
-                                   data-target="#addEditBookingModal">Edit</a>
-                                 <a 
-                                   @click.prevent="remove(published_booking.id)" 
-                                   class="btn btn-danger">Delete</a>
-                             </td>
-                         </tr>
-
-                       </tbody>
-                   </table>
-                 </div>
+                 
                  <div class="tab-pane" id="invoices">
                    <table class="table table-striped table-bordered database-tables" style="width: 100%;">
                      <thead>
@@ -135,8 +134,12 @@
                :action="action"
                :category="category"
                :booking="booking"
+               :published_booking="published_booking"
+               :resource_types="resource_types"
                :addBooking="addBooking"
-               :updateBooking="updateBooking"></booking-sheet-modals>
+               :updateBooking="updateBooking"
+               :fetchBookings="fetchBookings"
+               :closeModal="closeModal"></booking-sheet-modals>
 
              <div class="crud-btn-area mb-3 mt-3">
                <p class="text-white"> Manage Resource Types</p>
@@ -211,11 +214,18 @@
           return {
             bookings: [],
             unpublished_bookings: [],
+            published_booking: {
+              title: '',
+              setting: '',
+              isActiveSettingModel: false,
+              resources: []
+            },
             published_bookings: [],
             bookings: [],
             booking: {
               title: '',
               setting: '',
+              isActiveSettingModel: false
             },
             resource_types: [],
             resource_type: {
@@ -512,6 +522,11 @@
                 }
             });
           },
+          showSheetSettings: function(index){
+            this.published_booking = this.published_bookings[index]
+            Vue.delete(this.published_booking, 'isActiveSettingModel')
+            this.published_booking.isActiveSettingModel = true;
+          },
           closeModal: function(){
               $('.modal').modal('hide');
               $('.modal-backdrop').remove();
@@ -520,7 +535,7 @@
     }
 </script>
 
-<style scoped="scoped">
+<style>
 .vue-content {
     padding-right: 0px;
     padding-left: 0px;
@@ -544,5 +559,21 @@
     padding: 10px;
     margin: 0px;
     font-size: 18px;
+}
+.settingModal{
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  display: none;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  outline: 0;
+  background-color: rgba(0,0,0,0.5);
+}
+.settingModal.activeSetting {
+  display: block;
 }
 </style>
