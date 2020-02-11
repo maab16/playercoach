@@ -46,6 +46,11 @@ Vue.use(VueProgressBar, {
   inverse: false
 })
 
+import { Datetime } from 'vue-datetime'
+import 'vue-datetime/dist/vue-datetime.css'
+Vue.use(Datetime)
+Vue.component('datetime', Datetime);
+
 Vue.component('permissions-data', require('./views/Auth/Permission.vue').default);
 Vue.component('roles-data', require('./views/Auth/Role.vue').default);
 Vue.component('users-data', require('./views/Auth/User.vue').default);

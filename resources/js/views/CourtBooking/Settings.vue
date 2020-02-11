@@ -218,7 +218,11 @@
               title: '',
               setting: '',
               isActiveSettingModel: false,
-              resources: []
+              resources: [],
+              business_hours: {
+                start: '',
+                end: ''
+              }
             },
             published_bookings: [],
             bookings: [],
@@ -525,7 +529,12 @@
           showSheetSettings: function(index){
             this.published_booking = this.published_bookings[index]
             Vue.delete(this.published_booking, 'isActiveSettingModel')
+            Vue.delete(this.published_booking, 'business_hours')
             this.published_booking.isActiveSettingModel = true;
+            this.published_booking.business_hours = {
+                start: '',
+                end: ''
+              }
           },
           closeModal: function(){
               $('.modal').modal('hide');

@@ -15,10 +15,10 @@ class CreateBookingUser extends Migration
     {
         Schema::create('booking_user', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('booking_id')->unsigned()->nullable();
-            $table->foreign('booking_id')
+            $table->bigInteger('booking_sheet_id')->unsigned()->nullable();
+            $table->foreign('booking_sheet_id')
                 ->references('id')
-                ->on('courtbooking_bookings')
+                ->on('booking_sheets')
                 ->onDelete('cascade');
             $table->bigInteger('user_id')->unsigned()->nullable();
             $table->foreign('user_id')
