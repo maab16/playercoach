@@ -65,4 +65,4 @@ Route::group([
 	Route::delete('/courtbooking/resource/{id}', 'CourtBooking\ResourceController@destroy');
 });
 
-Route::post('login', 'Usercontroller@login');
+Route::post('login', 'UserController@login');

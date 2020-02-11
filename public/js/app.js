@@ -80396,7 +80396,11 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "form-group text-right" }, [
-      _c("button", { attrs: { type: "submit" } }, [_vm._v("Save")])
+      _c(
+        "button",
+        { staticClass: "btn btn-success", attrs: { type: "submit" } },
+        [_vm._v("Save")]
+      )
     ])
   },
   function() {
