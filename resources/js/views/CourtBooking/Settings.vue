@@ -13,7 +13,7 @@
               data-target="#addEditBookingModal"><i class="fa fa-plus"></i> New Booking Sheet</a>
              <div class="nav-tabs-custom">
                <ul class="nav nav-tabs">
-                  <li class="nav-item active">
+                  <li class="active">
                    <a class="nav-link active" href="#orders" data-toggle="tab" aria-expanded="false">
                      <i class="fa fa-shopping-cart"></i> Published</a>
                  </li>
@@ -28,19 +28,22 @@
                  </li>
                </ul>
                <div class="tab-content">
-                  <div class="tab-pane" id="orders">
-                    <table class="table table-striped table-bordered database-tables" style="width: 100%;">
+                  <div class="tab-pane active" id="orders">
+                    <table 
+                      class="table table-striped table-bordered database-tables" 
+                      style="width: 100%;"
+                      v-if="published_bookings.length > 0">
                          <thead>
                              <tr>
                                  <th>Title</th>
-                                 <th>Settings</th>
+                                 <th>Created At</th>
                                  <th class="action">Action</th>
                              </tr>
                          </thead>
                          <tbody>
                            <tr v-for="(published_booking,index) in published_bookings" :key="index" :data-id="index+1">
                                <td>{{ published_booking.title }}</td>
-                               <td>{{ published_booking.settings }}</td>
+                               <td>{{ published_booking.created_at }}</td>
                                <td class="action">
                                    <a 
                                      href="#" 
@@ -62,13 +65,13 @@
                          </tbody>
                     </table>
                   </div>
-                 <div class="tab-pane active" id="profile">
+                 <div class="tab-pane" id="profile">
                    <div class="table-responsive mt-3">
                      <table class="table table-striped table-bordered database-tables" style="width: 100%;">
                          <thead>
                              <tr>
                                  <th>Title</th>
-                                 <th>Settings</th>
+                                 <th>Created At</th>
                                  <th>Deleted At</th>
                                  <th class="action">Action</th>
                              </tr>
@@ -76,7 +79,7 @@
                          <tbody>
                            <tr v-for="(booking,index) in bookings" :key="index" :data-id="index+1">
                                <td>{{ booking.title }}</td>
-                               <td>{{ booking.settings }}</td>
+                               <td>{{ booking.created_at }}</td>
                                <td>{{ booking.deleted_at }}</td>
                                <td class="action">
                                    <a 
@@ -105,7 +108,7 @@
                      <thead>
                          <tr>
                              <th>Title</th>
-                             <th>Settings</th>
+                             <th>Created At</th>
                              <th>Deleted At</th>
                              <th class="action">Action</th>
                          </tr>
@@ -113,7 +116,7 @@
                      <tbody>
                        <tr v-for="(unpublished_booking,index) in unpublished_bookings" :key="index" :data-id="index+1">
                            <td>{{ unpublished_booking.title }}</td>
-                           <td>{{ unpublished_booking.settings }}</td>
+                           <td>{{ unpublished_booking.created_at }}</td>
                            <td>{{ unpublished_booking.deleted_at }}</td>
                            <td class="action">
                                <a 
@@ -134,11 +137,10 @@
                :action="action"
                :category="category"
                :booking="booking"
-               :published_booking="published_booking"
                :resource_types="resource_types"
                :addBooking="addBooking"
                :updateBooking="updateBooking"
-               :fetchBookings="fetchBookings"
+               @updateSettings="updateBooking"
                :closeModal="closeModal"></booking-sheet-modals>
 
              <div class="crud-btn-area mb-3 mt-3">
@@ -214,22 +216,22 @@
           return {
             bookings: [],
             unpublished_bookings: [],
-            published_booking: {
-              title: '',
-              setting: '',
-              isActiveSettingModel: false,
-              resources: [],
-              business_hours: {
-                start: '',
-                end: ''
-              }
-            },
             published_bookings: [],
             bookings: [],
             booking: {
               title: '',
-              setting: '',
-              isActiveSettingModel: false
+              settings: {
+                business_hours: {
+                  start:'2020-02-12T03:00:00.000Z',
+                  end: '2020-02-12T11:00:00.000Z',
+                  payment: {
+                    charge_per_court: false,
+                    price: null
+                  }
+                },
+              },
+              isActiveSettingModel: false,
+              resources: [],
             },
             resource_types: [],
             resource_type: {
@@ -252,26 +254,23 @@
             axios.get('/api/courtbooking/booking/all').then(res =>{
               console.log(res.data)
               this.bookings = res.data.bookings
-              for(let booking of this.bookings) {
-                booking.settings = JSON.stringify(booking.settings, null, 4);
-              }
+              // for(let booking of this.bookings) {
+              //   booking.settings = JSON.stringify(booking.settings, null, 4);
+              // }
               this.unpublished_bookings = res.data.unpublished_bookings
-              for(let unpublished_booking of this.unpublished_bookings) {
-                unpublished_booking.settings = JSON.stringify(unpublished_booking.settings, null, 4);
-              }
+              // for(let unpublished_booking of this.unpublished_bookings) {
+              //   unpublished_booking.settings = JSON.stringify(unpublished_booking.settings, null, 4);
+              // }
               this.published_bookings = res.data.published_bookings
-              for(let published_booking of this.published_bookings) {
-                published_booking.settings = JSON.stringify(published_booking.settings, null, 4);
-              }
+              // for(let published_booking of this.published_bookings) {
+              //   published_booking.settings = JSON.stringify(published_booking.settings, null, 4);
+              // }
             })
           },
           showCreateForm: function(){
             this.action = "add"
             this.category = "Create Booking Sheet"
-            this.booking = {
-              title: '',
-              settings: '',
-            }
+            this.booking.title = ''
           },
           showEditForm: function(index){
             console.log(index)
@@ -305,6 +304,7 @@
             });
           },
           updateBooking: function(){
+            console.log(this.booking)
             // this.booking.settings = JSON.parse(this.booking.settings)
             console.log(this.booking)
             axios.put(`/api/courtbooking/booking/${this.booking.id}`, this.booking).then(res =>{
@@ -528,13 +528,10 @@
           },
           showSheetSettings: function(index){
             this.published_booking = this.published_bookings[index]
-            Vue.delete(this.published_booking, 'isActiveSettingModel')
-            Vue.delete(this.published_booking, 'business_hours')
-            this.published_booking.isActiveSettingModel = true;
-            this.published_booking.business_hours = {
-                start: '',
-                end: ''
-              }
+            this.booking = this.published_bookings[index]
+            Vue.delete(this.booking, 'isActiveSettingModel')
+            Vue.delete(this.booking, 'business_hours')
+            this.booking.isActiveSettingModel = true;
           },
           closeModal: function(){
               $('.modal').modal('hide');

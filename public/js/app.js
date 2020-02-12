@@ -3492,6 +3492,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
 // Set Default functionality for all vue components
 
 
@@ -3506,21 +3508,21 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     return _ref = {
       bookings: [],
       unpublished_bookings: [],
-      published_booking: {
-        title: '',
-        setting: '',
-        isActiveSettingModel: false,
-        resources: [],
-        business_hours: {
-          start: '',
-          end: ''
-        }
-      },
       published_bookings: []
     }, _defineProperty(_ref, "bookings", []), _defineProperty(_ref, "booking", {
       title: '',
-      setting: '',
-      isActiveSettingModel: false
+      settings: {
+        business_hours: {
+          start: '2020-02-12T03:00:00.000Z',
+          end: '2020-02-12T11:00:00.000Z',
+          payment: {
+            charge_per_court: false,
+            price: null
+          }
+        }
+      },
+      isActiveSettingModel: false,
+      resources: []
     }), _defineProperty(_ref, "resource_types", []), _defineProperty(_ref, "resource_type", {
       title: ''
     }), _defineProperty(_ref, "category", 'Create Booking Sheet'), _defineProperty(_ref, "action", 'add'), _defineProperty(_ref, "errors", []), _ref;
@@ -3538,89 +3540,23 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       axios.get('/api/courtbooking/booking/all').then(function (res) {
         console.log(res.data);
-        _this.bookings = res.data.bookings;
-        var _iteratorNormalCompletion = true;
-        var _didIteratorError = false;
-        var _iteratorError = undefined;
+        _this.bookings = res.data.bookings; // for(let booking of this.bookings) {
+        //   booking.settings = JSON.stringify(booking.settings, null, 4);
+        // }
 
-        try {
-          for (var _iterator = _this.bookings[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var booking = _step.value;
-            booking.settings = JSON.stringify(booking.settings, null, 4);
-          }
-        } catch (err) {
-          _didIteratorError = true;
-          _iteratorError = err;
-        } finally {
-          try {
-            if (!_iteratorNormalCompletion && _iterator["return"] != null) {
-              _iterator["return"]();
-            }
-          } finally {
-            if (_didIteratorError) {
-              throw _iteratorError;
-            }
-          }
-        }
+        _this.unpublished_bookings = res.data.unpublished_bookings; // for(let unpublished_booking of this.unpublished_bookings) {
+        //   unpublished_booking.settings = JSON.stringify(unpublished_booking.settings, null, 4);
+        // }
 
-        _this.unpublished_bookings = res.data.unpublished_bookings;
-        var _iteratorNormalCompletion2 = true;
-        var _didIteratorError2 = false;
-        var _iteratorError2 = undefined;
-
-        try {
-          for (var _iterator2 = _this.unpublished_bookings[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-            var unpublished_booking = _step2.value;
-            unpublished_booking.settings = JSON.stringify(unpublished_booking.settings, null, 4);
-          }
-        } catch (err) {
-          _didIteratorError2 = true;
-          _iteratorError2 = err;
-        } finally {
-          try {
-            if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
-              _iterator2["return"]();
-            }
-          } finally {
-            if (_didIteratorError2) {
-              throw _iteratorError2;
-            }
-          }
-        }
-
-        _this.published_bookings = res.data.published_bookings;
-        var _iteratorNormalCompletion3 = true;
-        var _didIteratorError3 = false;
-        var _iteratorError3 = undefined;
-
-        try {
-          for (var _iterator3 = _this.published_bookings[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-            var published_booking = _step3.value;
-            published_booking.settings = JSON.stringify(published_booking.settings, null, 4);
-          }
-        } catch (err) {
-          _didIteratorError3 = true;
-          _iteratorError3 = err;
-        } finally {
-          try {
-            if (!_iteratorNormalCompletion3 && _iterator3["return"] != null) {
-              _iterator3["return"]();
-            }
-          } finally {
-            if (_didIteratorError3) {
-              throw _iteratorError3;
-            }
-          }
-        }
+        _this.published_bookings = res.data.published_bookings; // for(let published_booking of this.published_bookings) {
+        //   published_booking.settings = JSON.stringify(published_booking.settings, null, 4);
+        // }
       });
     },
     showCreateForm: function showCreateForm() {
       this.action = "add";
       this.category = "Create Booking Sheet";
-      this.booking = {
-        title: '',
-        settings: ''
-      };
+      this.booking.title = '';
     },
     showEditForm: function showEditForm(index) {
       console.log(index);
@@ -3648,28 +3584,28 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         if (res.data.success == false) {
           _this2.errors = [];
-          var _iteratorNormalCompletion4 = true;
-          var _didIteratorError4 = false;
-          var _iteratorError4 = undefined;
+          var _iteratorNormalCompletion = true;
+          var _didIteratorError = false;
+          var _iteratorError = undefined;
 
           try {
-            for (var _iterator4 = res.data.errors[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-              var error = _step4.value;
+            for (var _iterator = res.data.errors[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+              var error = _step.value;
               toastr.error(error);
 
               _this2.errors.push(error);
             }
           } catch (err) {
-            _didIteratorError4 = true;
-            _iteratorError4 = err;
+            _didIteratorError = true;
+            _iteratorError = err;
           } finally {
             try {
-              if (!_iteratorNormalCompletion4 && _iterator4["return"] != null) {
-                _iterator4["return"]();
+              if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+                _iterator["return"]();
               }
             } finally {
-              if (_didIteratorError4) {
-                throw _iteratorError4;
+              if (_didIteratorError) {
+                throw _iteratorError;
               }
             }
           }
@@ -3681,7 +3617,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     updateBooking: function updateBooking() {
       var _this3 = this;
 
-      // this.booking.settings = JSON.parse(this.booking.settings)
+      console.log(this.booking); // this.booking.settings = JSON.parse(this.booking.settings)
+
       console.log(this.booking);
       axios.put("/api/courtbooking/booking/".concat(this.booking.id), this.booking).then(function (res) {
         console.log(res.data);
@@ -3697,28 +3634,28 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         if (res.data.success == false) {
           _this3.errors = [];
-          var _iteratorNormalCompletion5 = true;
-          var _didIteratorError5 = false;
-          var _iteratorError5 = undefined;
+          var _iteratorNormalCompletion2 = true;
+          var _didIteratorError2 = false;
+          var _iteratorError2 = undefined;
 
           try {
-            for (var _iterator5 = res.data.errors[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-              var error = _step5.value;
+            for (var _iterator2 = res.data.errors[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+              var error = _step2.value;
               toastr.error(error);
 
               _this3.errors.push(error);
             }
           } catch (err) {
-            _didIteratorError5 = true;
-            _iteratorError5 = err;
+            _didIteratorError2 = true;
+            _iteratorError2 = err;
           } finally {
             try {
-              if (!_iteratorNormalCompletion5 && _iterator5["return"] != null) {
-                _iterator5["return"]();
+              if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
+                _iterator2["return"]();
               }
             } finally {
-              if (_didIteratorError5) {
-                throw _iteratorError5;
+              if (_didIteratorError2) {
+                throw _iteratorError2;
               }
             }
           }
@@ -3858,28 +3795,28 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         if (res.data.success == false) {
           _this8.errors = [];
-          var _iteratorNormalCompletion6 = true;
-          var _didIteratorError6 = false;
-          var _iteratorError6 = undefined;
+          var _iteratorNormalCompletion3 = true;
+          var _didIteratorError3 = false;
+          var _iteratorError3 = undefined;
 
           try {
-            for (var _iterator6 = res.data.errors[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
-              var error = _step6.value;
+            for (var _iterator3 = res.data.errors[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+              var error = _step3.value;
               toastr.error(error);
 
               _this8.errors.push(error);
             }
           } catch (err) {
-            _didIteratorError6 = true;
-            _iteratorError6 = err;
+            _didIteratorError3 = true;
+            _iteratorError3 = err;
           } finally {
             try {
-              if (!_iteratorNormalCompletion6 && _iterator6["return"] != null) {
-                _iterator6["return"]();
+              if (!_iteratorNormalCompletion3 && _iterator3["return"] != null) {
+                _iterator3["return"]();
               }
             } finally {
-              if (_didIteratorError6) {
-                throw _iteratorError6;
+              if (_didIteratorError3) {
+                throw _iteratorError3;
               }
             }
           }
@@ -3905,28 +3842,28 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         if (res.data.success == false) {
           _this9.errors = [];
-          var _iteratorNormalCompletion7 = true;
-          var _didIteratorError7 = false;
-          var _iteratorError7 = undefined;
+          var _iteratorNormalCompletion4 = true;
+          var _didIteratorError4 = false;
+          var _iteratorError4 = undefined;
 
           try {
-            for (var _iterator7 = res.data.errors[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
-              var error = _step7.value;
+            for (var _iterator4 = res.data.errors[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+              var error = _step4.value;
               toastr.error(error);
 
               _this9.errors.push(error);
             }
           } catch (err) {
-            _didIteratorError7 = true;
-            _iteratorError7 = err;
+            _didIteratorError4 = true;
+            _iteratorError4 = err;
           } finally {
             try {
-              if (!_iteratorNormalCompletion7 && _iterator7["return"] != null) {
-                _iterator7["return"]();
+              if (!_iteratorNormalCompletion4 && _iterator4["return"] != null) {
+                _iterator4["return"]();
               }
             } finally {
-              if (_didIteratorError7) {
-                throw _iteratorError7;
+              if (_didIteratorError4) {
+                throw _iteratorError4;
               }
             }
           }
@@ -3967,13 +3904,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     },
     showSheetSettings: function showSheetSettings(index) {
       this.published_booking = this.published_bookings[index];
-      Vue["delete"](this.published_booking, 'isActiveSettingModel');
-      Vue["delete"](this.published_booking, 'business_hours');
-      this.published_booking.isActiveSettingModel = true;
-      this.published_booking.business_hours = {
-        start: '',
-        end: ''
-      };
+      this.booking = this.published_bookings[index];
+      Vue["delete"](this.booking, 'isActiveSettingModel');
+      Vue["delete"](this.booking, 'business_hours');
+      this.booking.isActiveSettingModel = true;
     },
     closeModal: function closeModal() {
       $('.modal').modal('hide');
@@ -5583,10 +5517,72 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     booking: Object,
-    published_booking: Object,
     resource_types: Array,
     action: String,
     category: String,
@@ -5600,36 +5596,32 @@ __webpack_require__.r(__webpack_exports__);
       resource: {
         title: '',
         resource_type: '',
-        booking_sheet_id: this.published_booking.id,
+        booking_sheet_id: this.booking.id,
         business_hours: ''
       },
       resourceAction: 'add'
     };
   },
   methods: {
-    saveBusinessHours: function saveBusinessHours() {
-      console.log(new Date(this.published_booking.business_hours.start).getHours());
-      var event = new Date(this.published_booking.business_hours.start).getTime();
-    },
     showResourceCreateForm: function showResourceCreateForm() {
-      console.log(this.published_booking);
+      console.log(this.booking);
       this.resourceAction = "add"; // this.category = "Create Resource Type"
 
       this.resource = {
         title: '',
         resource_type: '',
-        booking_sheet_id: this.published_booking.id,
+        booking_sheet_id: this.booking.id,
         business_hours: ''
       };
     },
     viewResourceType: function viewResourceType(index) {
-      this.resource = this.published_booking.resources[index];
+      this.resource = this.booking.resources[index];
     },
     showEditResourceForm: function showEditResourceForm(index) {
       this.resourceAction = "edit"; // this.category = "Edit Resource"
 
-      this.resource = this.published_booking.resources[index];
-      console.log(this.published_booking);
+      this.resource = this.booking.resources[index];
+      console.log(this.booking);
     },
     addResource: function addResource() {
       var _this = this;
@@ -5638,7 +5630,7 @@ __webpack_require__.r(__webpack_exports__);
         console.log(res.data);
 
         if (res.data.success == true) {
-          _this.published_booking.resources = res.data.published_booking.resources; // Flash success message
+          _this.booking.resources = res.data.booking.resources; // Flash success message
 
           toastr.success('Resource Added Successfully.'); // this.$emit('fetchBookings')
 
@@ -5684,7 +5676,7 @@ __webpack_require__.r(__webpack_exports__);
         console.log(res.data);
 
         if (res.data.success == true) {
-          _this2.published_booking.resources = res.data.published_booking.resources; // Flash success message
+          _this2.booking.resources = res.data.booking.resources; // Flash success message
 
           toastr.success('Resource Updated Successfully'); // this.$emit('fetchBookings')
 
@@ -5738,12 +5730,12 @@ __webpack_require__.r(__webpack_exports__);
         if (result.value) {
           // this.$Progress.start()
           axios["delete"]("/api/courtbooking/resource/".concat(resource_id), {
-            params: _this3.published_booking
+            params: _this3.booking
           }).then(function (res) {
             console.log(res.data);
 
             if (res.data.success == true) {
-              _this3.published_booking.resources = res.data.published_booking.resources;
+              _this3.booking.resources = res.data.booking.resources;
               toastr.success("Resource Deleted Successfully");
               self.fetchBookings(); // this.$Progress.finish()
             }
@@ -5757,9 +5749,9 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     closeSettingModal: function closeSettingModal() {
-      console.log(this.published_booking);
-      Vue["delete"](this.published_booking, 'isActiveSettingModel');
-      this.published_booking.isActiveSettingModel = false;
+      console.log(this.booking);
+      Vue["delete"](this.booking, 'isActiveSettingModel');
+      this.booking.isActiveSettingModel = false;
     }
   }
 });
@@ -11277,7 +11269,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.loading {\n    position: absolute;\n    top: 0px;\n    left: 0px;\n    z-index: 99999;\n    width: 100%;\n    height: 100vh;\n    background-color: rgba(255,255,255);\n    color: red;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    color: #ffffff;\n    transition: 0.5s;\n}\n.fade-enter {\n    transform: translateY(10px);\n    opacity: 0;\n}\n.fade-enter-to {\n    transform: translateX(0px);\n}\n.fade-enter-active {\n    transition: all 0.3s cubic-bezier(1.0, 0.5, 0.8, 1.0);\n}\n.fade-leave-active, .fade-leave-to {\n    opacity: 0;\n}\n", ""]);
+exports.push([module.i, "\n.loading {\n    position: absolute;\n    top: 0px;\n    left: 0px;\n    z-index: 99999;\n    width: 100%;\n    height: 100vh;\n    background-color: rgba(255,255,255);\n    color: red;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    color: #ffffff;\n    transition: 0.5s;\n}\n.fade-enter {\n    transform: translateY(10px);\n    opacity: 0;\n}\n.fade-enter-to {\n    transform: translateX(0px);\n}\n.fade-enter-active {\n    transition: all 0.3s cubic-bezier(1.0, 0.5, 0.8, 1.0);\n}\n.fade-leave-active, .fade-leave-to {\n    opacity: 0;\n}\n.onoffswitch {\n  position: relative;\n  width: 90px;\n  -webkit-user-select:none; \n  -moz-user-select:none;\n  -ms-user-select: none;\n}\n.onoffswitch-checkbox {\n  display: none;\n}\n.onoffswitch-label {\n  display: block;\n  overflow: hidden;\n  cursor: pointer;\n  border-radius: 8px;\n  margin-top: 9px;\n}\n.onoffswitch-inner {\n  display: block; \n  width: 200%; \n  margin-left: -100%;\n  transition: margin 0.3s ease-in 0s;\n}\n.onoffswitch-inner:before,\n.onoffswitch-inner:after {\n  display: block; \n  float: left; \n  width: 50%;\n  height: 35px;\n  padding: 0;\n  line-height: 35px;\n  font-size: 14px;\n  color: white;\n  font-family: Trebuchet, Arial, sans-serif; \n  font-weight: bold;\n  box-sizing: border-box;\n}\n.onoffswitch-inner:before {\n  content: \"YES\";\n  padding-left: 10px;\n  background-color: #34A7C1; \n  color: #FFFFFF;\n}\n.onoffswitch-inner:after {\n  content: \"NO\";\n  padding-right: 10px;\n  background-color: #EEEEEE; \n  color: #999999;\n  text-align: right;\n}\n.onoffswitch-switch {\n  display: block;\n  width: 20px;\n  margin: 7px;\n  background: #FFFFFF;\n  position: absolute;\n  top: 0;\n  bottom: 0;\n  right: 56px;\n  border: 1px solid #999999;\n  border-radius: 20px;\n  transition: all 0.3s ease-in 0s;\n  height: 20px;\n}\n.onoffswitch-checkbox:checked + \n.onoffswitch-label .onoffswitch-inner {\n  margin-left: 0;\n}\n.onoffswitch-checkbox:checked + \n.onoffswitch-label .onoffswitch-switch {\n  right: 0px;\n}\n", ""]);
 
 // exports
 
@@ -77555,7 +77547,7 @@ var render = function() {
             _vm._v(" "),
             _c("div", { staticClass: "nav-tabs-custom" }, [
               _c("ul", { staticClass: "nav nav-tabs" }, [
-                _c("li", { staticClass: "nav-item active" }, [
+                _c("li", { staticClass: "active" }, [
                   _c(
                     "a",
                     {
@@ -77610,113 +77602,125 @@ var render = function() {
               _c("div", { staticClass: "tab-content" }, [
                 _c(
                   "div",
-                  { staticClass: "tab-pane", attrs: { id: "orders" } },
+                  { staticClass: "tab-pane active", attrs: { id: "orders" } },
                   [
-                    _c(
-                      "table",
-                      {
-                        staticClass:
-                          "table table-striped table-bordered database-tables",
-                        staticStyle: { width: "100%" }
-                      },
-                      [
-                        _c("thead", [
-                          _c("tr", [
-                            _c("th", [_vm._v("Title")]),
-                            _vm._v(" "),
-                            _c("th", [_vm._v("Settings")]),
-                            _vm._v(" "),
-                            _c("th", { staticClass: "action" }, [
-                              _vm._v("Action")
-                            ])
-                          ])
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "tbody",
-                          _vm._l(_vm.published_bookings, function(
-                            published_booking,
-                            index
-                          ) {
-                            return _c(
-                              "tr",
-                              { key: index, attrs: { "data-id": index + 1 } },
-                              [
-                                _c("td", [
-                                  _vm._v(_vm._s(published_booking.title))
-                                ]),
+                    _vm.published_bookings.length > 0
+                      ? _c(
+                          "table",
+                          {
+                            staticClass:
+                              "table table-striped table-bordered database-tables",
+                            staticStyle: { width: "100%" }
+                          },
+                          [
+                            _c("thead", [
+                              _c("tr", [
+                                _c("th", [_vm._v("Title")]),
                                 _vm._v(" "),
-                                _c("td", [
-                                  _vm._v(_vm._s(published_booking.settings))
-                                ]),
+                                _c("th", [_vm._v("Created At")]),
                                 _vm._v(" "),
-                                _c("td", { staticClass: "action" }, [
-                                  _c(
-                                    "a",
-                                    {
-                                      staticClass: "btn btn-info",
-                                      attrs: { href: "#" },
-                                      on: {
-                                        click: function($event) {
-                                          $event.preventDefault()
-                                          return _vm.showSheetSettings(index)
-                                        }
-                                      }
-                                    },
-                                    [
-                                      _c("i", { staticClass: "fa fa-cogs" }),
-                                      _vm._v(" Settings")
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "a",
-                                    {
-                                      staticClass: "btn btn-success",
-                                      attrs: {
-                                        href: "#",
-                                        "data-toggle": "modal",
-                                        "data-target": "#addEditBookingModal"
-                                      },
-                                      on: {
-                                        click: function($event) {
-                                          $event.preventDefault()
-                                          return _vm.showEditForm(index)
-                                        }
-                                      }
-                                    },
-                                    [_vm._v("Edit")]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "a",
-                                    {
-                                      staticClass: "btn btn-danger",
-                                      on: {
-                                        click: function($event) {
-                                          $event.preventDefault()
-                                          return _vm.remove(
-                                            published_booking.id
-                                          )
-                                        }
-                                      }
-                                    },
-                                    [_vm._v("Delete")]
-                                  )
+                                _c("th", { staticClass: "action" }, [
+                                  _vm._v("Action")
                                 ])
-                              ]
+                              ])
+                            ]),
+                            _vm._v(" "),
+                            _c(
+                              "tbody",
+                              _vm._l(_vm.published_bookings, function(
+                                published_booking,
+                                index
+                              ) {
+                                return _c(
+                                  "tr",
+                                  {
+                                    key: index,
+                                    attrs: { "data-id": index + 1 }
+                                  },
+                                  [
+                                    _c("td", [
+                                      _vm._v(_vm._s(published_booking.title))
+                                    ]),
+                                    _vm._v(" "),
+                                    _c("td", [
+                                      _vm._v(
+                                        _vm._s(published_booking.created_at)
+                                      )
+                                    ]),
+                                    _vm._v(" "),
+                                    _c("td", { staticClass: "action" }, [
+                                      _c(
+                                        "a",
+                                        {
+                                          staticClass: "btn btn-info",
+                                          attrs: { href: "#" },
+                                          on: {
+                                            click: function($event) {
+                                              $event.preventDefault()
+                                              return _vm.showSheetSettings(
+                                                index
+                                              )
+                                            }
+                                          }
+                                        },
+                                        [
+                                          _c("i", {
+                                            staticClass: "fa fa-cogs"
+                                          }),
+                                          _vm._v(" Settings")
+                                        ]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "a",
+                                        {
+                                          staticClass: "btn btn-success",
+                                          attrs: {
+                                            href: "#",
+                                            "data-toggle": "modal",
+                                            "data-target":
+                                              "#addEditBookingModal"
+                                          },
+                                          on: {
+                                            click: function($event) {
+                                              $event.preventDefault()
+                                              return _vm.showEditForm(index)
+                                            }
+                                          }
+                                        },
+                                        [_vm._v("Edit")]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "a",
+                                        {
+                                          staticClass: "btn btn-danger",
+                                          on: {
+                                            click: function($event) {
+                                              $event.preventDefault()
+                                              return _vm.remove(
+                                                published_booking.id
+                                              )
+                                            }
+                                          }
+                                        },
+                                        [_vm._v("Delete")]
+                                      )
+                                    ])
+                                  ]
+                                )
+                              }),
+                              0
                             )
-                          }),
-                          0
+                          ]
                         )
-                      ]
-                    )
+                      : _vm._e()
                   ]
                 ),
                 _vm._v(" "),
                 _c(
                   "div",
-                  { staticClass: "tab-pane active", attrs: { id: "profile" } },
+                  { staticClass: "tab-pane", attrs: { id: "profile" } },
                   [
                     _c("div", { staticClass: "table-responsive mt-3" }, [
                       _c(
@@ -77731,7 +77735,7 @@ var render = function() {
                             _c("tr", [
                               _c("th", [_vm._v("Title")]),
                               _vm._v(" "),
-                              _c("th", [_vm._v("Settings")]),
+                              _c("th", [_vm._v("Created At")]),
                               _vm._v(" "),
                               _c("th", [_vm._v("Deleted At")]),
                               _vm._v(" "),
@@ -77750,7 +77754,9 @@ var render = function() {
                                 [
                                   _c("td", [_vm._v(_vm._s(booking.title))]),
                                   _vm._v(" "),
-                                  _c("td", [_vm._v(_vm._s(booking.settings))]),
+                                  _c("td", [
+                                    _vm._v(_vm._s(booking.created_at))
+                                  ]),
                                   _vm._v(" "),
                                   _c("td", [
                                     _vm._v(_vm._s(booking.deleted_at))
@@ -77835,7 +77841,7 @@ var render = function() {
                           _c("tr", [
                             _c("th", [_vm._v("Title")]),
                             _vm._v(" "),
-                            _c("th", [_vm._v("Settings")]),
+                            _c("th", [_vm._v("Created At")]),
                             _vm._v(" "),
                             _c("th", [_vm._v("Deleted At")]),
                             _vm._v(" "),
@@ -77860,7 +77866,7 @@ var render = function() {
                                 ]),
                                 _vm._v(" "),
                                 _c("td", [
-                                  _vm._v(_vm._s(unpublished_booking.settings))
+                                  _vm._v(_vm._s(unpublished_booking.created_at))
                                 ]),
                                 _vm._v(" "),
                                 _c("td", [
@@ -77917,13 +77923,12 @@ var render = function() {
                 action: _vm.action,
                 category: _vm.category,
                 booking: _vm.booking,
-                published_booking: _vm.published_booking,
                 resource_types: _vm.resource_types,
                 addBooking: _vm.addBooking,
                 updateBooking: _vm.updateBooking,
-                fetchBookings: _vm.fetchBookings,
                 closeModal: _vm.closeModal
-              }
+              },
+              on: { updateSettings: _vm.updateBooking }
             }),
             _vm._v(" "),
             _c("div", { staticClass: "crud-btn-area mb-3 mt-3" }, [
@@ -79855,38 +79860,6 @@ var render = function() {
                       ]),
                       _vm._v(" "),
                       _c("div", { staticClass: "form-group" }, [
-                        _c("label", { attrs: { for: "title" } }, [
-                          _vm._v("Settings (PUT valid JSON)")
-                        ]),
-                        _vm._v(" "),
-                        _c("textarea", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.booking.settings,
-                              expression: "booking.settings"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: { placeholder: "Booking Settings", rows: "5" },
-                          domProps: { value: _vm.booking.settings },
-                          on: {
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.$set(
-                                _vm.booking,
-                                "settings",
-                                $event.target.value
-                              )
-                            }
-                          }
-                        })
-                      ]),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "form-group" }, [
                         _c(
                           "button",
                           {
@@ -80047,7 +80020,7 @@ var render = function() {
         "div",
         {
           staticClass: "settingModal",
-          class: { activeSetting: _vm.published_booking.isActiveSettingModel },
+          class: { activeSetting: _vm.booking.isActiveSettingModel },
           attrs: { id: "settingBookingSheetModal" }
         },
         [
@@ -80108,7 +80081,7 @@ var render = function() {
                     )
                   ]),
                   _vm._v(" "),
-                  _vm.published_booking.resources.length > 0
+                  _vm.booking.resources.length > 0
                     ? _c("div", { staticClass: "table-responsive mt-3" }, [
                         _c(
                           "table",
@@ -80122,7 +80095,7 @@ var render = function() {
                             _vm._v(" "),
                             _c(
                               "tbody",
-                              _vm._l(_vm.published_booking.resources, function(
+                              _vm._l(_vm.booking.resources, function(
                                 resource,
                                 index
                               ) {
@@ -80211,7 +80184,7 @@ var render = function() {
                       ])
                     : _vm._e(),
                   _vm._v(" "),
-                  _vm.published_booking.resources.length <= 0
+                  _vm.booking.resources.length <= 0
                     ? _c("div", [
                         _c("p", { staticClass: "alert alert-danger" }, [
                           _vm._v("There is no Resource")
@@ -80227,7 +80200,7 @@ var render = function() {
                       on: {
                         submit: function($event) {
                           $event.preventDefault()
-                          return _vm.saveBusinessHours($event)
+                          return _vm.updateBooking($event)
                         }
                       }
                     },
@@ -80248,16 +80221,16 @@ var render = function() {
                               },
                               model: {
                                 value:
-                                  _vm.published_booking.business_hours.start,
+                                  _vm.booking.settings.business_hours.start,
                                 callback: function($$v) {
                                   _vm.$set(
-                                    _vm.published_booking.business_hours,
+                                    _vm.booking.settings.business_hours,
                                     "start",
                                     $$v
                                   )
                                 },
                                 expression:
-                                  "published_booking.business_hours.start"
+                                  "booking.settings.business_hours.start"
                               }
                             })
                           ],
@@ -80278,16 +80251,16 @@ var render = function() {
                                 "input-class": "form-control"
                               },
                               model: {
-                                value: _vm.published_booking.business_hours.end,
+                                value: _vm.booking.settings.business_hours.end,
                                 callback: function($$v) {
                                   _vm.$set(
-                                    _vm.published_booking.business_hours,
+                                    _vm.booking.settings.business_hours,
                                     "end",
                                     $$v
                                   )
                                 },
                                 expression:
-                                  "published_booking.business_hours.end"
+                                  "booking.settings.business_hours.end"
                               }
                             })
                           ],
@@ -80295,7 +80268,391 @@ var render = function() {
                         )
                       ]),
                       _vm._v(" "),
-                      _vm._m(5)
+                      _c("div", { staticClass: "form-group row" }, [
+                        _c("div", { staticClass: "col-md-6" }, [
+                          _c("p", [
+                            _vm._v("Do you want to designate prime times? ")
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "onoffswitch" }, [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value:
+                                    _vm.booking.settings.business_hours
+                                      .prime_time,
+                                  expression:
+                                    "booking.settings.business_hours.prime_time"
+                                }
+                              ],
+                              staticClass: "onoffswitch-checkbox",
+                              attrs: { type: "checkbox", id: "prime_time" },
+                              domProps: {
+                                checked: Array.isArray(
+                                  _vm.booking.settings.business_hours.prime_time
+                                )
+                                  ? _vm._i(
+                                      _vm.booking.settings.business_hours
+                                        .prime_time,
+                                      null
+                                    ) > -1
+                                  : _vm.booking.settings.business_hours
+                                      .prime_time
+                              },
+                              on: {
+                                change: function($event) {
+                                  var $$a =
+                                      _vm.booking.settings.business_hours
+                                        .prime_time,
+                                    $$el = $event.target,
+                                    $$c = $$el.checked ? true : false
+                                  if (Array.isArray($$a)) {
+                                    var $$v = null,
+                                      $$i = _vm._i($$a, $$v)
+                                    if ($$el.checked) {
+                                      $$i < 0 &&
+                                        _vm.$set(
+                                          _vm.booking.settings.business_hours,
+                                          "prime_time",
+                                          $$a.concat([$$v])
+                                        )
+                                    } else {
+                                      $$i > -1 &&
+                                        _vm.$set(
+                                          _vm.booking.settings.business_hours,
+                                          "prime_time",
+                                          $$a
+                                            .slice(0, $$i)
+                                            .concat($$a.slice($$i + 1))
+                                        )
+                                    }
+                                  } else {
+                                    _vm.$set(
+                                      _vm.booking.settings.business_hours,
+                                      "prime_time",
+                                      $$c
+                                    )
+                                  }
+                                }
+                              }
+                            }),
+                            _vm._v(" "),
+                            _vm._m(5)
+                          ])
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "col-md-6" }, [
+                          _c("p", [_vm._v(" Allow non-members to book?")]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "onoffswitch" }, [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value:
+                                    _vm.booking.settings.business_hours
+                                      .allow_non_member,
+                                  expression:
+                                    "booking.settings.business_hours.allow_non_member"
+                                }
+                              ],
+                              staticClass: "onoffswitch-checkbox",
+                              attrs: {
+                                type: "checkbox",
+                                id: "allow_non_member"
+                              },
+                              domProps: {
+                                checked: Array.isArray(
+                                  _vm.booking.settings.business_hours
+                                    .allow_non_member
+                                )
+                                  ? _vm._i(
+                                      _vm.booking.settings.business_hours
+                                        .allow_non_member,
+                                      null
+                                    ) > -1
+                                  : _vm.booking.settings.business_hours
+                                      .allow_non_member
+                              },
+                              on: {
+                                change: function($event) {
+                                  var $$a =
+                                      _vm.booking.settings.business_hours
+                                        .allow_non_member,
+                                    $$el = $event.target,
+                                    $$c = $$el.checked ? true : false
+                                  if (Array.isArray($$a)) {
+                                    var $$v = null,
+                                      $$i = _vm._i($$a, $$v)
+                                    if ($$el.checked) {
+                                      $$i < 0 &&
+                                        _vm.$set(
+                                          _vm.booking.settings.business_hours,
+                                          "allow_non_member",
+                                          $$a.concat([$$v])
+                                        )
+                                    } else {
+                                      $$i > -1 &&
+                                        _vm.$set(
+                                          _vm.booking.settings.business_hours,
+                                          "allow_non_member",
+                                          $$a
+                                            .slice(0, $$i)
+                                            .concat($$a.slice($$i + 1))
+                                        )
+                                    }
+                                  } else {
+                                    _vm.$set(
+                                      _vm.booking.settings.business_hours,
+                                      "allow_non_member",
+                                      $$c
+                                    )
+                                  }
+                                }
+                              }
+                            }),
+                            _vm._v(" "),
+                            _vm._m(6)
+                          ])
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "div",
+                          {
+                            staticClass:
+                              "form-group col-md-6 align-items-center"
+                          },
+                          [
+                            _c("p", { staticClass: "p-0 m-0 mr-5" }, [
+                              _vm._v("Enable payment for court")
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "onoffswitch" }, [
+                              _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value:
+                                      _vm.booking.settings.business_hours
+                                        .enable_payment,
+                                    expression:
+                                      "booking.settings.business_hours.enable_payment"
+                                  }
+                                ],
+                                staticClass: "onoffswitch-checkbox",
+                                attrs: {
+                                  type: "checkbox",
+                                  id: "enable_payment"
+                                },
+                                domProps: {
+                                  checked: Array.isArray(
+                                    _vm.booking.settings.business_hours
+                                      .enable_payment
+                                  )
+                                    ? _vm._i(
+                                        _vm.booking.settings.business_hours
+                                          .enable_payment,
+                                        null
+                                      ) > -1
+                                    : _vm.booking.settings.business_hours
+                                        .enable_payment
+                                },
+                                on: {
+                                  change: function($event) {
+                                    var $$a =
+                                        _vm.booking.settings.business_hours
+                                          .enable_payment,
+                                      $$el = $event.target,
+                                      $$c = $$el.checked ? true : false
+                                    if (Array.isArray($$a)) {
+                                      var $$v = null,
+                                        $$i = _vm._i($$a, $$v)
+                                      if ($$el.checked) {
+                                        $$i < 0 &&
+                                          _vm.$set(
+                                            _vm.booking.settings.business_hours,
+                                            "enable_payment",
+                                            $$a.concat([$$v])
+                                          )
+                                      } else {
+                                        $$i > -1 &&
+                                          _vm.$set(
+                                            _vm.booking.settings.business_hours,
+                                            "enable_payment",
+                                            $$a
+                                              .slice(0, $$i)
+                                              .concat($$a.slice($$i + 1))
+                                          )
+                                      }
+                                    } else {
+                                      _vm.$set(
+                                        _vm.booking.settings.business_hours,
+                                        "enable_payment",
+                                        $$c
+                                      )
+                                    }
+                                  }
+                                }
+                              }),
+                              _vm._v(" "),
+                              _vm._m(7)
+                            ])
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _vm.booking.settings.business_hours.enable_payment
+                          ? _c(
+                              "div",
+                              { staticClass: "payment_options col-md-6" },
+                              [
+                                _c("div", { staticClass: "form-group" }, [
+                                  _c("p", { staticClass: "p-0 mr-5" }, [
+                                    _vm._v(
+                                      "Does your club charge a price per court?"
+                                    )
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("div", { staticClass: "onoffswitch" }, [
+                                    _c("input", {
+                                      directives: [
+                                        {
+                                          name: "model",
+                                          rawName: "v-model",
+                                          value:
+                                            _vm.booking.settings.business_hours
+                                              .payment.charge_per_court,
+                                          expression:
+                                            "booking.settings.business_hours.payment.charge_per_court"
+                                        }
+                                      ],
+                                      staticClass: "onoffswitch-checkbox",
+                                      attrs: {
+                                        type: "checkbox",
+                                        id: "charge_per_court"
+                                      },
+                                      domProps: {
+                                        checked: Array.isArray(
+                                          _vm.booking.settings.business_hours
+                                            .payment.charge_per_court
+                                        )
+                                          ? _vm._i(
+                                              _vm.booking.settings
+                                                .business_hours.payment
+                                                .charge_per_court,
+                                              null
+                                            ) > -1
+                                          : _vm.booking.settings.business_hours
+                                              .payment.charge_per_court
+                                      },
+                                      on: {
+                                        change: function($event) {
+                                          var $$a =
+                                              _vm.booking.settings
+                                                .business_hours.payment
+                                                .charge_per_court,
+                                            $$el = $event.target,
+                                            $$c = $$el.checked ? true : false
+                                          if (Array.isArray($$a)) {
+                                            var $$v = null,
+                                              $$i = _vm._i($$a, $$v)
+                                            if ($$el.checked) {
+                                              $$i < 0 &&
+                                                _vm.$set(
+                                                  _vm.booking.settings
+                                                    .business_hours.payment,
+                                                  "charge_per_court",
+                                                  $$a.concat([$$v])
+                                                )
+                                            } else {
+                                              $$i > -1 &&
+                                                _vm.$set(
+                                                  _vm.booking.settings
+                                                    .business_hours.payment,
+                                                  "charge_per_court",
+                                                  $$a
+                                                    .slice(0, $$i)
+                                                    .concat($$a.slice($$i + 1))
+                                                )
+                                            }
+                                          } else {
+                                            _vm.$set(
+                                              _vm.booking.settings
+                                                .business_hours.payment,
+                                              "charge_per_court",
+                                              $$c
+                                            )
+                                          }
+                                        }
+                                      }
+                                    }),
+                                    _vm._v(" "),
+                                    _vm._m(8)
+                                  ])
+                                ]),
+                                _vm._v(" "),
+                                _vm.booking.settings.business_hours.payment
+                                  .charge_per_court &&
+                                !_vm.booking.settings.business_hours.prime_time
+                                  ? _c("div", { staticClass: "form-group" }, [
+                                      _c("label", { attrs: { for: "" } }, [
+                                        _vm._v("Enter Court price")
+                                      ]),
+                                      _vm._v(" "),
+                                      _c("input", {
+                                        directives: [
+                                          {
+                                            name: "model",
+                                            rawName: "v-model",
+                                            value:
+                                              _vm.booking.settings
+                                                .business_hours.payment.price,
+                                            expression:
+                                              "booking.settings.business_hours.payment.price"
+                                          }
+                                        ],
+                                        staticClass: "form-control",
+                                        attrs: { type: "number" },
+                                        domProps: {
+                                          value:
+                                            _vm.booking.settings.business_hours
+                                              .payment.price
+                                        },
+                                        on: {
+                                          input: function($event) {
+                                            if ($event.target.composing) {
+                                              return
+                                            }
+                                            _vm.$set(
+                                              _vm.booking.settings
+                                                .business_hours.payment,
+                                              "price",
+                                              $event.target.value
+                                            )
+                                          }
+                                        }
+                                      })
+                                    ])
+                                  : _vm._e(),
+                                _vm._v(" "),
+                                _vm.booking.settings.business_hours.payment
+                                  .charge_per_court &&
+                                _vm.booking.settings.business_hours.prime_time
+                                  ? _c("div", { staticClass: "form-group" }, [
+                                      _c("label", { attrs: { for: "" } }, [
+                                        _vm._v("Price Subscription plans")
+                                      ])
+                                    ])
+                                  : _vm._e()
+                              ]
+                            )
+                          : _vm._e()
+                      ]),
+                      _vm._v(" "),
+                      _vm._m(9)
                     ]
                   ),
                   _vm._v(" "),
@@ -80305,7 +80662,7 @@ var render = function() {
                     )
                   ]),
                   _vm._v(" "),
-                  _vm._m(6)
+                  _vm._m(10)
                 ])
               ])
             ]
@@ -80395,11 +80752,73 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
+    return _c(
+      "label",
+      { staticClass: "onoffswitch-label", attrs: { for: "prime_time" } },
+      [
+        _c("span", { staticClass: "onoffswitch-inner" }),
+        _vm._v(" "),
+        _c("span", { staticClass: "onoffswitch-switch" })
+      ]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "label",
+      { staticClass: "onoffswitch-label", attrs: { for: "allow_non_member" } },
+      [
+        _c("span", { staticClass: "onoffswitch-inner" }),
+        _vm._v(" "),
+        _c("span", { staticClass: "onoffswitch-switch" })
+      ]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "label",
+      {
+        staticClass: "onoffswitch-label m-0",
+        attrs: { for: "enable_payment" }
+      },
+      [
+        _c("span", { staticClass: "onoffswitch-inner" }),
+        _vm._v(" "),
+        _c("span", { staticClass: "onoffswitch-switch" })
+      ]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "label",
+      {
+        staticClass: "onoffswitch-label m-0",
+        attrs: { for: "charge_per_court" }
+      },
+      [
+        _c("span", { staticClass: "onoffswitch-inner" }),
+        _vm._v(" "),
+        _c("span", { staticClass: "onoffswitch-switch" })
+      ]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
     return _c("div", { staticClass: "form-group text-right" }, [
       _c(
         "button",
         { staticClass: "btn btn-success", attrs: { type: "submit" } },
-        [_vm._v("Save")]
+        [_vm._v("Update")]
       )
     ])
   },

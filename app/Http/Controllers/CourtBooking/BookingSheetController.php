@@ -47,7 +47,7 @@ class BookingSheetController extends Controller
         $booking = new BookingSheet;
         $booking->user_id = Auth::user()->id;
         $booking->title = $request->title;
-        $booking->settings = json_decode($request->settings, true);
+        $booking->settings = $request->settings;
         if($booking->save()) {
             return response()->json(["success" => true, 'booking' => $booking]);
         }
@@ -64,9 +64,10 @@ class BookingSheetController extends Controller
      */
     public function update(Request $request, $id)
     {
+        // return response()->json(["success" => true, 'booking' => $request->settings]);
         $booking = BookingSheet::find($id);
         $booking->title = $request->title;
-        $booking->settings = json_decode($request->settings, true);
+        $booking->settings = $request->settings;
         if($booking->update()) {
             return response()->json(["success" => true, 'booking' => $booking]);
         }

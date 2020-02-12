@@ -42,7 +42,7 @@ class ResourceController extends Controller
         $resource->business_hours = $request->business_hours;
         if($resource->save()) {
             $published_booking = BookingSheet::with('resources')->where('id', $request->booking_sheet_id)->first();
-            return response()->json(["success" => true, 'published_booking' => $published_booking]);
+            return response()->json(["success" => true, 'booking' => $published_booking]);
         }
 
         return response()->json(["success" => true, 'errors' => ["There has an error with create Resource"]]);
@@ -64,7 +64,7 @@ class ResourceController extends Controller
         $resource->business_hours = $request->business_hours;
         if($resource->update()) {
             $published_booking = BookingSheet::with('resources')->where('id', $request->booking_sheet_id)->first();
-            return response()->json(["success" => true, 'published_booking' => $published_booking]);
+            return response()->json(["success" => true, 'booking' => $published_booking]);
         }
 
         return response()->json(["success" => true, 'errors' => ["There has an error with create Resource"]]);
@@ -81,7 +81,7 @@ class ResourceController extends Controller
         if($resource = Resource::find($id)) {
             $resource->delete();
            $published_booking = BookingSheet::with('resources')->where('id', $request->id)->first();
-            return response()->json(["success" => true, 'published_booking' => $published_booking]);
+            return response()->json(["success" => true, 'booking' => $published_booking]);
         }
         
         return response()->json(["success" => false, 'errors' => ["Resource not found"]]);
