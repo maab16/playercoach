@@ -3520,6 +3520,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             price: null
           },
           allow_per_period: false
+        },
+        special_times: false,
+        days_of_weeks: {
+          sunday: [],
+          monday: [],
+          tuesday: [],
+          wednessday: [],
+          thursday: [],
+          friday: [],
+          saturday: []
         }
       },
       isActiveSettingModel: false,
@@ -3571,6 +3581,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     addBooking: function addBooking() {
       var _this2 = this;
 
+      console.log(this.booking);
       axios.post('/api/courtbooking/booking', this.booking).then(function (res) {
         console.log(res.data);
 
@@ -5343,58 +5354,14 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
 //
 //
 //
@@ -6146,6 +6113,27 @@ __webpack_require__.r(__webpack_exports__);
           Swal.fire('Cancelled', 'Your imaginary file is safe :)', 'error');
         }
       });
+    },
+    addSession: function addSession(week_of_day) {
+      var sessions = _toConsumableArray(this.booking.settings.days_of_weeks[week_of_day]); // Vue.delete(this.booking.settings.days_of_weeks, week_of_day);
+
+
+      sessions.push({
+        start: '',
+        end: ''
+      });
+      this.booking.settings.days_of_weeks[week_of_day] = sessions;
+      console.log(this.booking.settings);
+    },
+    removeSession: function removeSession(index, week_of_day) {
+      console.log(index);
+      console.log(week_of_day);
+
+      var sessions = _toConsumableArray(this.booking.settings.days_of_weeks[week_of_day]);
+
+      sessions.splice(index, 1); // Vue.delete(this.booking.settings.days_of_weeks, week_of_day);
+
+      this.booking.settings.days_of_weeks[week_of_day] = sessions;
     },
     closeSettingModal: function closeSettingModal() {
       console.log(this.booking);
@@ -80917,9 +80905,297 @@ var render = function() {
                         ]
                       ),
                       _vm._v(" "),
-                      _vm._m(10),
+                      _c(
+                        "div",
+                        {
+                          staticClass:
+                            "crud-btn-area mb-3 d-flex align-items-center"
+                        },
+                        [
+                          _vm._m(10),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            { staticClass: "onoffswitch inline-group mr-3" },
+                            [
+                              _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.booking.settings.special_times,
+                                    expression: "booking.settings.special_times"
+                                  }
+                                ],
+                                staticClass: "onoffswitch-checkbox",
+                                attrs: {
+                                  type: "checkbox",
+                                  id: "special_times"
+                                },
+                                domProps: {
+                                  checked: Array.isArray(
+                                    _vm.booking.settings.special_times
+                                  )
+                                    ? _vm._i(
+                                        _vm.booking.settings.special_times,
+                                        null
+                                      ) > -1
+                                    : _vm.booking.settings.special_times
+                                },
+                                on: {
+                                  change: function($event) {
+                                    var $$a =
+                                        _vm.booking.settings.special_times,
+                                      $$el = $event.target,
+                                      $$c = $$el.checked ? true : false
+                                    if (Array.isArray($$a)) {
+                                      var $$v = null,
+                                        $$i = _vm._i($$a, $$v)
+                                      if ($$el.checked) {
+                                        $$i < 0 &&
+                                          _vm.$set(
+                                            _vm.booking.settings,
+                                            "special_times",
+                                            $$a.concat([$$v])
+                                          )
+                                      } else {
+                                        $$i > -1 &&
+                                          _vm.$set(
+                                            _vm.booking.settings,
+                                            "special_times",
+                                            $$a
+                                              .slice(0, $$i)
+                                              .concat($$a.slice($$i + 1))
+                                          )
+                                      }
+                                    } else {
+                                      _vm.$set(
+                                        _vm.booking.settings,
+                                        "special_times",
+                                        $$c
+                                      )
+                                    }
+                                  }
+                                }
+                              }),
+                              _vm._v(" "),
+                              _vm._m(11)
+                            ]
+                          )
+                        ]
+                      ),
                       _vm._v(" "),
-                      _vm._m(11),
+                      _c(
+                        "div",
+                        {
+                          staticClass: "collapse",
+                          class: { show: _vm.booking.settings.special_times },
+                          attrs: { id: "specialTimesCollaps" }
+                        },
+                        [
+                          _c(
+                            "div",
+                            { staticClass: "card card-body" },
+                            _vm._l(_vm.booking.settings.days_of_weeks, function(
+                              value,
+                              days_of_week
+                            ) {
+                              return _c("div", { key: days_of_week }, [
+                                _c(
+                                  "a",
+                                  {
+                                    staticClass:
+                                      "btn btn-block btn-success day_collaps text-left",
+                                    attrs: {
+                                      "data-toggle": "collapse",
+                                      href: "#" + days_of_week + "Collaps",
+                                      role: "button",
+                                      "aria-expanded": "false",
+                                      "aria-controls": days_of_week + "Collaps"
+                                    }
+                                  },
+                                  [_vm._v(_vm._s(days_of_week))]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  {
+                                    staticClass: "collapse",
+                                    attrs: { id: days_of_week + "Collaps" }
+                                  },
+                                  [
+                                    _c(
+                                      "div",
+                                      { staticClass: "card card-body" },
+                                      [
+                                        _vm._l(
+                                          _vm.booking.settings.days_of_weeks[
+                                            days_of_week
+                                          ],
+                                          function(day, index) {
+                                            return _c(
+                                              "div",
+                                              {
+                                                key: index,
+                                                staticClass: "form-group row"
+                                              },
+                                              [
+                                                _c(
+                                                  "div",
+                                                  { staticClass: "col-md-5" },
+                                                  [
+                                                    _c(
+                                                      "label",
+                                                      {
+                                                        staticClass: "cs-label",
+                                                        attrs: { for: "start" }
+                                                      },
+                                                      [_vm._v("Start")]
+                                                    ),
+                                                    _vm._v(" "),
+                                                    _c("datetime", {
+                                                      attrs: {
+                                                        "min-datetime":
+                                                          _vm.booking.settings
+                                                            .business_hours
+                                                            .start,
+                                                        "max-datetime":
+                                                          _vm.booking.settings
+                                                            .business_hours.end,
+                                                        type: "time",
+                                                        "input-class":
+                                                          "form-control"
+                                                      },
+                                                      model: {
+                                                        value: day.start,
+                                                        callback: function(
+                                                          $$v
+                                                        ) {
+                                                          _vm.$set(
+                                                            day,
+                                                            "start",
+                                                            $$v
+                                                          )
+                                                        },
+                                                        expression: "day.start"
+                                                      }
+                                                    })
+                                                  ],
+                                                  1
+                                                ),
+                                                _vm._v(" "),
+                                                _c(
+                                                  "div",
+                                                  { staticClass: "col-md-5" },
+                                                  [
+                                                    _c(
+                                                      "label",
+                                                      {
+                                                        staticClass: "cs-label",
+                                                        attrs: { for: "end" }
+                                                      },
+                                                      [_vm._v("End")]
+                                                    ),
+                                                    _vm._v(" "),
+                                                    _c("datetime", {
+                                                      attrs: {
+                                                        type: "time",
+                                                        "min-datetime":
+                                                          _vm.booking.settings
+                                                            .business_hours
+                                                            .start,
+                                                        "max-datetime":
+                                                          _vm.booking.settings
+                                                            .business_hours.end,
+                                                        "input-class":
+                                                          "form-control"
+                                                      },
+                                                      model: {
+                                                        value: day.end,
+                                                        callback: function(
+                                                          $$v
+                                                        ) {
+                                                          _vm.$set(
+                                                            day,
+                                                            "end",
+                                                            $$v
+                                                          )
+                                                        },
+                                                        expression: "day.end"
+                                                      }
+                                                    })
+                                                  ],
+                                                  1
+                                                ),
+                                                _vm._v(" "),
+                                                _c(
+                                                  "div",
+                                                  {
+                                                    staticClass:
+                                                      "col-md-2 align-self-end"
+                                                  },
+                                                  [
+                                                    _c(
+                                                      "button",
+                                                      {
+                                                        staticClass:
+                                                          "btn btn-danger",
+                                                        attrs: {
+                                                          type: "button"
+                                                        },
+                                                        on: {
+                                                          click: function(
+                                                            $event
+                                                          ) {
+                                                            return _vm.removeSession(
+                                                              index,
+                                                              days_of_week
+                                                            )
+                                                          }
+                                                        }
+                                                      },
+                                                      [
+                                                        _c("i", {
+                                                          staticClass:
+                                                            "fa fa-trash"
+                                                        })
+                                                      ]
+                                                    )
+                                                  ]
+                                                )
+                                              ]
+                                            )
+                                          }
+                                        ),
+                                        _vm._v(" "),
+                                        _c("div", {}, [
+                                          _c(
+                                            "button",
+                                            {
+                                              staticClass: "btn btn-success",
+                                              attrs: { type: "button" },
+                                              on: {
+                                                click: function($event) {
+                                                  return _vm.addSession(
+                                                    days_of_week
+                                                  )
+                                                }
+                                              }
+                                            },
+                                            [_vm._v("Add Session")]
+                                          )
+                                        ])
+                                      ],
+                                      2
+                                    )
+                                  ]
+                                )
+                              ])
+                            }),
+                            0
+                          )
+                        ]
+                      ),
                       _vm._v(" "),
                       _vm._m(12),
                       _vm._v(" "),
@@ -81184,256 +81460,46 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c(
-      "div",
-      { staticClass: "crud-btn-area mb-3 d-flex align-items-center" },
-      [
-        _c("p", { staticClass: "text-white" }, [
-          _vm._v(
-            " Do you want to create special time slots ?\n                              "
-          ),
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-link p-0",
-              attrs: {
-                type: "button",
-                "data-toggle": "tooltip",
-                "data-placement": "right",
-                title: "Prime-times, guest free times, priority booking times"
-              }
-            },
-            [_c("i", { staticClass: "fas fa-info-circle" })]
-          )
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "onoffswitch inline-group mr-3" }, [
-          _c("input", {
-            staticClass: "onoffswitch-checkbox",
-            attrs: { type: "checkbox", id: "special_times" }
-          }),
-          _vm._v(" "),
-          _c(
-            "label",
-            {
-              staticClass: "onoffswitch-label",
-              attrs: {
-                "data-toggle": "collapse",
-                "data-target": "#specialTimesCollaps",
-                role: "button",
-                "aria-expanded": "false",
-                "aria-controls": "specialTimesCollaps",
-                for: "special_times"
-              }
-            },
-            [
-              _c("span", { staticClass: "onoffswitch-inner" }),
-              _vm._v(" "),
-              _c("span", { staticClass: "onoffswitch-switch" })
-            ]
-          )
-        ])
-      ]
-    )
+    return _c("p", { staticClass: "text-white" }, [
+      _vm._v(
+        " Do you want to create special time slots ?\n                              "
+      ),
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-link p-0",
+          attrs: {
+            type: "button",
+            "data-toggle": "tooltip",
+            "data-placement": "right",
+            title: "Prime-times, guest free times, priority booking times"
+          }
+        },
+        [_c("i", { staticClass: "fas fa-info-circle" })]
+      )
+    ])
   },
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c(
-      "div",
-      { staticClass: "collapse", attrs: { id: "specialTimesCollaps" } },
+      "label",
+      {
+        staticClass: "onoffswitch-label",
+        attrs: {
+          "data-toggle": "collapse",
+          "data-target": "#specialTimesCollaps",
+          role: "button",
+          "aria-expanded": "false",
+          "aria-controls": "specialTimesCollaps",
+          for: "special_times"
+        }
+      },
       [
-        _c("div", { staticClass: "card card-body" }, [
-          _c(
-            "a",
-            {
-              staticClass: "btn btn-success day_collaps text-left",
-              attrs: {
-                "data-toggle": "collapse",
-                href: "#sunDayCollaps",
-                role: "button",
-                "aria-expanded": "false",
-                "aria-controls": "sunDayCollaps"
-              }
-            },
-            [_vm._v("Sunday")]
-          ),
-          _vm._v(" "),
-          _c(
-            "div",
-            { staticClass: "collapse", attrs: { id: "sunDayCollaps" } },
-            [
-              _c("div", { staticClass: "card card-body" }, [
-                _vm._v(
-                  "\n                                Sunday\n                              "
-                )
-              ])
-            ]
-          ),
-          _vm._v(" "),
-          _c(
-            "a",
-            {
-              staticClass: "btn btn-success day_collaps text-left",
-              attrs: {
-                "data-toggle": "collapse",
-                href: "#monDayCollaps",
-                role: "button",
-                "aria-expanded": "false",
-                "aria-controls": "monDayCollaps"
-              }
-            },
-            [_vm._v("monDay")]
-          ),
-          _vm._v(" "),
-          _c(
-            "div",
-            { staticClass: "collapse", attrs: { id: "monDayCollaps" } },
-            [
-              _c("div", { staticClass: "card card-body" }, [
-                _vm._v(
-                  "\n                                monDay\n                              "
-                )
-              ])
-            ]
-          ),
-          _vm._v(" "),
-          _c(
-            "a",
-            {
-              staticClass: "btn btn-success day_collaps text-left",
-              attrs: {
-                "data-toggle": "collapse",
-                href: "#TuesDayCollaps",
-                role: "button",
-                "aria-expanded": "false",
-                "aria-controls": "TuesDayCollaps"
-              }
-            },
-            [_vm._v("TuesDay")]
-          ),
-          _vm._v(" "),
-          _c(
-            "div",
-            { staticClass: "collapse", attrs: { id: "TuesDayCollaps" } },
-            [
-              _c("div", { staticClass: "card card-body" }, [
-                _vm._v(
-                  "\n                                TuesDay\n                              "
-                )
-              ])
-            ]
-          ),
-          _vm._v(" "),
-          _c(
-            "a",
-            {
-              staticClass: "btn btn-success day_collaps text-left",
-              attrs: {
-                "data-toggle": "collapse",
-                href: "#WednessDayCollaps",
-                role: "button",
-                "aria-expanded": "false",
-                "aria-controls": "WednessDayCollaps"
-              }
-            },
-            [_vm._v("WednessDay")]
-          ),
-          _vm._v(" "),
-          _c(
-            "div",
-            { staticClass: "collapse", attrs: { id: "WednessDayCollaps" } },
-            [
-              _c("div", { staticClass: "card card-body" }, [
-                _vm._v(
-                  "\n                                WednessDay\n                              "
-                )
-              ])
-            ]
-          ),
-          _vm._v(" "),
-          _c(
-            "a",
-            {
-              staticClass: "btn btn-success day_collaps text-left",
-              attrs: {
-                "data-toggle": "collapse",
-                href: "#ThursDayCollaps",
-                role: "button",
-                "aria-expanded": "false",
-                "aria-controls": "ThursDayCollaps"
-              }
-            },
-            [_vm._v("ThursDay")]
-          ),
-          _vm._v(" "),
-          _c(
-            "div",
-            { staticClass: "collapse", attrs: { id: "ThursDayCollaps" } },
-            [
-              _c("div", { staticClass: "card card-body" }, [
-                _vm._v(
-                  "\n                                ThursDay\n                              "
-                )
-              ])
-            ]
-          ),
-          _vm._v(" "),
-          _c(
-            "a",
-            {
-              staticClass: "btn btn-success day_collaps text-left",
-              attrs: {
-                "data-toggle": "collapse",
-                href: "#FridayCollaps",
-                role: "button",
-                "aria-expanded": "false",
-                "aria-controls": "FridayCollaps"
-              }
-            },
-            [_vm._v("Friday")]
-          ),
-          _vm._v(" "),
-          _c(
-            "div",
-            { staticClass: "collapse", attrs: { id: "FridayCollaps" } },
-            [
-              _c("div", { staticClass: "card card-body" }, [
-                _vm._v(
-                  "\n                                Friday\n                              "
-                )
-              ])
-            ]
-          ),
-          _vm._v(" "),
-          _c(
-            "a",
-            {
-              staticClass: "btn btn-success day_collaps text-left",
-              attrs: {
-                "data-toggle": "collapse",
-                href: "#SaturDayCollaps",
-                role: "button",
-                "aria-expanded": "false",
-                "aria-controls": "SaturDayCollaps"
-              }
-            },
-            [_vm._v("SaturDay")]
-          ),
-          _vm._v(" "),
-          _c(
-            "div",
-            { staticClass: "collapse", attrs: { id: "SaturDayCollaps" } },
-            [
-              _c("div", { staticClass: "card card-body" }, [
-                _vm._v(
-                  "\n                                SaturDay\n                              "
-                )
-              ])
-            ]
-          )
-        ])
+        _c("span", { staticClass: "onoffswitch-inner" }),
+        _vm._v(" "),
+        _c("span", { staticClass: "onoffswitch-switch" })
       ]
     )
   },

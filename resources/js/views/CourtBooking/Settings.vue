@@ -230,6 +230,16 @@
                   },
                   allow_per_period : false
                 },
+                special_times: false,
+                days_of_weeks: {
+                  sunday: [],
+                  monday: [],
+                  tuesday: [],
+                  wednessday: [],
+                  thursday: [],
+                  friday: [],
+                  saturday: [],
+                }
               },
               isActiveSettingModel: false,
               resources: [],
@@ -283,6 +293,7 @@
             this.booking = this.bookings[index]
           },
           addBooking: function(){
+            console.log(this.booking)
             axios.post('/api/courtbooking/booking', this.booking).then(res =>{
               console.log(res.data)
                 if(res.data.success == true) {

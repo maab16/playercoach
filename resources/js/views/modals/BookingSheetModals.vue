@@ -265,6 +265,7 @@
                            <div class="onoffswitch inline-group mr-3">
                             <input 
                               type="checkbox"
+                              v-model="booking.settings.special_times"
                               id="special_times" 
                               class="onoffswitch-checkbox"> 
                             <label 
@@ -281,100 +282,47 @@
                           </div>
                         </div>
 
-                        <div class="collapse" id="specialTimesCollaps">
+                        <div class="collapse" :class="{show: booking.settings.special_times}" id="specialTimesCollaps">
                           <div class="card card-body">
-                            <a 
-                            class="btn btn-success day_collaps text-left" 
-                            data-toggle="collapse" 
-                            href="#sunDayCollaps" 
-                            role="button" 
-                            aria-expanded="false" 
-                            aria-controls="sunDayCollaps">Sunday</a>
-                            <div class="collapse" id="sunDayCollaps">
-                              <div class="card card-body">
-                                Sunday
+                            <div v-for="(value, days_of_week) in booking.settings.days_of_weeks" :key="days_of_week">
+                              <a 
+                              class="btn btn-block btn-success day_collaps text-left" 
+                              data-toggle="collapse" 
+                              :href="'#'+days_of_week+'Collaps'" 
+                              role="button" 
+                              aria-expanded="false" 
+                              :aria-controls="days_of_week+'Collaps'">{{ days_of_week }}</a>
+                              <div class="collapse" :id="days_of_week+'Collaps'">
+                                <div class="card card-body">
+                                  <div v-for="(day, index) in booking.settings.days_of_weeks[days_of_week]" :key="index" class="form-group row">
+                                      <div class="col-md-5">
+                                          <label for="start" class="cs-label">Start</label>
+                                          <datetime
+                                            :min-datetime="booking.settings.business_hours.start"
+                                            :max-datetime="booking.settings.business_hours.end" 
+                                            type="time" 
+                                            input-class="form-control" 
+                                            v-model="day.start"></datetime>
+                                      </div>
+                                      <div class="col-md-5">
+                                          <label for="end" class="cs-label">End</label>
+                                          <datetime 
+                                            type="time"
+                                            :min-datetime="booking.settings.business_hours.start"
+                                            :max-datetime="booking.settings.business_hours.end" 
+                                            input-class="form-control" 
+                                            v-model="day.end"></datetime>
+                                      </div>
+                                      <div class="col-md-2 align-self-end">
+                                          <button type="button" class="btn btn-danger" @click="removeSession(index, days_of_week)"><i class="fa fa-trash"></i></button>
+                                      </div>
+                                  </div>
+                                  <div class="">
+                                      <button type="button" class="btn btn-success" @click="addSession(days_of_week)">Add Session</button>
+                                  </div>
+                                </div>
                               </div>
                             </div>
-
-                            <a 
-                            class="btn btn-success day_collaps text-left" 
-                            data-toggle="collapse" 
-                            href="#monDayCollaps" 
-                            role="button" 
-                            aria-expanded="false" 
-                            aria-controls="monDayCollaps">monDay</a>
-                            <div class="collapse" id="monDayCollaps">
-                              <div class="card card-body">
-                                monDay
-                              </div>
-                            </div>
-
-                            <a 
-                            class="btn btn-success day_collaps text-left" 
-                            data-toggle="collapse" 
-                            href="#TuesDayCollaps" 
-                            role="button" 
-                            aria-expanded="false" 
-                            aria-controls="TuesDayCollaps">TuesDay</a>
-                            <div class="collapse" id="TuesDayCollaps">
-                              <div class="card card-body">
-                                TuesDay
-                              </div>
-                            </div>
-
-                            <a 
-                            class="btn btn-success day_collaps text-left" 
-                            data-toggle="collapse" 
-                            href="#WednessDayCollaps" 
-                            role="button" 
-                            aria-expanded="false" 
-                            aria-controls="WednessDayCollaps">WednessDay</a>
-                            <div class="collapse" id="WednessDayCollaps">
-                              <div class="card card-body">
-                                WednessDay
-                              </div>
-                            </div>
-
-                            <a 
-                            class="btn btn-success day_collaps text-left" 
-                            data-toggle="collapse" 
-                            href="#ThursDayCollaps" 
-                            role="button" 
-                            aria-expanded="false" 
-                            aria-controls="ThursDayCollaps">ThursDay</a>
-                            <div class="collapse" id="ThursDayCollaps">
-                              <div class="card card-body">
-                                ThursDay
-                              </div>
-                            </div>
-
-                            <a 
-                            class="btn btn-success day_collaps text-left" 
-                            data-toggle="collapse" 
-                            href="#FridayCollaps" 
-                            role="button" 
-                            aria-expanded="false" 
-                            aria-controls="FridayCollaps">Friday</a>
-                            <div class="collapse" id="FridayCollaps">
-                              <div class="card card-body">
-                                Friday
-                              </div>
-                            </div>
-
-                            <a 
-                            class="btn btn-success day_collaps text-left" 
-                            data-toggle="collapse" 
-                            href="#SaturDayCollaps" 
-                            role="button" 
-                            aria-expanded="false" 
-                            aria-controls="SaturDayCollaps">SaturDay</a>
-                            <div class="collapse" id="SaturDayCollaps">
-                              <div class="card card-body">
-                                SaturDay
-                              </div>
-                            </div>
-
-
                           </div>
                         </div>
 
@@ -759,6 +707,22 @@
                 )
             }
         });
+      },
+      addSession: function(week_of_day){
+          let sessions = [...this.booking.settings.days_of_weeks[week_of_day]];
+          // Vue.delete(this.booking.settings.days_of_weeks, week_of_day);
+          sessions.push({start:'',end: ''});
+          this.booking.settings.days_of_weeks[week_of_day] = sessions;
+
+          console.log(this.booking.settings)
+      },
+      removeSession(index, week_of_day) {
+          console.log(index);
+          console.log(week_of_day);
+          let sessions = [...this.booking.settings.days_of_weeks[week_of_day]];
+          sessions.splice(index, 1);
+          // Vue.delete(this.booking.settings.days_of_weeks, week_of_day);
+          this.booking.settings.days_of_weeks[week_of_day] = sessions;
       },
       closeSettingModal: function(){
         console.log(this.booking)
