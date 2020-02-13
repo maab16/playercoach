@@ -185,7 +185,7 @@
                             <div class="form-group inline-group row align-items-center">
                               <label class="col-md-6"> What is the length of 1 unit of booking?</label>
                               <div class="col-md-6">
-                                <select id="" class="form-control">
+                                <select id="" class="form-control" v-model="booking.settings.business_hours.booking_unit_length">
                                   <option value="one_hour">1 hour</option>
                                   <option value="half_hour">30 minutes</option>
                                 </select>
@@ -194,7 +194,7 @@
                             <div class="form-group inline-group row align-items-center">
                               <label class="col-md-6"> What is the maximum number of units allowed back to back?</label>
                               <div class="col-md-6">
-                                <input type="number" value="1" class="form-control" min="1">
+                                <input type="number" v-model="booking.settings.business_hours.max_units" class="form-control" min="1">
                               </div>
                             </div>
                             <div class="form-group inline-group row align-items-center">
@@ -265,7 +265,7 @@
                            <div class="onoffswitch inline-group mr-3">
                             <input 
                               type="checkbox"
-                              v-model="booking.settings.special_times"
+                              v-model="booking.settings.business_hours.special_times"
                               id="special_times" 
                               class="onoffswitch-checkbox"> 
                             <label 
@@ -282,7 +282,7 @@
                           </div>
                         </div>
 
-                        <div class="collapse" :class="{show: booking.settings.special_times}" id="specialTimesCollaps">
+                        <div class="collapse" :class="{show: booking.settings.business_hours.special_times}" id="specialTimesCollaps">
                           <div class="card card-body">
                             <div v-for="(value, days_of_week) in booking.settings.business_hours.days_of_weeks" :key="days_of_week">
                               <a 
@@ -335,6 +335,7 @@
                            <div class="onoffswitch inline-group mr-3">
                             <input 
                               type="checkbox"
+                              v-model="booking.settings.business_hours.enable_payment"
                               id="enable_payment" 
                               class="onoffswitch-checkbox"> 
                             <label 
@@ -350,14 +351,15 @@
                             </label>
                           </div>
                         </div>
-                        <div class="collapse" id="enablePaymentCollaps">
+                        <div class="collapse" :class="{show: booking.settings.business_hours.enable_payment}" id="enablePaymentCollaps">
                           <div class="card card-body">
                             <div class="form-group inline-group row align-items-center">
                               <label class="col-md-6">Enable payment for courts?</label>
                               <div class="col-md-6">
                                 <div class="onoffswitch">
                                   <input 
-                                    type="checkbox" 
+                                    type="checkbox"
+                                    v-model="booking.settings.business_hours.enable_courts_payment" 
                                     id="courts_payment" 
                                     class="onoffswitch-checkbox"> 
                                   <label 
@@ -373,7 +375,7 @@
                                   </label>
                                 </div>
                               </div>
-                              <div class="col-md-12 collapse" id="courtsPaymentCollaps">
+                              <div class="col-md-12 collapse" :class="{show: booking.settings.business_hours.enable_courts_payment}" id="courtsPaymentCollaps">
                                 <div class="card card-body">
                                   <div class="table-responsive mt-3">
                                     <table class="table table-striped table-bordered database-tables" style="width: 100%;">
@@ -438,7 +440,8 @@
                               <div class="col-md-6">
                                 <div class="onoffswitch">
                                   <input 
-                                    type="checkbox" 
+                                    type="checkbox"
+                                    v-model="booking.settings.business_hours.enable_advanced_bookings_payment" 
                                     id="advanced_bookings_payment" 
                                     class="onoffswitch-checkbox"> 
                                   <label 
@@ -454,7 +457,7 @@
                                   </label>
                                 </div>
                               </div>
-                              <div class="col-md-12 collapse" id="advancedBookingsCollaps">
+                              <div class="col-md-12 collapse" :class="{show: booking.settings.business_hours.enable_advanced_bookings_payment}" id="advancedBookingsCollaps">
                                   <div class="card card-body">
                                     <h3>Between 1 and 2 days before the booking</h3>
                                     <div class="table-responsive mt-3">
@@ -511,61 +514,6 @@
                             </div>
                           </div>
                         </div>
-
-                        <!-- <div class="form-group row">
-                          <div class="col-md-6">
-                            <p>Do you want to designate prime times? </p>
-                            <div class="onoffswitch">
-                              <input 
-                                type="checkbox" 
-                                v-model="booking.settings.business_hours.prime_time" 
-                                id="prime_time" 
-                                class="onoffswitch-checkbox"> 
-                              <label for="prime_time" class="onoffswitch-label">
-                                <span class="onoffswitch-inner"></span> 
-                                <span class="onoffswitch-switch"></span>
-                              </label>
-                            </div>
-                          </div>
-                          
-                          <div class="form-group col-md-6 align-items-center">
-                            <p class="p-0 m-0 mr-5">Enable payment for court</p>   
-                            <div class="onoffswitch">
-                              <input 
-                                type="checkbox" 
-                                v-model="booking.settings.business_hours.enable_payment" 
-                                id="enable_payment" 
-                                class="onoffswitch-checkbox"> 
-                              <label for="enable_payment" class="onoffswitch-label m-0">
-                                <span class="onoffswitch-inner"></span> 
-                                <span class="onoffswitch-switch"></span>
-                              </label>
-                            </div>
-                          </div>
-                          <div class="payment_options col-md-6" v-if="booking.settings.business_hours.enable_payment">
-                            <div class="form-group">
-                              <p class="p-0 mr-5">Does your club charge a price per court?</p>
-                              <div class="onoffswitch">
-                                <input 
-                                  type="checkbox" 
-                                  v-model="booking.settings.business_hours.payment.charge_per_court" 
-                                  id="charge_per_court" 
-                                  class="onoffswitch-checkbox"> 
-                                <label for="charge_per_court" class="onoffswitch-label m-0">
-                                  <span class="onoffswitch-inner"></span> 
-                                  <span class="onoffswitch-switch"></span>
-                                </label>
-                              </div>
-                            </div>
-                            <div class="form-group" v-if="booking.settings.business_hours.payment.charge_per_court && !booking.settings.business_hours.prime_time">
-                              <label for="">Enter Court price</label>
-                              <input type="number" class="form-control" v-model="booking.settings.business_hours.payment.price">
-                            </div>
-                            <div class="form-group" v-if="booking.settings.business_hours.payment.charge_per_court && booking.settings.business_hours.prime_time">
-                              <label for="">Price Subscription plans</label>
-                            </div>
-                          </div>
-                        </div> -->
                         <div class="form-group text-right">
                           <button type="submit" class="btn btn-success">Update</button>
                         </div>

@@ -3519,6 +3519,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             charge_per_court: false,
             price: null
           },
+          allow_non_member: false,
+          booking_unit_length: 'one_hour',
+          max_units: 1,
           allow_per_period: false,
           special_times: false,
           days_of_weeks: {
@@ -3529,7 +3532,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             thursday: [],
             friday: [],
             saturday: []
-          }
+          },
+          enable_payment: false,
+          enable_courts_payment: false,
+          enable_advanced_bookings_payment: false
         }
       },
       isActiveSettingModel: false,
@@ -5362,58 +5368,6 @@ function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
 
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -80802,9 +80756,129 @@ var render = function() {
                               ]
                             ),
                             _vm._v(" "),
-                            _vm._m(6),
+                            _c(
+                              "div",
+                              {
+                                staticClass:
+                                  "form-group inline-group row align-items-center"
+                              },
+                              [
+                                _c("label", { staticClass: "col-md-6" }, [
+                                  _vm._v(
+                                    " What is the length of 1 unit of booking?"
+                                  )
+                                ]),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "col-md-6" }, [
+                                  _c(
+                                    "select",
+                                    {
+                                      directives: [
+                                        {
+                                          name: "model",
+                                          rawName: "v-model",
+                                          value:
+                                            _vm.booking.settings.business_hours
+                                              .booking_unit_length,
+                                          expression:
+                                            "booking.settings.business_hours.booking_unit_length"
+                                        }
+                                      ],
+                                      staticClass: "form-control",
+                                      attrs: { id: "" },
+                                      on: {
+                                        change: function($event) {
+                                          var $$selectedVal = Array.prototype.filter
+                                            .call(
+                                              $event.target.options,
+                                              function(o) {
+                                                return o.selected
+                                              }
+                                            )
+                                            .map(function(o) {
+                                              var val =
+                                                "_value" in o
+                                                  ? o._value
+                                                  : o.value
+                                              return val
+                                            })
+                                          _vm.$set(
+                                            _vm.booking.settings.business_hours,
+                                            "booking_unit_length",
+                                            $event.target.multiple
+                                              ? $$selectedVal
+                                              : $$selectedVal[0]
+                                          )
+                                        }
+                                      }
+                                    },
+                                    [
+                                      _c(
+                                        "option",
+                                        { attrs: { value: "one_hour" } },
+                                        [_vm._v("1 hour")]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "option",
+                                        { attrs: { value: "half_hour" } },
+                                        [_vm._v("30 minutes")]
+                                      )
+                                    ]
+                                  )
+                                ])
+                              ]
+                            ),
                             _vm._v(" "),
-                            _vm._m(7),
+                            _c(
+                              "div",
+                              {
+                                staticClass:
+                                  "form-group inline-group row align-items-center"
+                              },
+                              [
+                                _c("label", { staticClass: "col-md-6" }, [
+                                  _vm._v(
+                                    " What is the maximum number of units allowed back to back?"
+                                  )
+                                ]),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "col-md-6" }, [
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value:
+                                          _vm.booking.settings.business_hours
+                                            .max_units,
+                                        expression:
+                                          "booking.settings.business_hours.max_units"
+                                      }
+                                    ],
+                                    staticClass: "form-control",
+                                    attrs: { type: "number", min: "1" },
+                                    domProps: {
+                                      value:
+                                        _vm.booking.settings.business_hours
+                                          .max_units
+                                    },
+                                    on: {
+                                      input: function($event) {
+                                        if ($event.target.composing) {
+                                          return
+                                        }
+                                        _vm.$set(
+                                          _vm.booking.settings.business_hours,
+                                          "max_units",
+                                          $event.target.value
+                                        )
+                                      }
+                                    }
+                                  })
+                                ])
+                              ]
+                            ),
                             _vm._v(" "),
                             _c(
                               "div",
@@ -80894,11 +80968,11 @@ var render = function() {
                                       }
                                     }),
                                     _vm._v(" "),
-                                    _vm._m(8)
+                                    _vm._m(6)
                                   ])
                                 ]),
                                 _vm._v(" "),
-                                _vm._m(9)
+                                _vm._m(7)
                               ]
                             )
                           ])
@@ -80912,7 +80986,7 @@ var render = function() {
                             "crud-btn-area mb-3 d-flex align-items-center"
                         },
                         [
-                          _vm._m(10),
+                          _vm._m(8),
                           _vm._v(" "),
                           _c(
                             "div",
@@ -80923,8 +80997,11 @@ var render = function() {
                                   {
                                     name: "model",
                                     rawName: "v-model",
-                                    value: _vm.booking.settings.special_times,
-                                    expression: "booking.settings.special_times"
+                                    value:
+                                      _vm.booking.settings.business_hours
+                                        .special_times,
+                                    expression:
+                                      "booking.settings.business_hours.special_times"
                                   }
                                 ],
                                 staticClass: "onoffswitch-checkbox",
@@ -80934,18 +81011,22 @@ var render = function() {
                                 },
                                 domProps: {
                                   checked: Array.isArray(
-                                    _vm.booking.settings.special_times
+                                    _vm.booking.settings.business_hours
+                                      .special_times
                                   )
                                     ? _vm._i(
-                                        _vm.booking.settings.special_times,
+                                        _vm.booking.settings.business_hours
+                                          .special_times,
                                         null
                                       ) > -1
-                                    : _vm.booking.settings.special_times
+                                    : _vm.booking.settings.business_hours
+                                        .special_times
                                 },
                                 on: {
                                   change: function($event) {
                                     var $$a =
-                                        _vm.booking.settings.special_times,
+                                        _vm.booking.settings.business_hours
+                                          .special_times,
                                       $$el = $event.target,
                                       $$c = $$el.checked ? true : false
                                     if (Array.isArray($$a)) {
@@ -80954,14 +81035,14 @@ var render = function() {
                                       if ($$el.checked) {
                                         $$i < 0 &&
                                           _vm.$set(
-                                            _vm.booking.settings,
+                                            _vm.booking.settings.business_hours,
                                             "special_times",
                                             $$a.concat([$$v])
                                           )
                                       } else {
                                         $$i > -1 &&
                                           _vm.$set(
-                                            _vm.booking.settings,
+                                            _vm.booking.settings.business_hours,
                                             "special_times",
                                             $$a
                                               .slice(0, $$i)
@@ -80970,7 +81051,7 @@ var render = function() {
                                       }
                                     } else {
                                       _vm.$set(
-                                        _vm.booking.settings,
+                                        _vm.booking.settings.business_hours,
                                         "special_times",
                                         $$c
                                       )
@@ -80979,7 +81060,7 @@ var render = function() {
                                 }
                               }),
                               _vm._v(" "),
-                              _vm._m(11)
+                              _vm._m(9)
                             ]
                           )
                         ]
@@ -80989,7 +81070,10 @@ var render = function() {
                         "div",
                         {
                           staticClass: "collapse",
-                          class: { show: _vm.booking.settings.special_times },
+                          class: {
+                            show:
+                              _vm.booking.settings.business_hours.special_times
+                          },
                           attrs: { id: "specialTimesCollaps" }
                         },
                         [
@@ -81204,15 +81288,327 @@ var render = function() {
                         ]
                       ),
                       _vm._v(" "),
-                      _vm._m(12),
+                      _c(
+                        "div",
+                        {
+                          staticClass:
+                            "crud-btn-area mb-3 d-flex align-items-center"
+                        },
+                        [
+                          _vm._m(10),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            { staticClass: "onoffswitch inline-group mr-3" },
+                            [
+                              _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value:
+                                      _vm.booking.settings.business_hours
+                                        .enable_payment,
+                                    expression:
+                                      "booking.settings.business_hours.enable_payment"
+                                  }
+                                ],
+                                staticClass: "onoffswitch-checkbox",
+                                attrs: {
+                                  type: "checkbox",
+                                  id: "enable_payment"
+                                },
+                                domProps: {
+                                  checked: Array.isArray(
+                                    _vm.booking.settings.business_hours
+                                      .enable_payment
+                                  )
+                                    ? _vm._i(
+                                        _vm.booking.settings.business_hours
+                                          .enable_payment,
+                                        null
+                                      ) > -1
+                                    : _vm.booking.settings.business_hours
+                                        .enable_payment
+                                },
+                                on: {
+                                  change: function($event) {
+                                    var $$a =
+                                        _vm.booking.settings.business_hours
+                                          .enable_payment,
+                                      $$el = $event.target,
+                                      $$c = $$el.checked ? true : false
+                                    if (Array.isArray($$a)) {
+                                      var $$v = null,
+                                        $$i = _vm._i($$a, $$v)
+                                      if ($$el.checked) {
+                                        $$i < 0 &&
+                                          _vm.$set(
+                                            _vm.booking.settings.business_hours,
+                                            "enable_payment",
+                                            $$a.concat([$$v])
+                                          )
+                                      } else {
+                                        $$i > -1 &&
+                                          _vm.$set(
+                                            _vm.booking.settings.business_hours,
+                                            "enable_payment",
+                                            $$a
+                                              .slice(0, $$i)
+                                              .concat($$a.slice($$i + 1))
+                                          )
+                                      }
+                                    } else {
+                                      _vm.$set(
+                                        _vm.booking.settings.business_hours,
+                                        "enable_payment",
+                                        $$c
+                                      )
+                                    }
+                                  }
+                                }
+                              }),
+                              _vm._v(" "),
+                              _vm._m(11)
+                            ]
+                          )
+                        ]
+                      ),
                       _vm._v(" "),
-                      _vm._m(13),
+                      _c(
+                        "div",
+                        {
+                          staticClass: "collapse",
+                          class: {
+                            show:
+                              _vm.booking.settings.business_hours.enable_payment
+                          },
+                          attrs: { id: "enablePaymentCollaps" }
+                        },
+                        [
+                          _c("div", { staticClass: "card card-body" }, [
+                            _c(
+                              "div",
+                              {
+                                staticClass:
+                                  "form-group inline-group row align-items-center"
+                              },
+                              [
+                                _c("label", { staticClass: "col-md-6" }, [
+                                  _vm._v("Enable payment for courts?")
+                                ]),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "col-md-6" }, [
+                                  _c("div", { staticClass: "onoffswitch" }, [
+                                    _c("input", {
+                                      directives: [
+                                        {
+                                          name: "model",
+                                          rawName: "v-model",
+                                          value:
+                                            _vm.booking.settings.business_hours
+                                              .enable_courts_payment,
+                                          expression:
+                                            "booking.settings.business_hours.enable_courts_payment"
+                                        }
+                                      ],
+                                      staticClass: "onoffswitch-checkbox",
+                                      attrs: {
+                                        type: "checkbox",
+                                        id: "courts_payment"
+                                      },
+                                      domProps: {
+                                        checked: Array.isArray(
+                                          _vm.booking.settings.business_hours
+                                            .enable_courts_payment
+                                        )
+                                          ? _vm._i(
+                                              _vm.booking.settings
+                                                .business_hours
+                                                .enable_courts_payment,
+                                              null
+                                            ) > -1
+                                          : _vm.booking.settings.business_hours
+                                              .enable_courts_payment
+                                      },
+                                      on: {
+                                        change: function($event) {
+                                          var $$a =
+                                              _vm.booking.settings
+                                                .business_hours
+                                                .enable_courts_payment,
+                                            $$el = $event.target,
+                                            $$c = $$el.checked ? true : false
+                                          if (Array.isArray($$a)) {
+                                            var $$v = null,
+                                              $$i = _vm._i($$a, $$v)
+                                            if ($$el.checked) {
+                                              $$i < 0 &&
+                                                _vm.$set(
+                                                  _vm.booking.settings
+                                                    .business_hours,
+                                                  "enable_courts_payment",
+                                                  $$a.concat([$$v])
+                                                )
+                                            } else {
+                                              $$i > -1 &&
+                                                _vm.$set(
+                                                  _vm.booking.settings
+                                                    .business_hours,
+                                                  "enable_courts_payment",
+                                                  $$a
+                                                    .slice(0, $$i)
+                                                    .concat($$a.slice($$i + 1))
+                                                )
+                                            }
+                                          } else {
+                                            _vm.$set(
+                                              _vm.booking.settings
+                                                .business_hours,
+                                              "enable_courts_payment",
+                                              $$c
+                                            )
+                                          }
+                                        }
+                                      }
+                                    }),
+                                    _vm._v(" "),
+                                    _vm._m(12)
+                                  ])
+                                ]),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  {
+                                    staticClass: "col-md-12 collapse",
+                                    class: {
+                                      show:
+                                        _vm.booking.settings.business_hours
+                                          .enable_courts_payment
+                                    },
+                                    attrs: { id: "courtsPaymentCollaps" }
+                                  },
+                                  [_vm._m(13)]
+                                )
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "div",
+                              {
+                                staticClass:
+                                  "form-group inline-group row align-items-center"
+                              },
+                              [
+                                _c("label", { staticClass: "col-md-6" }, [
+                                  _vm._v(
+                                    "Enable payment for advanced bookings?"
+                                  )
+                                ]),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "col-md-6" }, [
+                                  _c("div", { staticClass: "onoffswitch" }, [
+                                    _c("input", {
+                                      directives: [
+                                        {
+                                          name: "model",
+                                          rawName: "v-model",
+                                          value:
+                                            _vm.booking.settings.business_hours
+                                              .enable_advanced_bookings_payment,
+                                          expression:
+                                            "booking.settings.business_hours.enable_advanced_bookings_payment"
+                                        }
+                                      ],
+                                      staticClass: "onoffswitch-checkbox",
+                                      attrs: {
+                                        type: "checkbox",
+                                        id: "advanced_bookings_payment"
+                                      },
+                                      domProps: {
+                                        checked: Array.isArray(
+                                          _vm.booking.settings.business_hours
+                                            .enable_advanced_bookings_payment
+                                        )
+                                          ? _vm._i(
+                                              _vm.booking.settings
+                                                .business_hours
+                                                .enable_advanced_bookings_payment,
+                                              null
+                                            ) > -1
+                                          : _vm.booking.settings.business_hours
+                                              .enable_advanced_bookings_payment
+                                      },
+                                      on: {
+                                        change: function($event) {
+                                          var $$a =
+                                              _vm.booking.settings
+                                                .business_hours
+                                                .enable_advanced_bookings_payment,
+                                            $$el = $event.target,
+                                            $$c = $$el.checked ? true : false
+                                          if (Array.isArray($$a)) {
+                                            var $$v = null,
+                                              $$i = _vm._i($$a, $$v)
+                                            if ($$el.checked) {
+                                              $$i < 0 &&
+                                                _vm.$set(
+                                                  _vm.booking.settings
+                                                    .business_hours,
+                                                  "enable_advanced_bookings_payment",
+                                                  $$a.concat([$$v])
+                                                )
+                                            } else {
+                                              $$i > -1 &&
+                                                _vm.$set(
+                                                  _vm.booking.settings
+                                                    .business_hours,
+                                                  "enable_advanced_bookings_payment",
+                                                  $$a
+                                                    .slice(0, $$i)
+                                                    .concat($$a.slice($$i + 1))
+                                                )
+                                            }
+                                          } else {
+                                            _vm.$set(
+                                              _vm.booking.settings
+                                                .business_hours,
+                                              "enable_advanced_bookings_payment",
+                                              $$c
+                                            )
+                                          }
+                                        }
+                                      }
+                                    }),
+                                    _vm._v(" "),
+                                    _vm._m(14)
+                                  ])
+                                ]),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  {
+                                    staticClass: "col-md-12 collapse",
+                                    class: {
+                                      show:
+                                        _vm.booking.settings.business_hours
+                                          .enable_advanced_bookings_payment
+                                    },
+                                    attrs: { id: "advancedBookingsCollaps" }
+                                  },
+                                  [_vm._m(15)]
+                                )
+                              ]
+                            )
+                          ])
+                        ]
+                      ),
                       _vm._v(" "),
-                      _vm._m(14)
+                      _vm._m(16)
                     ]
                   ),
                   _vm._v(" "),
-                  _vm._m(15)
+                  _vm._m(17)
                 ])
               ])
             ]
@@ -81309,51 +81705,6 @@ var staticRenderFns = [
         _c("span", { staticClass: "onoffswitch-inner" }),
         _vm._v(" "),
         _c("span", { staticClass: "onoffswitch-switch" })
-      ]
-    )
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "div",
-      { staticClass: "form-group inline-group row align-items-center" },
-      [
-        _c("label", { staticClass: "col-md-6" }, [
-          _vm._v(" What is the length of 1 unit of booking?")
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "col-md-6" }, [
-          _c("select", { staticClass: "form-control", attrs: { id: "" } }, [
-            _c("option", { attrs: { value: "one_hour" } }, [_vm._v("1 hour")]),
-            _vm._v(" "),
-            _c("option", { attrs: { value: "half_hour" } }, [
-              _vm._v("30 minutes")
-            ])
-          ])
-        ])
-      ]
-    )
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "div",
-      { staticClass: "form-group inline-group row align-items-center" },
-      [
-        _c("label", { staticClass: "col-md-6" }, [
-          _vm._v(" What is the maximum number of units allowed back to back?")
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "col-md-6" }, [
-          _c("input", {
-            staticClass: "form-control",
-            attrs: { type: "number", value: "1", min: "1" }
-          })
-        ])
       ]
     )
   },
@@ -81514,53 +81865,44 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
+    return _c("p", { staticClass: "text-white" }, [
+      _vm._v(" Enable payment?\n                              "),
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-link p-0",
+          attrs: {
+            type: "button",
+            "data-toggle": "tooltip",
+            "data-placement": "right",
+            title: "Prime-times, guest free times, priority booking times"
+          }
+        },
+        [_c("i", { staticClass: "fas fa-info-circle" })]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
     return _c(
-      "div",
-      { staticClass: "crud-btn-area mb-3 d-flex align-items-center" },
+      "label",
+      {
+        staticClass: "onoffswitch-label",
+        attrs: {
+          "data-toggle": "collapse",
+          "data-target": "#enablePaymentCollaps",
+          role: "button",
+          "aria-expanded": "false",
+          "aria-controls": "enablePaymentCollaps",
+          for: "enable_payment"
+        }
+      },
       [
-        _c("p", { staticClass: "text-white" }, [
-          _vm._v(" Enable payment?\n                              "),
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-link p-0",
-              attrs: {
-                type: "button",
-                "data-toggle": "tooltip",
-                "data-placement": "right",
-                title: "Prime-times, guest free times, priority booking times"
-              }
-            },
-            [_c("i", { staticClass: "fas fa-info-circle" })]
-          )
-        ]),
+        _c("span", { staticClass: "onoffswitch-inner" }),
         _vm._v(" "),
-        _c("div", { staticClass: "onoffswitch inline-group mr-3" }, [
-          _c("input", {
-            staticClass: "onoffswitch-checkbox",
-            attrs: { type: "checkbox", id: "enable_payment" }
-          }),
-          _vm._v(" "),
-          _c(
-            "label",
-            {
-              staticClass: "onoffswitch-label",
-              attrs: {
-                "data-toggle": "collapse",
-                "data-target": "#enablePaymentCollaps",
-                role: "button",
-                "aria-expanded": "false",
-                "aria-controls": "enablePaymentCollaps",
-                for: "enable_payment"
-              }
-            },
-            [
-              _c("span", { staticClass: "onoffswitch-inner" }),
-              _vm._v(" "),
-              _c("span", { staticClass: "onoffswitch-switch" })
-            ]
-          )
-        ])
+        _c("span", { staticClass: "onoffswitch-switch" })
       ]
     )
   },
@@ -81569,292 +81911,234 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c(
-      "div",
-      { staticClass: "collapse", attrs: { id: "enablePaymentCollaps" } },
+      "label",
+      {
+        staticClass: "onoffswitch-label",
+        attrs: {
+          "data-toggle": "collapse",
+          "data-target": "#courtsPaymentCollaps",
+          role: "button",
+          "aria-expanded": "false",
+          "aria-controls": "courtsPaymentCollaps",
+          for: "courts_payment"
+        }
+      },
       [
-        _c("div", { staticClass: "card card-body" }, [
-          _c(
-            "div",
-            { staticClass: "form-group inline-group row align-items-center" },
-            [
-              _c("label", { staticClass: "col-md-6" }, [
-                _vm._v("Enable payment for courts?")
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "col-md-6" }, [
-                _c("div", { staticClass: "onoffswitch" }, [
-                  _c("input", {
-                    staticClass: "onoffswitch-checkbox",
-                    attrs: { type: "checkbox", id: "courts_payment" }
-                  }),
-                  _vm._v(" "),
-                  _c(
-                    "label",
-                    {
-                      staticClass: "onoffswitch-label",
-                      attrs: {
-                        "data-toggle": "collapse",
-                        "data-target": "#courtsPaymentCollaps",
-                        role: "button",
-                        "aria-expanded": "false",
-                        "aria-controls": "courtsPaymentCollaps",
-                        for: "courts_payment"
-                      }
-                    },
-                    [
-                      _c("span", { staticClass: "onoffswitch-inner" }),
-                      _vm._v(" "),
-                      _c("span", { staticClass: "onoffswitch-switch" })
-                    ]
-                  )
-                ])
-              ]),
-              _vm._v(" "),
-              _c(
-                "div",
-                {
-                  staticClass: "col-md-12 collapse",
-                  attrs: { id: "courtsPaymentCollaps" }
-                },
-                [
-                  _c("div", { staticClass: "card card-body" }, [
-                    _c("div", { staticClass: "table-responsive mt-3" }, [
-                      _c(
-                        "table",
-                        {
-                          staticClass:
-                            "table table-striped table-bordered database-tables",
-                          staticStyle: { width: "100%" }
-                        },
-                        [
-                          _c("thead", [
-                            _c("tr", [
-                              _c("th", [_vm._v("time / subscription")]),
-                              _vm._v(" "),
-                              _c("th", [_vm._v("Adult Member")]),
-                              _vm._v(" "),
-                              _c("th", [_vm._v("Junior Member")]),
-                              _vm._v(" "),
-                              _c("th", [_vm._v("Senior Member")])
-                            ])
-                          ]),
-                          _vm._v(" "),
-                          _c("tbody", [
-                            _c("tr", [
-                              _c("td", [_vm._v("default prices")]),
-                              _vm._v(" "),
-                              _c("td", [_vm._v("$15")]),
-                              _vm._v(" "),
-                              _c("td", [_vm._v("$5")]),
-                              _vm._v(" "),
-                              _c("td", [_vm._v("$10")])
-                            ]),
-                            _vm._v(" "),
-                            _c("tr", [
-                              _c("td", [_vm._v("Mondays 4-9 pm")]),
-                              _vm._v(" "),
-                              _c("td", [_vm._v("$23")]),
-                              _vm._v(" "),
-                              _c("td", [_vm._v("$15")]),
-                              _vm._v(" "),
-                              _c("td", [_vm._v("$18")])
-                            ]),
-                            _vm._v(" "),
-                            _c("tr", [
-                              _c("td", [_vm._v("Tuesdays 8-10 am")]),
-                              _vm._v(" "),
-                              _c("td", [_vm._v("$18")]),
-                              _vm._v(" "),
-                              _c("td", [_vm._v("$13")]),
-                              _vm._v(" "),
-                              _c("td", [_vm._v("$15")])
-                            ]),
-                            _vm._v(" "),
-                            _c("tr", [
-                              _c("td", [_vm._v("Wednesdays 12-4 pm")]),
-                              _vm._v(" "),
-                              _c("td", [_vm._v("$20")]),
-                              _vm._v(" "),
-                              _c("td", [_vm._v("$15")]),
-                              _vm._v(" "),
-                              _c("td", [_vm._v("$18")])
-                            ]),
-                            _vm._v(" "),
-                            _c("tr", [
-                              _c("td", [_vm._v("Thursdays 3-9pm")]),
-                              _vm._v(" "),
-                              _c("td", [_vm._v("$23")]),
-                              _vm._v(" "),
-                              _c("td", [_vm._v("$0")]),
-                              _vm._v(" "),
-                              _c("td")
-                            ]),
-                            _vm._v(" "),
-                            _c("tr", [
-                              _c("td", [
-                                _c("a", { attrs: { href: "#" } }, [
-                                  _c("i", { staticClass: "fas fa-plus" }),
-                                  _vm._v(" add special time slot")
-                                ])
-                              ]),
-                              _vm._v(" "),
-                              _c("td"),
-                              _vm._v(" "),
-                              _c("td"),
-                              _vm._v(" "),
-                              _c("td")
-                            ])
-                          ])
-                        ]
-                      )
-                    ])
-                  ])
-                ]
-              )
-            ]
-          ),
-          _vm._v(" "),
-          _c(
-            "div",
-            { staticClass: "form-group inline-group row align-items-center" },
-            [
-              _c("label", { staticClass: "col-md-6" }, [
-                _vm._v("Enable payment for advanced bookings?")
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "col-md-6" }, [
-                _c("div", { staticClass: "onoffswitch" }, [
-                  _c("input", {
-                    staticClass: "onoffswitch-checkbox",
-                    attrs: { type: "checkbox", id: "advanced_bookings_payment" }
-                  }),
-                  _vm._v(" "),
-                  _c(
-                    "label",
-                    {
-                      staticClass: "onoffswitch-label",
-                      attrs: {
-                        "data-toggle": "collapse",
-                        "data-target": "#advancedBookingsCollaps",
-                        role: "button",
-                        "aria-expanded": "false",
-                        "aria-controls": "advancedBookingsCollaps",
-                        for: "advanced_bookings_payment"
-                      }
-                    },
-                    [
-                      _c("span", { staticClass: "onoffswitch-inner" }),
-                      _vm._v(" "),
-                      _c("span", { staticClass: "onoffswitch-switch" })
-                    ]
-                  )
-                ])
-              ]),
-              _vm._v(" "),
-              _c(
-                "div",
-                {
-                  staticClass: "col-md-12 collapse",
-                  attrs: { id: "advancedBookingsCollaps" }
-                },
-                [
-                  _c("div", { staticClass: "card card-body" }, [
-                    _c("h3", [
-                      _vm._v("Between 1 and 2 days before the booking")
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "table-responsive mt-3" }, [
-                      _c(
-                        "table",
-                        {
-                          staticClass:
-                            "table table-striped table-bordered database-tables",
-                          staticStyle: { width: "100%" }
-                        },
-                        [
-                          _c("thead", [
-                            _c("tr", [
-                              _c("th"),
-                              _vm._v(" "),
-                              _c("th", [_vm._v("Adult Member")]),
-                              _vm._v(" "),
-                              _c("th", [_vm._v("Junior Member")]),
-                              _vm._v(" "),
-                              _c("th", [_vm._v("Senior Member")])
-                            ])
-                          ]),
-                          _vm._v(" "),
-                          _c("tbody", [
-                            _c("tr", [
-                              _c("td", [_vm._v("default")]),
-                              _vm._v(" "),
-                              _c("td", [_vm._v("2")]),
-                              _vm._v(" "),
-                              _c("td", [_vm._v("1")]),
-                              _vm._v(" "),
-                              _c("td", [_vm._v("1")])
-                            ]),
-                            _vm._v(" "),
-                            _c("tr", [
-                              _c("td", [_vm._v("time slot 1 ")]),
-                              _vm._v(" "),
-                              _c("td", [_vm._v("3")]),
-                              _vm._v(" "),
-                              _c("td", [_vm._v("2")]),
-                              _vm._v(" "),
-                              _c("td")
-                            ]),
-                            _vm._v(" "),
-                            _c("tr", [
-                              _c("td", [_vm._v("time slot 2")]),
-                              _vm._v(" "),
-                              _c("td", [_vm._v("4")]),
-                              _vm._v(" "),
-                              _c("td", [_vm._v("3")]),
-                              _vm._v(" "),
-                              _c("td")
-                            ]),
-                            _vm._v(" "),
-                            _c("tr", [
-                              _c("td", [_vm._v("time slot 3")]),
-                              _vm._v(" "),
-                              _c("td", [_vm._v("6")]),
-                              _vm._v(" "),
-                              _c("td", [_vm._v("4")]),
-                              _vm._v(" "),
-                              _c("td")
-                            ]),
-                            _vm._v(" "),
-                            _c("tr", [
-                              _c("td", [
-                                _c("a", { attrs: { href: "#" } }, [
-                                  _c("i", { staticClass: "fas fa-plus" }),
-                                  _vm._v(" add special time slot")
-                                ])
-                              ]),
-                              _vm._v(" "),
-                              _c("td"),
-                              _vm._v(" "),
-                              _c("td"),
-                              _vm._v(" "),
-                              _c("td")
-                            ])
-                          ])
-                        ]
-                      )
-                    ]),
-                    _vm._v(" "),
-                    _c("h3", [
-                      _vm._v("Between 2 and 5 days before the booking time")
-                    ])
-                  ])
-                ]
-              )
-            ]
-          )
-        ])
+        _c("span", { staticClass: "onoffswitch-inner" }),
+        _vm._v(" "),
+        _c("span", { staticClass: "onoffswitch-switch" })
       ]
     )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card card-body" }, [
+      _c("div", { staticClass: "table-responsive mt-3" }, [
+        _c(
+          "table",
+          {
+            staticClass: "table table-striped table-bordered database-tables",
+            staticStyle: { width: "100%" }
+          },
+          [
+            _c("thead", [
+              _c("tr", [
+                _c("th", [_vm._v("time / subscription")]),
+                _vm._v(" "),
+                _c("th", [_vm._v("Adult Member")]),
+                _vm._v(" "),
+                _c("th", [_vm._v("Junior Member")]),
+                _vm._v(" "),
+                _c("th", [_vm._v("Senior Member")])
+              ])
+            ]),
+            _vm._v(" "),
+            _c("tbody", [
+              _c("tr", [
+                _c("td", [_vm._v("default prices")]),
+                _vm._v(" "),
+                _c("td", [_vm._v("$15")]),
+                _vm._v(" "),
+                _c("td", [_vm._v("$5")]),
+                _vm._v(" "),
+                _c("td", [_vm._v("$10")])
+              ]),
+              _vm._v(" "),
+              _c("tr", [
+                _c("td", [_vm._v("Mondays 4-9 pm")]),
+                _vm._v(" "),
+                _c("td", [_vm._v("$23")]),
+                _vm._v(" "),
+                _c("td", [_vm._v("$15")]),
+                _vm._v(" "),
+                _c("td", [_vm._v("$18")])
+              ]),
+              _vm._v(" "),
+              _c("tr", [
+                _c("td", [_vm._v("Tuesdays 8-10 am")]),
+                _vm._v(" "),
+                _c("td", [_vm._v("$18")]),
+                _vm._v(" "),
+                _c("td", [_vm._v("$13")]),
+                _vm._v(" "),
+                _c("td", [_vm._v("$15")])
+              ]),
+              _vm._v(" "),
+              _c("tr", [
+                _c("td", [_vm._v("Wednesdays 12-4 pm")]),
+                _vm._v(" "),
+                _c("td", [_vm._v("$20")]),
+                _vm._v(" "),
+                _c("td", [_vm._v("$15")]),
+                _vm._v(" "),
+                _c("td", [_vm._v("$18")])
+              ]),
+              _vm._v(" "),
+              _c("tr", [
+                _c("td", [_vm._v("Thursdays 3-9pm")]),
+                _vm._v(" "),
+                _c("td", [_vm._v("$23")]),
+                _vm._v(" "),
+                _c("td", [_vm._v("$0")]),
+                _vm._v(" "),
+                _c("td")
+              ]),
+              _vm._v(" "),
+              _c("tr", [
+                _c("td", [
+                  _c("a", { attrs: { href: "#" } }, [
+                    _c("i", { staticClass: "fas fa-plus" }),
+                    _vm._v(" add special time slot")
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("td"),
+                _vm._v(" "),
+                _c("td"),
+                _vm._v(" "),
+                _c("td")
+              ])
+            ])
+          ]
+        )
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "label",
+      {
+        staticClass: "onoffswitch-label",
+        attrs: {
+          "data-toggle": "collapse",
+          "data-target": "#advancedBookingsCollaps",
+          role: "button",
+          "aria-expanded": "false",
+          "aria-controls": "advancedBookingsCollaps",
+          for: "advanced_bookings_payment"
+        }
+      },
+      [
+        _c("span", { staticClass: "onoffswitch-inner" }),
+        _vm._v(" "),
+        _c("span", { staticClass: "onoffswitch-switch" })
+      ]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card card-body" }, [
+      _c("h3", [_vm._v("Between 1 and 2 days before the booking")]),
+      _vm._v(" "),
+      _c("div", { staticClass: "table-responsive mt-3" }, [
+        _c(
+          "table",
+          {
+            staticClass: "table table-striped table-bordered database-tables",
+            staticStyle: { width: "100%" }
+          },
+          [
+            _c("thead", [
+              _c("tr", [
+                _c("th"),
+                _vm._v(" "),
+                _c("th", [_vm._v("Adult Member")]),
+                _vm._v(" "),
+                _c("th", [_vm._v("Junior Member")]),
+                _vm._v(" "),
+                _c("th", [_vm._v("Senior Member")])
+              ])
+            ]),
+            _vm._v(" "),
+            _c("tbody", [
+              _c("tr", [
+                _c("td", [_vm._v("default")]),
+                _vm._v(" "),
+                _c("td", [_vm._v("2")]),
+                _vm._v(" "),
+                _c("td", [_vm._v("1")]),
+                _vm._v(" "),
+                _c("td", [_vm._v("1")])
+              ]),
+              _vm._v(" "),
+              _c("tr", [
+                _c("td", [_vm._v("time slot 1 ")]),
+                _vm._v(" "),
+                _c("td", [_vm._v("3")]),
+                _vm._v(" "),
+                _c("td", [_vm._v("2")]),
+                _vm._v(" "),
+                _c("td")
+              ]),
+              _vm._v(" "),
+              _c("tr", [
+                _c("td", [_vm._v("time slot 2")]),
+                _vm._v(" "),
+                _c("td", [_vm._v("4")]),
+                _vm._v(" "),
+                _c("td", [_vm._v("3")]),
+                _vm._v(" "),
+                _c("td")
+              ]),
+              _vm._v(" "),
+              _c("tr", [
+                _c("td", [_vm._v("time slot 3")]),
+                _vm._v(" "),
+                _c("td", [_vm._v("6")]),
+                _vm._v(" "),
+                _c("td", [_vm._v("4")]),
+                _vm._v(" "),
+                _c("td")
+              ]),
+              _vm._v(" "),
+              _c("tr", [
+                _c("td", [
+                  _c("a", { attrs: { href: "#" } }, [
+                    _c("i", { staticClass: "fas fa-plus" }),
+                    _vm._v(" add special time slot")
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("td"),
+                _vm._v(" "),
+                _c("td"),
+                _vm._v(" "),
+                _c("td")
+              ])
+            ])
+          ]
+        )
+      ]),
+      _vm._v(" "),
+      _c("h3", [_vm._v("Between 2 and 5 days before the booking time")])
+    ])
   },
   function() {
     var _vm = this

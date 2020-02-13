@@ -228,6 +228,9 @@
                     charge_per_court: false,
                     price: null
                   },
+                  allow_non_member: false,
+                  booking_unit_length: 'one_hour',
+                  max_units: 1,
                   allow_per_period : false,
                   special_times: false,
                   days_of_weeks: {
@@ -238,7 +241,10 @@
                     thursday: [],
                     friday: [],
                     saturday: [],
-                  }
+                  },
+                  enable_payment: false,
+                  enable_courts_payment: false,
+                  enable_advanced_bookings_payment: false,
                 },
               },
               isActiveSettingModel: false,
