@@ -3519,17 +3519,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             charge_per_court: false,
             price: null
           },
-          allow_per_period: false
-        },
-        special_times: false,
-        days_of_weeks: {
-          sunday: [],
-          monday: [],
-          tuesday: [],
-          wednessday: [],
-          thursday: [],
-          friday: [],
-          saturday: []
+          allow_per_period: false,
+          special_times: false,
+          days_of_weeks: {
+            sunday: [],
+            monday: [],
+            tuesday: [],
+            wednessday: [],
+            thursday: [],
+            friday: [],
+            saturday: []
+          }
         }
       },
       isActiveSettingModel: false,
@@ -6114,26 +6114,26 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         }
       });
     },
-    addSession: function addSession(week_of_day) {
-      var sessions = _toConsumableArray(this.booking.settings.days_of_weeks[week_of_day]); // Vue.delete(this.booking.settings.days_of_weeks, week_of_day);
+    addSession: function addSession(day_of_weeks) {
+      var sessions = _toConsumableArray(this.booking.settings.business_hours.days_of_weeks[day_of_weeks]); // Vue.delete(this.booking.settings.business_hours.days_of_weeks, day_of_weeks);
 
 
       sessions.push({
         start: '',
         end: ''
       });
-      this.booking.settings.days_of_weeks[week_of_day] = sessions;
+      this.booking.settings.business_hours.days_of_weeks[day_of_weeks] = sessions;
       console.log(this.booking.settings);
     },
-    removeSession: function removeSession(index, week_of_day) {
+    removeSession: function removeSession(index, day_of_weeks) {
       console.log(index);
-      console.log(week_of_day);
+      console.log(day_of_weeks);
 
-      var sessions = _toConsumableArray(this.booking.settings.days_of_weeks[week_of_day]);
+      var sessions = _toConsumableArray(this.booking.settings.business_hours.days_of_weeks[day_of_weeks]);
 
-      sessions.splice(index, 1); // Vue.delete(this.booking.settings.days_of_weeks, week_of_day);
+      sessions.splice(index, 1); // Vue.delete(this.booking.settings.business_hours.days_of_weeks, day_of_weeks);
 
-      this.booking.settings.days_of_weeks[week_of_day] = sessions;
+      this.booking.settings.business_hours.days_of_weeks[day_of_weeks] = sessions;
     },
     closeSettingModal: function closeSettingModal() {
       console.log(this.booking);
@@ -80996,202 +80996,209 @@ var render = function() {
                           _c(
                             "div",
                             { staticClass: "card card-body" },
-                            _vm._l(_vm.booking.settings.days_of_weeks, function(
-                              value,
-                              days_of_week
-                            ) {
-                              return _c("div", { key: days_of_week }, [
-                                _c(
-                                  "a",
-                                  {
-                                    staticClass:
-                                      "btn btn-block btn-success day_collaps text-left",
-                                    attrs: {
-                                      "data-toggle": "collapse",
-                                      href: "#" + days_of_week + "Collaps",
-                                      role: "button",
-                                      "aria-expanded": "false",
-                                      "aria-controls": days_of_week + "Collaps"
-                                    }
-                                  },
-                                  [_vm._v(_vm._s(days_of_week))]
-                                ),
-                                _vm._v(" "),
-                                _c(
-                                  "div",
-                                  {
-                                    staticClass: "collapse",
-                                    attrs: { id: days_of_week + "Collaps" }
-                                  },
-                                  [
-                                    _c(
-                                      "div",
-                                      { staticClass: "card card-body" },
-                                      [
-                                        _vm._l(
-                                          _vm.booking.settings.days_of_weeks[
-                                            days_of_week
-                                          ],
-                                          function(day, index) {
-                                            return _c(
-                                              "div",
-                                              {
-                                                key: index,
-                                                staticClass: "form-group row"
-                                              },
-                                              [
-                                                _c(
-                                                  "div",
-                                                  { staticClass: "col-md-5" },
-                                                  [
-                                                    _c(
-                                                      "label",
-                                                      {
-                                                        staticClass: "cs-label",
-                                                        attrs: { for: "start" }
-                                                      },
-                                                      [_vm._v("Start")]
-                                                    ),
-                                                    _vm._v(" "),
-                                                    _c("datetime", {
-                                                      attrs: {
-                                                        "min-datetime":
-                                                          _vm.booking.settings
-                                                            .business_hours
-                                                            .start,
-                                                        "max-datetime":
-                                                          _vm.booking.settings
-                                                            .business_hours.end,
-                                                        type: "time",
-                                                        "input-class":
-                                                          "form-control"
-                                                      },
-                                                      model: {
-                                                        value: day.start,
-                                                        callback: function(
-                                                          $$v
-                                                        ) {
-                                                          _vm.$set(
-                                                            day,
-                                                            "start",
-                                                            $$v
-                                                          )
-                                                        },
-                                                        expression: "day.start"
-                                                      }
-                                                    })
-                                                  ],
-                                                  1
-                                                ),
-                                                _vm._v(" "),
-                                                _c(
-                                                  "div",
-                                                  { staticClass: "col-md-5" },
-                                                  [
-                                                    _c(
-                                                      "label",
-                                                      {
-                                                        staticClass: "cs-label",
-                                                        attrs: { for: "end" }
-                                                      },
-                                                      [_vm._v("End")]
-                                                    ),
-                                                    _vm._v(" "),
-                                                    _c("datetime", {
-                                                      attrs: {
-                                                        type: "time",
-                                                        "min-datetime":
-                                                          _vm.booking.settings
-                                                            .business_hours
-                                                            .start,
-                                                        "max-datetime":
-                                                          _vm.booking.settings
-                                                            .business_hours.end,
-                                                        "input-class":
-                                                          "form-control"
-                                                      },
-                                                      model: {
-                                                        value: day.end,
-                                                        callback: function(
-                                                          $$v
-                                                        ) {
-                                                          _vm.$set(
-                                                            day,
-                                                            "end",
-                                                            $$v
-                                                          )
-                                                        },
-                                                        expression: "day.end"
-                                                      }
-                                                    })
-                                                  ],
-                                                  1
-                                                ),
-                                                _vm._v(" "),
-                                                _c(
-                                                  "div",
-                                                  {
-                                                    staticClass:
-                                                      "col-md-2 align-self-end"
-                                                  },
-                                                  [
-                                                    _c(
-                                                      "button",
-                                                      {
-                                                        staticClass:
-                                                          "btn btn-danger",
-                                                        attrs: {
-                                                          type: "button"
-                                                        },
-                                                        on: {
-                                                          click: function(
-                                                            $event
-                                                          ) {
-                                                            return _vm.removeSession(
-                                                              index,
-                                                              days_of_week
-                                                            )
-                                                          }
-                                                        }
-                                                      },
-                                                      [
-                                                        _c("i", {
+                            _vm._l(
+                              _vm.booking.settings.business_hours.days_of_weeks,
+                              function(value, days_of_week) {
+                                return _c("div", { key: days_of_week }, [
+                                  _c(
+                                    "a",
+                                    {
+                                      staticClass:
+                                        "btn btn-block btn-success day_collaps text-left",
+                                      attrs: {
+                                        "data-toggle": "collapse",
+                                        href: "#" + days_of_week + "Collaps",
+                                        role: "button",
+                                        "aria-expanded": "false",
+                                        "aria-controls":
+                                          days_of_week + "Collaps"
+                                      }
+                                    },
+                                    [_vm._v(_vm._s(days_of_week))]
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "div",
+                                    {
+                                      staticClass: "collapse",
+                                      attrs: { id: days_of_week + "Collaps" }
+                                    },
+                                    [
+                                      _c(
+                                        "div",
+                                        { staticClass: "card card-body" },
+                                        [
+                                          _vm._l(
+                                            _vm.booking.settings.business_hours
+                                              .days_of_weeks[days_of_week],
+                                            function(day, index) {
+                                              return _c(
+                                                "div",
+                                                {
+                                                  key: index,
+                                                  staticClass: "form-group row"
+                                                },
+                                                [
+                                                  _c(
+                                                    "div",
+                                                    { staticClass: "col-md-5" },
+                                                    [
+                                                      _c(
+                                                        "label",
+                                                        {
                                                           staticClass:
-                                                            "fa fa-trash"
-                                                        })
-                                                      ]
-                                                    )
-                                                  ]
-                                                )
-                                              ]
-                                            )
-                                          }
-                                        ),
-                                        _vm._v(" "),
-                                        _c("div", {}, [
-                                          _c(
-                                            "button",
-                                            {
-                                              staticClass: "btn btn-success",
-                                              attrs: { type: "button" },
-                                              on: {
-                                                click: function($event) {
-                                                  return _vm.addSession(
-                                                    days_of_week
+                                                            "cs-label",
+                                                          attrs: {
+                                                            for: "start"
+                                                          }
+                                                        },
+                                                        [_vm._v("Start")]
+                                                      ),
+                                                      _vm._v(" "),
+                                                      _c("datetime", {
+                                                        attrs: {
+                                                          "min-datetime":
+                                                            _vm.booking.settings
+                                                              .business_hours
+                                                              .start,
+                                                          "max-datetime":
+                                                            _vm.booking.settings
+                                                              .business_hours
+                                                              .end,
+                                                          type: "time",
+                                                          "input-class":
+                                                            "form-control"
+                                                        },
+                                                        model: {
+                                                          value: day.start,
+                                                          callback: function(
+                                                            $$v
+                                                          ) {
+                                                            _vm.$set(
+                                                              day,
+                                                              "start",
+                                                              $$v
+                                                            )
+                                                          },
+                                                          expression:
+                                                            "day.start"
+                                                        }
+                                                      })
+                                                    ],
+                                                    1
+                                                  ),
+                                                  _vm._v(" "),
+                                                  _c(
+                                                    "div",
+                                                    { staticClass: "col-md-5" },
+                                                    [
+                                                      _c(
+                                                        "label",
+                                                        {
+                                                          staticClass:
+                                                            "cs-label",
+                                                          attrs: { for: "end" }
+                                                        },
+                                                        [_vm._v("End")]
+                                                      ),
+                                                      _vm._v(" "),
+                                                      _c("datetime", {
+                                                        attrs: {
+                                                          type: "time",
+                                                          "min-datetime":
+                                                            _vm.booking.settings
+                                                              .business_hours
+                                                              .start,
+                                                          "max-datetime":
+                                                            _vm.booking.settings
+                                                              .business_hours
+                                                              .end,
+                                                          "input-class":
+                                                            "form-control"
+                                                        },
+                                                        model: {
+                                                          value: day.end,
+                                                          callback: function(
+                                                            $$v
+                                                          ) {
+                                                            _vm.$set(
+                                                              day,
+                                                              "end",
+                                                              $$v
+                                                            )
+                                                          },
+                                                          expression: "day.end"
+                                                        }
+                                                      })
+                                                    ],
+                                                    1
+                                                  ),
+                                                  _vm._v(" "),
+                                                  _c(
+                                                    "div",
+                                                    {
+                                                      staticClass:
+                                                        "col-md-2 align-self-end"
+                                                    },
+                                                    [
+                                                      _c(
+                                                        "button",
+                                                        {
+                                                          staticClass:
+                                                            "btn btn-danger",
+                                                          attrs: {
+                                                            type: "button"
+                                                          },
+                                                          on: {
+                                                            click: function(
+                                                              $event
+                                                            ) {
+                                                              return _vm.removeSession(
+                                                                index,
+                                                                days_of_week
+                                                              )
+                                                            }
+                                                          }
+                                                        },
+                                                        [
+                                                          _c("i", {
+                                                            staticClass:
+                                                              "fa fa-trash"
+                                                          })
+                                                        ]
+                                                      )
+                                                    ]
                                                   )
+                                                ]
+                                              )
+                                            }
+                                          ),
+                                          _vm._v(" "),
+                                          _c("div", {}, [
+                                            _c(
+                                              "button",
+                                              {
+                                                staticClass: "btn btn-success",
+                                                attrs: { type: "button" },
+                                                on: {
+                                                  click: function($event) {
+                                                    return _vm.addSession(
+                                                      days_of_week
+                                                    )
+                                                  }
                                                 }
-                                              }
-                                            },
-                                            [_vm._v("Add Session")]
-                                          )
-                                        ])
-                                      ],
-                                      2
-                                    )
-                                  ]
-                                )
-                              ])
-                            }),
+                                              },
+                                              [_vm._v("Add Session")]
+                                            )
+                                          ])
+                                        ],
+                                        2
+                                      )
+                                    ]
+                                  )
+                                ])
+                              }
+                            ),
                             0
                           )
                         ]

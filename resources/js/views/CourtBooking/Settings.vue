@@ -228,18 +228,18 @@
                     charge_per_court: false,
                     price: null
                   },
-                  allow_per_period : false
+                  allow_per_period : false,
+                  special_times: false,
+                  days_of_weeks: {
+                    sunday: [],
+                    monday: [],
+                    tuesday: [],
+                    wednessday: [],
+                    thursday: [],
+                    friday: [],
+                    saturday: [],
+                  }
                 },
-                special_times: false,
-                days_of_weeks: {
-                  sunday: [],
-                  monday: [],
-                  tuesday: [],
-                  wednessday: [],
-                  thursday: [],
-                  friday: [],
-                  saturday: [],
-                }
               },
               isActiveSettingModel: false,
               resources: [],

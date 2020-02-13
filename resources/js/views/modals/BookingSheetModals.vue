@@ -284,7 +284,7 @@
 
                         <div class="collapse" :class="{show: booking.settings.special_times}" id="specialTimesCollaps">
                           <div class="card card-body">
-                            <div v-for="(value, days_of_week) in booking.settings.days_of_weeks" :key="days_of_week">
+                            <div v-for="(value, days_of_week) in booking.settings.business_hours.days_of_weeks" :key="days_of_week">
                               <a 
                               class="btn btn-block btn-success day_collaps text-left" 
                               data-toggle="collapse" 
@@ -294,7 +294,7 @@
                               :aria-controls="days_of_week+'Collaps'">{{ days_of_week }}</a>
                               <div class="collapse" :id="days_of_week+'Collaps'">
                                 <div class="card card-body">
-                                  <div v-for="(day, index) in booking.settings.days_of_weeks[days_of_week]" :key="index" class="form-group row">
+                                  <div v-for="(day, index) in booking.settings.business_hours.days_of_weeks[days_of_week]" :key="index" class="form-group row">
                                       <div class="col-md-5">
                                           <label for="start" class="cs-label">Start</label>
                                           <datetime
@@ -708,21 +708,21 @@
             }
         });
       },
-      addSession: function(week_of_day){
-          let sessions = [...this.booking.settings.days_of_weeks[week_of_day]];
-          // Vue.delete(this.booking.settings.days_of_weeks, week_of_day);
+      addSession: function(day_of_weeks){
+          let sessions = [...this.booking.settings.business_hours.days_of_weeks[day_of_weeks]];
+          // Vue.delete(this.booking.settings.business_hours.days_of_weeks, day_of_weeks);
           sessions.push({start:'',end: ''});
-          this.booking.settings.days_of_weeks[week_of_day] = sessions;
+          this.booking.settings.business_hours.days_of_weeks[day_of_weeks] = sessions;
 
           console.log(this.booking.settings)
       },
-      removeSession(index, week_of_day) {
+      removeSession(index, day_of_weeks) {
           console.log(index);
-          console.log(week_of_day);
-          let sessions = [...this.booking.settings.days_of_weeks[week_of_day]];
+          console.log(day_of_weeks);
+          let sessions = [...this.booking.settings.business_hours.days_of_weeks[day_of_weeks]];
           sessions.splice(index, 1);
-          // Vue.delete(this.booking.settings.days_of_weeks, week_of_day);
-          this.booking.settings.days_of_weeks[week_of_day] = sessions;
+          // Vue.delete(this.booking.settings.business_hours.days_of_weeks, day_of_weeks);
+          this.booking.settings.business_hours.days_of_weeks[day_of_weeks] = sessions;
       },
       closeSettingModal: function(){
         console.log(this.booking)
