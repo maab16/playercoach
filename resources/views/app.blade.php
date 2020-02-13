@@ -66,6 +66,8 @@
             //     width: '100%'
             // });
 
+            $('[data-toggle="tooltip"]').tooltip(); 
+
         })(jQuery);
     </script>
     <!-- Scripts -->

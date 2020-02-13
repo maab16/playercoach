@@ -227,7 +227,8 @@
                   payment: {
                     charge_per_court: false,
                     price: null
-                  }
+                  },
+                  allow_per_period : false
                 },
               },
               isActiveSettingModel: false,
