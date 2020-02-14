@@ -3523,6 +3523,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           booking_unit_length: 'one_hour',
           max_units: 1,
           allow_per_period: false,
+          rules: [],
           special_times: false,
           days_of_weeks: {
             sunday: [],
@@ -3556,18 +3557,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var _this = this;
 
       axios.get('/api/courtbooking/booking/all').then(function (res) {
-        console.log(res.data);
-        _this.bookings = res.data.bookings; // for(let booking of this.bookings) {
-        //   booking.settings = JSON.stringify(booking.settings, null, 4);
-        // }
-
-        _this.unpublished_bookings = res.data.unpublished_bookings; // for(let unpublished_booking of this.unpublished_bookings) {
-        //   unpublished_booking.settings = JSON.stringify(unpublished_booking.settings, null, 4);
-        // }
-
-        _this.published_bookings = res.data.published_bookings; // for(let published_booking of this.published_bookings) {
-        //   published_booking.settings = JSON.stringify(published_booking.settings, null, 4);
-        // }
+        _this.bookings = res.data.bookings;
+        _this.unpublished_bookings = res.data.unpublished_bookings;
+        _this.published_bookings = res.data.published_bookings;
       });
     },
     showCreateForm: function showCreateForm() {
@@ -3576,7 +3568,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.booking.title = '';
     },
     showEditForm: function showEditForm(index) {
-      console.log(index);
       this.action = "edit";
       this.category = "Update Booking Sheet";
       this.booking = this.bookings[index];
@@ -3587,10 +3578,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     addBooking: function addBooking() {
       var _this2 = this;
 
-      console.log(this.booking);
       axios.post('/api/courtbooking/booking', this.booking).then(function (res) {
-        console.log(res.data);
-
         if (res.data.success == true) {
           // Flash success message
           toastr.success('Added Successfully.');
@@ -3629,18 +3617,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           }
         }
       })["catch"](function (err) {
-        console.log(err);
+        return console.log(err);
       });
     },
     updateBooking: function updateBooking() {
       var _this3 = this;
 
-      console.log(this.booking); // this.booking.settings = JSON.parse(this.booking.settings)
-
-      console.log(this.booking);
       axios.put("/api/courtbooking/booking/".concat(this.booking.id), this.booking).then(function (res) {
-        console.log(res.data);
-
         if (res.data.success == true) {
           // Flash success message
           toastr.success('Updated Successfully');
@@ -3697,8 +3680,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         if (result.value) {
           // this.$Progress.start()
           axios.put("/api/courtbooking/booking/".concat(booking, "/restore")).then(function (res) {
-            console.log(res.data);
-
             if (res.data.success == true) {
               toastr.success("Booking Restored Successfully");
               self.fetchBookings(); // this.$Progress.finish()
@@ -3727,8 +3708,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         if (result.value) {
           // this.$Progress.start()
           axios["delete"]("/api/courtbooking/booking/".concat(booking)).then(function (res) {
-            console.log(res.data);
-
             if (res.data.success == true) {
               toastr.success("Booking Deleted Successfully");
               self.fetchBookings(); // this.$Progress.finish()
@@ -3757,8 +3736,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         if (result.value) {
           // this.$Progress.start()
           axios["delete"]("/api/courtbooking/booking/".concat(booking, "/permanent")).then(function (res) {
-            console.log(res.data);
-
             if (res.data.success == true) {
               toastr.success("Booking Permanently Deleted Successfully");
               self.fetchBookings(); // this.$Progress.finish()
@@ -3776,7 +3753,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var _this7 = this;
 
       axios.get('/api/courtbooking/resource-type/all').then(function (res) {
-        console.log(res.data);
         _this7.resource_types = res.data.resource_types;
       });
     },
@@ -3791,7 +3767,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.resource_type = this.resource_types[index];
     },
     showEditResourceTypeForm: function showEditResourceTypeForm(index) {
-      console.log(index);
       this.action = "edit";
       this.category = "Edit Resource Type";
       this.resource_type = this.resource_types[index];
@@ -3800,8 +3775,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var _this8 = this;
 
       axios.post('/api/courtbooking/resource-type', this.resource_type).then(function (res) {
-        console.log(res.data);
-
         if (res.data.success == true) {
           // Flash success message
           toastr.success('Resource Type Added Successfully.');
@@ -3840,15 +3813,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           }
         }
       })["catch"](function (err) {
-        console.log(err);
+        return console.log(err);
       });
     },
     updateResourceType: function updateResourceType() {
       var _this9 = this;
 
       axios.put("/api/courtbooking/resource-type/".concat(this.resource_type.id), this.resource_type).then(function (res) {
-        console.log(res.data);
-
         if (res.data.success == true) {
           // Flash success message
           toastr.success('Resource Type Updated Successfully');
@@ -3905,15 +3876,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         if (result.value) {
           // this.$Progress.start()
           axios["delete"]("/api/courtbooking/resource-type/".concat(resource_type)).then(function (res) {
-            console.log(res.data);
-
             if (res.data.success == true) {
               toastr.success("Resource Type Deleted Successfully");
               self.fetchResourceTypes(); // this.$Progress.finish()
             }
           })["catch"](function (err) {
-            // this.$Progress.start()
-            _this10.displayError(err.response);
+            return _this10.displayError(err.response);
           });
         } else if (result.dismiss === Swal.DismissReason.cancel) {
           Swal.fire('Cancelled', 'Your imaginary file is safe :)', 'error');
@@ -5899,6 +5867,52 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     booking: Object,
@@ -5924,7 +5938,6 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
   },
   methods: {
     showResourceCreateForm: function showResourceCreateForm() {
-      console.log(this.booking);
       this.resourceAction = "add"; // this.category = "Create Resource Type"
 
       this.resource = {
@@ -5941,14 +5954,14 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       this.resourceAction = "edit"; // this.category = "Edit Resource"
 
       this.resource = this.booking.resources[index];
-      console.log(this.booking);
+    },
+    viewResourceSettings: function viewResourceSettings(index) {
+      this.resource = this.booking.resources[index];
     },
     addResource: function addResource() {
       var _this = this;
 
       axios.post('/api/courtbooking/resource', this.resource).then(function (res) {
-        console.log(res.data);
-
         if (res.data.success == true) {
           _this.booking.resources = res.data.booking.resources; // Flash success message
 
@@ -5986,15 +5999,13 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
           }
         }
       })["catch"](function (err) {
-        console.log(err);
+        return _this.displayError(err.response);
       });
     },
     updateResource: function updateResource() {
       var _this2 = this;
 
       axios.put("/api/courtbooking/resource/".concat(this.resource.id), this.resource).then(function (res) {
-        console.log(res.data);
-
         if (res.data.success == true) {
           _this2.booking.resources = res.data.booking.resources; // Flash success message
 
@@ -6032,7 +6043,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
           }
         }
       })["catch"](function (err) {
-        return console.log(err);
+        return _this2.displayError(err.response);
       });
     },
     removeResource: function removeResource(resource_id) {
@@ -6052,8 +6063,6 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
           axios["delete"]("/api/courtbooking/resource/".concat(resource_id), {
             params: _this3.booking
           }).then(function (res) {
-            console.log(res.data);
-
             if (res.data.success == true) {
               _this3.booking.resources = res.data.booking.resources;
               toastr.success("Resource Deleted Successfully");
@@ -6068,29 +6077,38 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         }
       });
     },
-    addSession: function addSession(day_of_weeks) {
-      var sessions = _toConsumableArray(this.booking.settings.business_hours.days_of_weeks[day_of_weeks]); // Vue.delete(this.booking.settings.business_hours.days_of_weeks, day_of_weeks);
+    addRule: function addRule() {
+      var rules = _toConsumableArray(this.booking.settings.business_hours.rules);
 
+      rules.push({
+        plan: '',
+        max_book: '',
+        booking_per: ''
+      });
+      this.booking.settings.business_hours.rules = rules;
+    },
+    removeRule: function removeRule(index) {
+      var rules = _toConsumableArray(this.booking.settings.business_hours.rules);
+
+      rules.splice(index, 1);
+      this.booking.settings.business_hours.rules = rules;
+    },
+    addSession: function addSession(day_of_weeks) {
+      var sessions = _toConsumableArray(this.booking.settings.business_hours.days_of_weeks[day_of_weeks]);
 
       sessions.push({
         start: '',
         end: ''
       });
       this.booking.settings.business_hours.days_of_weeks[day_of_weeks] = sessions;
-      console.log(this.booking.settings);
     },
     removeSession: function removeSession(index, day_of_weeks) {
-      console.log(index);
-      console.log(day_of_weeks);
-
       var sessions = _toConsumableArray(this.booking.settings.business_hours.days_of_weeks[day_of_weeks]);
 
-      sessions.splice(index, 1); // Vue.delete(this.booking.settings.business_hours.days_of_weeks, day_of_weeks);
-
+      sessions.splice(index, 1);
       this.booking.settings.business_hours.days_of_weeks[day_of_weeks] = sessions;
     },
     closeSettingModal: function closeSettingModal() {
-      console.log(this.booking);
       Vue["delete"](this.booking, 'isActiveSettingModel');
       this.booking.isActiveSettingModel = false;
     }
@@ -80359,6 +80377,135 @@ var render = function() {
       _vm._v(" "),
       _c(
         "div",
+        { staticClass: "modal fade", attrs: { id: "resourceSettingsModal" } },
+        [
+          _c(
+            "div",
+            {
+              staticClass: "modal-dialog view-modal-dialog",
+              attrs: { role: "document" }
+            },
+            [
+              _c("div", { staticClass: "modal-content" }, [
+                _vm._m(2),
+                _vm._v(" "),
+                _c("div", { staticClass: "modal-body" }, [
+                  _c(
+                    "form",
+                    {
+                      on: {
+                        submit: function($event) {
+                          $event.preventDefault()
+                          _vm.resourceAction == "add"
+                            ? _vm.addResource()
+                            : _vm.updateResource()
+                        }
+                      }
+                    },
+                    [
+                      _c(
+                        "div",
+                        { staticClass: "form-group" },
+                        [
+                          _c(
+                            "label",
+                            {
+                              staticClass: "col-form-lebel text-md-right",
+                              attrs: { for: "permissions" }
+                            },
+                            [_vm._v("Booking Sheet")]
+                          ),
+                          _vm._v(" "),
+                          _c("multiselect", {
+                            attrs: {
+                              options: _vm.resource_types,
+                              multiple: false,
+                              "close-on-select": true,
+                              "clear-on-select": false,
+                              "preserve-search": true,
+                              placeholder: "'Pick Resource Type'",
+                              label: "title",
+                              "track-by": "title",
+                              "preselect-first": false,
+                              id: "resource_type"
+                            },
+                            model: {
+                              value: _vm.resource.resource_type,
+                              callback: function($$v) {
+                                _vm.$set(_vm.resource, "resource_type", $$v)
+                              },
+                              expression: "resource.resource_type"
+                            }
+                          })
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "form-group" }, [
+                        _c("label", { attrs: { for: "title" } }, [
+                          _vm._v("Title")
+                        ]),
+                        _vm._v(" "),
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.resource.title,
+                              expression: "resource.title"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: {
+                            type: "text",
+                            placeholder: "Resource Title"
+                          },
+                          domProps: { value: _vm.resource.title },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.$set(
+                                _vm.resource,
+                                "title",
+                                $event.target.value
+                              )
+                            }
+                          }
+                        })
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "form-group" }, [
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-danger",
+                            attrs: { type: "button", "data-dismiss": "modal" }
+                          },
+                          [_vm._v("Close")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-success",
+                            attrs: { type: "submit" }
+                          },
+                          [_vm._v(_vm._s(_vm.resourceAction))]
+                        )
+                      ])
+                    ]
+                  )
+                ])
+              ])
+            ]
+          )
+        ]
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
         {
           staticClass: "settingModal",
           class: { activeSetting: _vm.booking.isActiveSettingModel },
@@ -80393,7 +80540,7 @@ var render = function() {
                     )
                   ]),
                   _vm._v(" "),
-                  _vm._m(2)
+                  _vm._m(3)
                 ]),
                 _vm._v(" "),
                 _c("div", { staticClass: "modal-body" }, [
@@ -80432,7 +80579,7 @@ var render = function() {
                             staticStyle: { width: "100%" }
                           },
                           [
-                            _vm._m(3),
+                            _vm._m(4),
                             _vm._v(" "),
                             _c(
                               "tbody",
@@ -80465,16 +80612,19 @@ var render = function() {
                                           attrs: {
                                             href: "#",
                                             "data-toggle": "modal",
-                                            "data-target": "#viewResourceModal"
+                                            "data-target":
+                                              "#resourceSettingsModal"
                                           },
                                           on: {
                                             click: function($event) {
                                               $event.preventDefault()
-                                              return _vm.viewResource(index)
+                                              return _vm.viewResourceSettings(
+                                                index
+                                              )
                                             }
                                           }
                                         },
-                                        [_vm._v("View")]
+                                        [_vm._v("Settings")]
                                       ),
                                       _vm._v(" "),
                                       _c(
@@ -80533,7 +80683,7 @@ var render = function() {
                       ])
                     : _vm._e(),
                   _vm._v(" "),
-                  _vm._m(4),
+                  _vm._m(5),
                   _vm._v(" "),
                   _c(
                     "form",
@@ -80750,7 +80900,7 @@ var render = function() {
                                       }
                                     }),
                                     _vm._v(" "),
-                                    _vm._m(5)
+                                    _vm._m(6)
                                   ])
                                 ])
                               ]
@@ -80968,11 +81118,423 @@ var render = function() {
                                       }
                                     }),
                                     _vm._v(" "),
-                                    _vm._m(6)
+                                    _vm._m(7)
                                   ])
                                 ]),
                                 _vm._v(" "),
-                                _vm._m(7)
+                                _c(
+                                  "div",
+                                  {
+                                    staticClass: "col-md-12 collapse",
+                                    class: {
+                                      show:
+                                        _vm.booking.settings.business_hours
+                                          .allow_per_period
+                                    },
+                                    attrs: { id: "collapsePeriod" }
+                                  },
+                                  [
+                                    _c(
+                                      "div",
+                                      { staticClass: "card card-body" },
+                                      [
+                                        _vm._l(
+                                          _vm.booking.settings.business_hours
+                                            .rules,
+                                          function(rule, index) {
+                                            return _c(
+                                              "div",
+                                              {
+                                                key: index,
+                                                staticClass: "form-group row"
+                                              },
+                                              [
+                                                _c(
+                                                  "div",
+                                                  {
+                                                    staticClass:
+                                                      "form-group col-md-3"
+                                                  },
+                                                  [
+                                                    _c(
+                                                      "label",
+                                                      {
+                                                        attrs: { for: "plan" }
+                                                      },
+                                                      [_vm._v("Plan")]
+                                                    ),
+                                                    _vm._v(" "),
+                                                    _c(
+                                                      "select",
+                                                      {
+                                                        directives: [
+                                                          {
+                                                            name: "model",
+                                                            rawName: "v-model",
+                                                            value: rule.plan,
+                                                            expression:
+                                                              "rule.plan"
+                                                          }
+                                                        ],
+                                                        staticClass:
+                                                          "form-control",
+                                                        attrs: { id: "plan" },
+                                                        on: {
+                                                          change: function(
+                                                            $event
+                                                          ) {
+                                                            var $$selectedVal = Array.prototype.filter
+                                                              .call(
+                                                                $event.target
+                                                                  .options,
+                                                                function(o) {
+                                                                  return o.selected
+                                                                }
+                                                              )
+                                                              .map(function(o) {
+                                                                var val =
+                                                                  "_value" in o
+                                                                    ? o._value
+                                                                    : o.value
+                                                                return val
+                                                              })
+                                                            _vm.$set(
+                                                              rule,
+                                                              "plan",
+                                                              $event.target
+                                                                .multiple
+                                                                ? $$selectedVal
+                                                                : $$selectedVal[0]
+                                                            )
+                                                          }
+                                                        }
+                                                      },
+                                                      [
+                                                        _c(
+                                                          "option",
+                                                          {
+                                                            attrs: {
+                                                              value: "everyone"
+                                                            }
+                                                          },
+                                                          [_vm._v("Everyone")]
+                                                        ),
+                                                        _vm._v(" "),
+                                                        _c(
+                                                          "option",
+                                                          {
+                                                            attrs: {
+                                                              value: "adult"
+                                                            }
+                                                          },
+                                                          [_vm._v("Adult")]
+                                                        ),
+                                                        _vm._v(" "),
+                                                        _c(
+                                                          "option",
+                                                          {
+                                                            attrs: {
+                                                              value: "junior"
+                                                            }
+                                                          },
+                                                          [_vm._v("Junior")]
+                                                        ),
+                                                        _vm._v(" "),
+                                                        _c(
+                                                          "option",
+                                                          {
+                                                            attrs: {
+                                                              value: "senior"
+                                                            }
+                                                          },
+                                                          [_vm._v("Senior")]
+                                                        )
+                                                      ]
+                                                    )
+                                                  ]
+                                                ),
+                                                _vm._v(" "),
+                                                _c(
+                                                  "div",
+                                                  {
+                                                    staticClass:
+                                                      "form-group col-md-3"
+                                                  },
+                                                  [
+                                                    _c(
+                                                      "label",
+                                                      {
+                                                        attrs: {
+                                                          for: "max_book"
+                                                        }
+                                                      },
+                                                      [_vm._v("Maximum book")]
+                                                    ),
+                                                    _vm._v(" "),
+                                                    _c(
+                                                      "select",
+                                                      {
+                                                        directives: [
+                                                          {
+                                                            name: "model",
+                                                            rawName: "v-model",
+                                                            value:
+                                                              rule.max_book,
+                                                            expression:
+                                                              "rule.max_book"
+                                                          }
+                                                        ],
+                                                        staticClass:
+                                                          "form-control",
+                                                        attrs: {
+                                                          id: "max_book"
+                                                        },
+                                                        on: {
+                                                          change: function(
+                                                            $event
+                                                          ) {
+                                                            var $$selectedVal = Array.prototype.filter
+                                                              .call(
+                                                                $event.target
+                                                                  .options,
+                                                                function(o) {
+                                                                  return o.selected
+                                                                }
+                                                              )
+                                                              .map(function(o) {
+                                                                var val =
+                                                                  "_value" in o
+                                                                    ? o._value
+                                                                    : o.value
+                                                                return val
+                                                              })
+                                                            _vm.$set(
+                                                              rule,
+                                                              "max_book",
+                                                              $event.target
+                                                                .multiple
+                                                                ? $$selectedVal
+                                                                : $$selectedVal[0]
+                                                            )
+                                                          }
+                                                        }
+                                                      },
+                                                      [
+                                                        _c(
+                                                          "option",
+                                                          {
+                                                            attrs: {
+                                                              value: "1"
+                                                            }
+                                                          },
+                                                          [_vm._v("1")]
+                                                        ),
+                                                        _vm._v(" "),
+                                                        _c(
+                                                          "option",
+                                                          {
+                                                            attrs: {
+                                                              value: "2"
+                                                            }
+                                                          },
+                                                          [_vm._v("2")]
+                                                        ),
+                                                        _vm._v(" "),
+                                                        _c(
+                                                          "option",
+                                                          {
+                                                            attrs: {
+                                                              value: "3"
+                                                            }
+                                                          },
+                                                          [_vm._v("3")]
+                                                        ),
+                                                        _vm._v(" "),
+                                                        _c(
+                                                          "option",
+                                                          {
+                                                            attrs: {
+                                                              value: "4"
+                                                            }
+                                                          },
+                                                          [_vm._v("4")]
+                                                        )
+                                                      ]
+                                                    )
+                                                  ]
+                                                ),
+                                                _vm._v(" "),
+                                                _c(
+                                                  "div",
+                                                  {
+                                                    staticClass:
+                                                      "form-group col-md-3"
+                                                  },
+                                                  [
+                                                    _c(
+                                                      "label",
+                                                      {
+                                                        attrs: {
+                                                          for: "booking_per"
+                                                        }
+                                                      },
+                                                      [_vm._v("Bookings per")]
+                                                    ),
+                                                    _vm._v(" "),
+                                                    _c(
+                                                      "select",
+                                                      {
+                                                        directives: [
+                                                          {
+                                                            name: "model",
+                                                            rawName: "v-model",
+                                                            value:
+                                                              rule.booking_per,
+                                                            expression:
+                                                              "rule.booking_per"
+                                                          }
+                                                        ],
+                                                        staticClass:
+                                                          "form-control",
+                                                        attrs: {
+                                                          id: "booking_per"
+                                                        },
+                                                        on: {
+                                                          change: function(
+                                                            $event
+                                                          ) {
+                                                            var $$selectedVal = Array.prototype.filter
+                                                              .call(
+                                                                $event.target
+                                                                  .options,
+                                                                function(o) {
+                                                                  return o.selected
+                                                                }
+                                                              )
+                                                              .map(function(o) {
+                                                                var val =
+                                                                  "_value" in o
+                                                                    ? o._value
+                                                                    : o.value
+                                                                return val
+                                                              })
+                                                            _vm.$set(
+                                                              rule,
+                                                              "booking_per",
+                                                              $event.target
+                                                                .multiple
+                                                                ? $$selectedVal
+                                                                : $$selectedVal[0]
+                                                            )
+                                                          }
+                                                        }
+                                                      },
+                                                      [
+                                                        _c(
+                                                          "option",
+                                                          {
+                                                            attrs: {
+                                                              value: "day"
+                                                            }
+                                                          },
+                                                          [_vm._v("day")]
+                                                        ),
+                                                        _vm._v(" "),
+                                                        _c(
+                                                          "option",
+                                                          {
+                                                            attrs: {
+                                                              value: "week"
+                                                            }
+                                                          },
+                                                          [_vm._v("week")]
+                                                        ),
+                                                        _vm._v(" "),
+                                                        _c(
+                                                          "option",
+                                                          {
+                                                            attrs: {
+                                                              value: "month"
+                                                            }
+                                                          },
+                                                          [_vm._v("month")]
+                                                        ),
+                                                        _vm._v(" "),
+                                                        _c(
+                                                          "option",
+                                                          {
+                                                            attrs: {
+                                                              value: "year"
+                                                            }
+                                                          },
+                                                          [_vm._v("year")]
+                                                        )
+                                                      ]
+                                                    )
+                                                  ]
+                                                ),
+                                                _vm._v(" "),
+                                                _c(
+                                                  "div",
+                                                  {
+                                                    staticClass:
+                                                      "col-md-3 align-self-center"
+                                                  },
+                                                  [
+                                                    _c(
+                                                      "button",
+                                                      {
+                                                        staticClass:
+                                                          "btn btn-danger",
+                                                        attrs: {
+                                                          type: "button"
+                                                        },
+                                                        on: {
+                                                          click: function(
+                                                            $event
+                                                          ) {
+                                                            $event.preventDefault()
+                                                            return _vm.removeRule(
+                                                              index
+                                                            )
+                                                          }
+                                                        }
+                                                      },
+                                                      [
+                                                        _c("i", {
+                                                          staticClass:
+                                                            "fa fa-trash"
+                                                        })
+                                                      ]
+                                                    )
+                                                  ]
+                                                )
+                                              ]
+                                            )
+                                          }
+                                        ),
+                                        _vm._v(" "),
+                                        _c("div", {}, [
+                                          _c(
+                                            "button",
+                                            {
+                                              staticClass: "btn btn-success",
+                                              attrs: { type: "button" },
+                                              on: {
+                                                click: function($event) {
+                                                  $event.preventDefault()
+                                                  return _vm.addRule($event)
+                                                }
+                                              }
+                                            },
+                                            [_vm._v("Add Rule")]
+                                          )
+                                        ])
+                                      ],
+                                      2
+                                    )
+                                  ]
+                                )
                               ]
                             )
                           ])
@@ -81663,6 +82225,29 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-header" }, [
+      _c("h4", { staticClass: "modal-title font-weight-bold" }, [
+        _vm._v("Update resource settings")
+      ]),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "close",
+          attrs: {
+            type: "button",
+            "data-dismiss": "modal",
+            "aria-label": "Close"
+          }
+        },
+        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
     return _c("div", { staticClass: "text-right" }, [
       _c("a", { attrs: { href: "#" } }, [
         _vm._v("Open in new window "),
@@ -81729,88 +82314,6 @@ var staticRenderFns = [
         _c("span", { staticClass: "onoffswitch-inner" }),
         _vm._v(" "),
         _c("span", { staticClass: "onoffswitch-switch" })
-      ]
-    )
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "div",
-      { staticClass: "col-md-12 collapse", attrs: { id: "collapsePeriod" } },
-      [
-        _c("div", { staticClass: "card card-body" }, [
-          _c("div", { staticClass: "row" }, [
-            _c("div", { staticClass: "form-group col-md-4" }, [
-              _c("label", { attrs: { for: "plans" } }, [_vm._v("Plans")]),
-              _vm._v(" "),
-              _c(
-                "select",
-                { staticClass: "form-control", attrs: { id: "plans" } },
-                [
-                  _c("option", { attrs: { value: "everyone" } }, [
-                    _vm._v("Everyone")
-                  ]),
-                  _vm._v(" "),
-                  _c("option", { attrs: { value: "adult" } }, [
-                    _vm._v("Adult")
-                  ]),
-                  _vm._v(" "),
-                  _c("option", { attrs: { value: "junior" } }, [
-                    _vm._v("Junior")
-                  ]),
-                  _vm._v(" "),
-                  _c("option", { attrs: { value: "senior" } }, [
-                    _vm._v("Senior")
-                  ])
-                ]
-              )
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "form-group col-md-4" }, [
-              _c("label", { attrs: { for: "maximum_book" } }, [
-                _vm._v("Maximum book")
-              ]),
-              _vm._v(" "),
-              _c(
-                "select",
-                { staticClass: "form-control", attrs: { id: "maximum_book" } },
-                [
-                  _c("option", { attrs: { value: "1" } }, [_vm._v("1")]),
-                  _vm._v(" "),
-                  _c("option", { attrs: { value: "2" } }, [_vm._v("2")]),
-                  _vm._v(" "),
-                  _c("option", { attrs: { value: "3" } }, [_vm._v("3")]),
-                  _vm._v(" "),
-                  _c("option", { attrs: { value: "4" } }, [_vm._v("4")])
-                ]
-              )
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "form-group col-md-4" }, [
-              _c("label", { attrs: { for: "booking_per" } }, [
-                _vm._v("Bookings per")
-              ]),
-              _vm._v(" "),
-              _c(
-                "select",
-                { staticClass: "form-control", attrs: { id: "booking_per" } },
-                [
-                  _c("option", { attrs: { value: "day" } }, [_vm._v("day")]),
-                  _vm._v(" "),
-                  _c("option", { attrs: { value: "week" } }, [_vm._v("week")]),
-                  _vm._v(" "),
-                  _c("option", { attrs: { value: "month" } }, [
-                    _vm._v("month")
-                  ]),
-                  _vm._v(" "),
-                  _c("option", { attrs: { value: "year" } }, [_vm._v("year")])
-                ]
-              )
-            ])
-          ])
-        ])
       ]
     )
   },

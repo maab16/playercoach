@@ -69,6 +69,46 @@
           </div>
       </div>
 
+      <div class="modal fade" id="resourceSettingsModal">
+          <div class="modal-dialog view-modal-dialog" role="document">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h4 class="modal-title font-weight-bold">Update resource settings</h4>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                       <span aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+                  <div class="modal-body">
+                    <form v-on:submit.prevent="resourceAction == 'add' ? addResource() : updateResource()">
+                         <div class="form-group">
+                             <label for="permissions" class="col-form-lebel text-md-right">Booking Sheet</label>
+                             <multiselect
+                                 v-model="resource.resource_type" 
+                                 :options="resource_types"
+                                 :multiple="false" 
+                                 :close-on-select="true" 
+                                 :clear-on-select="false" 
+                                 :preserve-search="true" 
+                                 placeholder="'Pick Resource Type'" 
+                                 label="title" 
+                                 track-by="title" 
+                                 :preselect-first="false"
+                                 id="resource_type"></multiselect>
+                         </div>
+                            <div class="form-group">
+                              <label for="title">Title</label>
+                              <input type="text" v-model="resource.title" class="form-control" placeholder="Resource Title">
+                            </div>
+                        <div class="form-group">
+                          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                          <button type="submit" class="btn btn-success">{{ resourceAction }}</button>
+                        </div>
+                    </form>
+                  </div>
+             </div>
+          </div>
+      </div>
+
         <div 
           class="settingModal" 
           :class="{activeSetting:booking.isActiveSettingModel}" 
@@ -110,9 +150,9 @@
                                           <a 
                                             href="#" 
                                             class="btn btn-info" 
-                                            @click.prevent="viewResource(index)" 
+                                            @click.prevent="viewResourceSettings(index)" 
                                             data-toggle="modal" 
-                                            data-target="#viewResourceModal">View</a>
+                                            data-target="#resourceSettingsModal">Settings</a>
                                           <a 
                                             href="#" 
                                             class="btn btn-success" 
@@ -219,36 +259,42 @@
                                   </label>
                                 </div>
                               </div>
-                              <div class="col-md-12 collapse" id="collapsePeriod">
+                              <div class="col-md-12 collapse" :class="{show: booking.settings.business_hours.allow_per_period}" id="collapsePeriod">
                                   <div class="card card-body">
-                                    <div class="row">
-                                      <div class="form-group col-md-4">
-                                        <label for="plans">Plans</label>
-                                        <select id="plans" class="form-control">
-                                          <option value="everyone">Everyone</option>
-                                          <option value="adult">Adult</option>
-                                          <option value="junior">Junior</option>
-                                          <option value="senior">Senior</option>
-                                        </select>
-                                      </div>
-                                      <div class="form-group col-md-4">
-                                        <label for="maximum_book">Maximum book</label>
-                                        <select id="maximum_book" class="form-control">
-                                          <option value="1">1</option>
-                                          <option value="2">2</option>
-                                          <option value="3">3</option>
-                                          <option value="4">4</option>
-                                        </select>
-                                      </div>
-                                      <div class="form-group col-md-4">
-                                        <label for="booking_per">Bookings per</label>
-                                        <select id="booking_per" class="form-control">
-                                          <option value="day">day</option>
-                                          <option value="week">week</option>
-                                          <option value="month">month</option>
-                                          <option value="year">year</option>
-                                        </select>
-                                      </div>
+                                    <div v-for="(rule, index) in booking.settings.business_hours.rules" :key="index" class="form-group row">
+                                        <div class="form-group col-md-3">
+                                          <label for="plan">Plan</label>
+                                          <select id="plan" class="form-control" v-model="rule.plan">
+                                            <option value="everyone">Everyone</option>
+                                            <option value="adult">Adult</option>
+                                            <option value="junior">Junior</option>
+                                            <option value="senior">Senior</option>
+                                          </select>
+                                        </div>
+                                        <div class="form-group col-md-3">
+                                          <label for="max_book">Maximum book</label>
+                                          <select id="max_book" v-model="rule.max_book" class="form-control">
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                          </select>
+                                        </div>
+                                        <div class="form-group col-md-3">
+                                          <label for="booking_per">Bookings per</label>
+                                          <select id="booking_per" v-model="rule.booking_per" class="form-control">
+                                            <option value="day">day</option>
+                                            <option value="week">week</option>
+                                            <option value="month">month</option>
+                                            <option value="year">year</option>
+                                          </select>
+                                        </div>
+                                        <div class="col-md-3 align-self-center">
+                                            <button type="button" class="btn btn-danger" @click.prevent="removeRule(index)"><i class="fa fa-trash"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="">
+                                        <button type="button" class="btn btn-success" @click.prevent="addRule">Add Rule</button>
                                     </div>
                                   </div>
                                 </div>
@@ -556,7 +602,6 @@
     },
     methods: {
       showResourceCreateForm: function(){
-        console.log(this.booking)
             this.resourceAction = "add"
             // this.category = "Create Resource Type"
             this.resource = {
@@ -573,11 +618,12 @@
         this.resourceAction = "edit"
         // this.category = "Edit Resource"
         this.resource = this.booking.resources[index]
-        console.log(this.booking);
+      },
+      viewResourceSettings: function(index) {
+        this.resource = this.booking.resources[index]
       },
       addResource: function(){
         axios.post('/api/courtbooking/resource', this.resource).then(res => {
-          console.log(res.data)
             if(res.data.success == true) {
               this.booking.resources = res.data.booking.resources
               // Flash success message
@@ -594,14 +640,11 @@
               }
             }
         })
-        .catch(err => {
-          console.log(err)
-        });
+        .catch(err => this.displayError(err.response));
       },
       updateResource: function(){
         axios.put(`/api/courtbooking/resource/${this.resource.id}`, this.resource)
         .then(res =>{
-          console.log(res.data)
           if(res.data.success == true) {
             this.booking.resources = res.data.booking.resources
             // Flash success message
@@ -619,7 +662,7 @@
           }
 
         })
-        .catch(err => console.log(err));
+        .catch(err => this.displayError(err.response));
       },
       removeResource: function(resource_id){
         let self = this;
@@ -635,7 +678,6 @@
                 // this.$Progress.start()
                 axios.delete(`/api/courtbooking/resource/${resource_id}`, {params: this.booking})
                 .then(res => {
-                  console.log(res.data)
                     if( res.data.success == true ){
                         this.booking.resources = res.data.booking.resources
                         toastr.success("Resource Deleted Successfully")
@@ -656,24 +698,27 @@
             }
         });
       },
+      addRule: function(){
+        let rules = [...this.booking.settings.business_hours.rules];
+        rules.push({plan:'', max_book: '', booking_per: ''});
+        this.booking.settings.business_hours.rules = rules;
+      },
+      removeRule: function(index){
+        let rules = [...this.booking.settings.business_hours.rules];
+        rules.splice(index, 1);
+        this.booking.settings.business_hours.rules = rules;
+      },
       addSession: function(day_of_weeks){
           let sessions = [...this.booking.settings.business_hours.days_of_weeks[day_of_weeks]];
-          // Vue.delete(this.booking.settings.business_hours.days_of_weeks, day_of_weeks);
           sessions.push({start:'',end: ''});
           this.booking.settings.business_hours.days_of_weeks[day_of_weeks] = sessions;
-
-          console.log(this.booking.settings)
       },
       removeSession(index, day_of_weeks) {
-          console.log(index);
-          console.log(day_of_weeks);
           let sessions = [...this.booking.settings.business_hours.days_of_weeks[day_of_weeks]];
           sessions.splice(index, 1);
-          // Vue.delete(this.booking.settings.business_hours.days_of_weeks, day_of_weeks);
           this.booking.settings.business_hours.days_of_weeks[day_of_weeks] = sessions;
       },
       closeSettingModal: function(){
-        console.log(this.booking)
         Vue.delete(this.booking, 'isActiveSettingModel')
         this.booking.isActiveSettingModel = false
       }

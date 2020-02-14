@@ -232,6 +232,7 @@
                   booking_unit_length: 'one_hour',
                   max_units: 1,
                   allow_per_period : false,
+                  rules: [],
                   special_times: false,
                   days_of_weeks: {
                     sunday: [],
@@ -269,19 +270,9 @@
         methods: {
           fetchBookings: function(){
             axios.get('/api/courtbooking/booking/all').then(res =>{
-              console.log(res.data)
               this.bookings = res.data.bookings
-              // for(let booking of this.bookings) {
-              //   booking.settings = JSON.stringify(booking.settings, null, 4);
-              // }
               this.unpublished_bookings = res.data.unpublished_bookings
-              // for(let unpublished_booking of this.unpublished_bookings) {
-              //   unpublished_booking.settings = JSON.stringify(unpublished_booking.settings, null, 4);
-              // }
               this.published_bookings = res.data.published_bookings
-              // for(let published_booking of this.published_bookings) {
-              //   published_booking.settings = JSON.stringify(published_booking.settings, null, 4);
-              // }
             })
           },
           showCreateForm: function(){
@@ -290,7 +281,6 @@
             this.booking.title = ''
           },
           showEditForm: function(index){
-            console.log(index)
             this.action = "edit"
             this.category = "Update Booking Sheet"
             this.booking = this.bookings[index]
@@ -299,9 +289,7 @@
             this.booking = this.bookings[index]
           },
           addBooking: function(){
-            console.log(this.booking)
             axios.post('/api/courtbooking/booking', this.booking).then(res =>{
-              console.log(res.data)
                 if(res.data.success == true) {
                   // Flash success message
                   toastr.success('Added Successfully.')
@@ -317,16 +305,10 @@
                   }
                 }
             })
-            .catch(err => {
-              console.log(err)
-            });
+            .catch(err => console.log(err));
           },
           updateBooking: function(){
-            console.log(this.booking)
-            // this.booking.settings = JSON.parse(this.booking.settings)
-            console.log(this.booking)
             axios.put(`/api/courtbooking/booking/${this.booking.id}`, this.booking).then(res =>{
-              console.log(res.data)
               if(res.data.success == true) {
                 // Flash success message
                 toastr.success('Updated Successfully')
@@ -358,7 +340,6 @@
                 if (result.value) {
                     // this.$Progress.start()
                     axios.put(`/api/courtbooking/booking/${booking}/restore`).then(res => {
-                      console.log(res.data)
                         if( res.data.success == true ){
                             toastr.success("Booking Restored Successfully")
                             self.fetchBookings()
@@ -391,7 +372,6 @@
                 if (result.value) {
                     // this.$Progress.start()
                     axios.delete(`/api/courtbooking/booking/${booking}`).then(res => {
-                      console.log(res.data)
                         if( res.data.success == true ){
                             toastr.success("Booking Deleted Successfully")
                             self.fetchBookings()
@@ -424,7 +404,6 @@
                 if (result.value) {
                     // this.$Progress.start()
                     axios.delete(`/api/courtbooking/booking/${booking}/permanent`).then(res => {
-                      console.log(res.data)
                         if( res.data.success == true ){
                             toastr.success("Booking Permanently Deleted Successfully")
                             self.fetchBookings()
@@ -445,8 +424,7 @@
             });
           },
           fetchResourceTypes: function(){
-            axios.get('/api/courtbooking/resource-type/all').then(res =>{
-              console.log(res.data)
+            axios.get('/api/courtbooking/resource-type/all').then(res => {
               this.resource_types = res.data.resource_types
             })
           },
@@ -461,14 +439,12 @@
             this.resource_type = this.resource_types[index]
           },
           showEditResourceTypeForm: function(index){
-            console.log(index)
             this.action = "edit"
             this.category = "Edit Resource Type"
             this.resource_type = this.resource_types[index]
           },
           addResourceType: function(){
             axios.post('/api/courtbooking/resource-type', this.resource_type).then(res =>{
-              console.log(res.data)
                 if(res.data.success == true) {
                   // Flash success message
                   toastr.success('Resource Type Added Successfully.')
@@ -484,14 +460,11 @@
                   }
                 }
             })
-            .catch(err => {
-              console.log(err)
-            });
+            .catch(err => console.log(err));
           },
           updateResourceType: function(){
             axios.put(`/api/courtbooking/resource-type/${this.resource_type.id}`, this.resource_type)
             .then(res =>{
-              console.log(res.data)
               if(res.data.success == true) {
                 // Flash success message
                 toastr.success('Resource Type Updated Successfully')
@@ -524,16 +497,12 @@
                     // this.$Progress.start()
                     axios.delete(`/api/courtbooking/resource-type/${resource_type}`)
                     .then(res => {
-                      console.log(res.data)
                         if( res.data.success == true ){
                             toastr.success("Resource Type Deleted Successfully")
                             self.fetchResourceTypes()
                             // this.$Progress.finish()
                         }
-                    }).catch(err => {
-                        // this.$Progress.start()
-                        this.displayError(err.response)
-                    });
+                    }).catch(err => this.displayError(err.response));
 
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
                     Swal.fire(
